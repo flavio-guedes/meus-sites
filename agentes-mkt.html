@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flávio Guedes · AI Specialist · Case Study 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Outfit:wght@700;800;900&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080a0e;
+    --bg-2: #0d1017;
+    --bg-3: #121620;
+    --surface: #161b26;
+    --surface-2: #1c2333;
+    --border: rgba(255,255,255,0.07);
+    --border-accent: rgba(99,179,237,0.2);
+    --text: #e8ecf4;
+    --text-muted: #6b7a99;
+    --text-dim: #3d4d6a;
+    --accent: #63b3ed;
+    --accent-2: #7c6ef2;
+    --accent-3: #4fd1c5;
+    --accent-warm: #f6ad55;
+    --gradient: linear-gradient(135deg, #63b3ed, #7c6ef2);
+    --gradient-warm: linear-gradient(135deg, #f6ad55, #fc8181);
+    --font-display: 'Syne', sans-serif;
+    --font-heading: 'Outfit', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-weight: 400;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ─── NOISE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+  }
+
+  /* ─── AMBIENT GLOW ─── */
+  .ambient {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .ambient-1 {
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(99,179,237,0.06) 0%, transparent 70%);
+    top: -200px; right: -100px;
+  }
+  .ambient-2 {
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(124,110,242,0.05) 0%, transparent 70%);
+    bottom: 20%; left: -150px;
+  }
+
+  /* ─── LAYOUT ─── */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 32px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 20px 0;
+    background: linear-gradient(to bottom, rgba(8,10,14,0.9) 0%, transparent 100%);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  nav .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .nav-brand {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: 0.02em;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .nav-brand span {
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .nav-tag {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 4px 12px;
+    border-radius: 100px;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    padding: 160px 0 100px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards;
+  }
+  .hero-label::before {
+    content: '';
+    display: block;
+    width: 20px; height: 1px;
+    background: var(--accent);
+    opacity: 0.6;
+  }
+  .hero-title {
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-size: clamp(44px, 7vw, 80px);
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.1s forwards;
+  }
+  .hero-title .highlight {
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: block;
+  }
+  .hero-subtitle {
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--text-muted);
+    max-width: 560px;
+    line-height: 1.7;
+    margin-bottom: 56px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.2s forwards;
+  }
+  .hero-stats {
+    display: flex;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--surface);
+    max-width: 480px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.3s forwards;
+  }
+  .stat {
+    flex: 1;
+    padding: 24px 20px;
+    text-align: center;
+    position: relative;
+  }
+  .stat + .stat {
+    border-left: 1px solid var(--border);
+  }
+  .stat-number {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 32px;
+    line-height: 1;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: block;
+    margin-bottom: 6px;
+  }
+  .stat-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  /* ─── SECTION ─── */
+  section {
+    padding: 100px 0;
+    border-top: 1px solid var(--border);
+  }
+  .section-num {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+    display: block;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(28px, 4vw, 42px);
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+  .section-sub {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 48px;
+  }
+  .body-text {
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--text-muted);
+    line-height: 1.8;
+    max-width: 680px;
+    margin-bottom: 32px;
+  }
+
+  /* ─── CARDS ─── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    transition: border-color 0.3s ease, background 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .card:hover {
+    border-color: var(--border-accent);
+    background: var(--surface-2);
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(99,179,237,0.03) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .card:hover::before { opacity: 1; }
+
+  /* ─── QUOTE ─── */
+  .quote-block {
+    border-left: 2px solid var(--accent);
+    padding: 20px 28px;
+    margin: 40px 0;
+    background: var(--surface);
+    border-radius: 0 12px 12px 0;
+  }
+  .quote-block p {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--text);
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+  .quote-block cite {
+    font-size: 12px;
+    font-style: normal;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  /* ─── PIPELINE TABLE ─── */
+  .pipeline {
+    margin: 48px 0;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .pipeline-header {
+    display: grid;
+    grid-template-columns: 48px 1fr 2fr 80px;
+    gap: 0;
+    padding: 14px 24px;
+    background: var(--bg-3);
+    border-bottom: 1px solid var(--border);
+  }
+  .pipeline-header span {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .pipeline-row {
+    display: grid;
+    grid-template-columns: 48px 1fr 2fr 80px;
+    gap: 0;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+    transition: background 0.2s;
+  }
+  .pipeline-row:last-child { border-bottom: none; }
+  .pipeline-row:hover { background: rgba(255,255,255,0.02); }
+  .pipeline-row.pause { background: rgba(99,179,237,0.03); }
+  .pipeline-row.pause:hover { background: rgba(99,179,237,0.05); }
+  .row-num {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 13px;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+  }
+  .row-agent {
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .row-agent .emoji {
+    font-size: 16px;
+    width: 28px;
+    height: 28px;
+    background: var(--bg-3);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .row-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 300;
+  }
+  .row-mode {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .badge {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+  .badge-auto {
+    background: rgba(79,209,197,0.1);
+    color: var(--accent-3);
+    border: 1px solid rgba(79,209,197,0.15);
+  }
+  .badge-human {
+    background: rgba(99,179,237,0.12);
+    color: var(--accent);
+    border: 1px solid rgba(99,179,237,0.2);
+  }
+
+  /* ─── PROMPT BLOCK ─── */
+  .prompt-anatomy {
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin: 40px 0;
+    font-family: 'Courier New', monospace;
+  }
+  .prompt-header {
+    padding: 16px 24px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .prompt-header span {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+  }
+  .prompt-dots {
+    display: flex;
+    gap: 6px;
+  }
+  .prompt-dots i {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    display: block;
+  }
+  .prompt-dots i:nth-child(1) { background: #fc8181; opacity: 0.6; }
+  .prompt-dots i:nth-child(2) { background: #f6ad55; opacity: 0.6; }
+  .prompt-dots i:nth-child(3) { background: #68d391; opacity: 0.6; }
+  .prompt-body {
+    padding: 24px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text-muted);
+  }
+  .prompt-comment {
+    color: var(--text-dim);
+    display: block;
+    margin-bottom: 4px;
+    font-style: italic;
+  }
+  .prompt-text {
+    color: var(--text);
+    display: block;
+    margin-bottom: 20px;
+    padding-left: 0;
+  }
+  .prompt-highlight {
+    color: var(--accent);
+  }
+  .prompt-highlight-2 {
+    color: var(--accent-3);
+  }
+
+  /* ─── COMPETÊNCIAS GRID ─── */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 48px 0;
+  }
+  @media (max-width: 640px) {
+    .skills-grid { grid-template-columns: 1fr; }
+  }
+  .skill-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .skill-card:hover {
+    border-color: var(--border-accent);
+    transform: translateY(-2px);
+  }
+  .skill-icon {
+    font-size: 24px;
+    margin-bottom: 16px;
+    display: block;
+  }
+  .skill-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--text);
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .skill-desc {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  .skill-tag {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    background: rgba(124,110,242,0.08);
+    border: 1px solid rgba(124,110,242,0.12);
+    padding: 3px 10px;
+    border-radius: 100px;
+    display: inline-block;
+  }
+
+  /* ─── MÉTRICAS ─── */
+  .metrics-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin: 48px 0;
+  }
+  @media (max-width: 640px) {
+    .metrics-row { grid-template-columns: repeat(2, 1fr); }
+  }
+  .metric {
+    background: var(--surface);
+    padding: 32px 24px;
+    text-align: center;
+  }
+  .metric-value {
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-size: 36px;
+    line-height: 1;
+    display: block;
+    margin-bottom: 8px;
+  }
+  .metric-value.blue { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .metric-value.teal { background: linear-gradient(135deg, #4fd1c5, #63b3ed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .metric-value.purple { background: linear-gradient(135deg, #7c6ef2, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .metric-value.warm { background: var(--gradient-warm); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .metric-desc {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  /* ─── LIMITAÇÕES ─── */
+  .limit-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 40px 0;
+  }
+  .limit-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 20px;
+    align-items: start;
+    transition: border-color 0.3s;
+  }
+  .limit-item:hover { border-color: rgba(246,173,85,0.2); }
+  .limit-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent-warm);
+    margin-top: 8px;
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+  .limit-content {}
+  .limit-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-warm);
+    opacity: 0.8;
+    margin-bottom: 6px;
+  }
+  .limit-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .limit-desc {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* ─── CTA ─── */
+  .cta-section {
+    padding: 100px 0;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  .cta-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(32px, 5vw, 52px);
+    letter-spacing: -0.03em;
+    color: var(--text);
+    margin-bottom: 16px;
+    line-height: 1.1;
+  }
+  .cta-sub {
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--text-muted);
+    margin-bottom: 40px;
+  }
+  .cta-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    background: var(--gradient);
+    color: white;
+    text-decoration: none;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    background: transparent;
+    color: var(--text);
+    text-decoration: none;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid var(--border);
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--border-accent); background: var(--surface); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 0;
+    position: relative;
+    z-index: 1;
+  }
+  footer .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .footer-copy {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-dim);
+  }
+  .footer-links {
+    display: flex;
+    gap: 20px;
+  }
+  .footer-links a {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--text); }
+
+  /* ─── DIVIDER ─── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border), transparent);
+    margin: 48px 0;
+  }
+
+  /* ─── INFO BOX ─── */
+  .info-box {
+    background: rgba(99,179,237,0.04);
+    border: 1px solid rgba(99,179,237,0.12);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 32px 0;
+  }
+  .info-box-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--accent);
+    margin-bottom: 10px;
+    letter-spacing: 0.01em;
+  }
+  .info-box p {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ─── SCROLL INDICATOR ─── */
+  .scroll-line {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    background: var(--gradient);
+    z-index: 200;
+    transition: width 0.1s linear;
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    .container { padding: 0 20px; }
+    .pipeline-header, .pipeline-row {
+      grid-template-columns: 40px 1fr;
+    }
+    .pipeline-header span:nth-child(3),
+    .pipeline-header span:nth-child(4),
+    .pipeline-row .row-desc,
+    .pipeline-row .row-mode { display: none; }
+    .hero { padding: 120px 0 80px; }
+    section { padding: 72px 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="scroll-line" id="scrollLine"></div>
+<div class="ambient ambient-1"></div>
+<div class="ambient ambient-2"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="container">
+    <a href="#" class="nav-brand">Flávio <span>Guedes</span></a>
+    <span class="nav-tag">AI Specialist · 2026</span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="container">
+    <div class="hero-label">Case Study · Multi-Agent System</div>
+    <h1 class="hero-title">
+      Um time de marketing<br>
+      <span class="highlight">inteiro. Automático.</span>
+    </h1>
+    <p class="hero-subtitle">
+      Projetei e implementei um sistema com 7 agentes de IA especializados que trabalham em sequência — do primeiro contato com o cliente até o relatório final — com pontos de decisão humana no meio do fluxo.
+    </p>
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-number">7</span>
+        <span class="stat-label">Agentes</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number">2</span>
+        <span class="stat-label">Human-in-loop</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number">R$0</span>
+        <span class="stat-label">Plataformas pagas</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 01 — PROBLEMA -->
+<section>
+  <div class="container">
+    <span class="section-num">01 — O Problema Real</span>
+    <h2 class="section-title reveal">Por que agências de<br>marketing travam.</h2>
+    <p class="section-sub">O gargalo humano</p>
+
+    <p class="body-text reveal">
+      Em agências criativas, o fundador ou diretor acaba sendo o único ponto de conexão entre comercial, estratégia, criação e entrega. Quando ele está dentro da operação, a agência cresce até o limite da sua disponibilidade — e então trava.
+    </p>
+
+    <div class="quote-block reveal">
+      <p>"O problema não está na qualidade do trabalho — está em quem precisa estar presente em cada etapa para o trabalho acontecer."</p>
+      <cite>Diagnóstico que originou o projeto</cite>
+    </div>
+
+    <div class="divider"></div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;" class="reveal">
+      <div class="card">
+        <div class="skill-name" style="margin-bottom: 10px;">O que ferramentas existentes não resolvem</div>
+        <p class="skill-desc">ChatGPT, Gemini e similares são excelentes para tarefas isoladas. Mas nenhum deles tem memória nativa do que o agente anterior produziu. Cada conversa começa do zero. Para simular um time, é preciso arquitetar o fluxo de informação manualmente.</p>
+      </div>
+      <div class="card">
+        <div class="skill-name" style="margin-bottom: 10px;">Por que construir em vez de usar plataforma pronta</div>
+        <p class="skill-desc">Ferramentas como Make e n8n resolvem o fluxo, mas abstraem o controle sobre os prompts. Construir na API diretamente deu controle total sobre o que cada agente recebe, como processa e o que entrega — a habilidade central de um AI Specialist.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 — SOLUÇÃO -->
+<section>
+  <div class="container">
+    <span class="section-num">02 — A Solução</span>
+    <h2 class="section-title reveal">Sequential pipeline com<br>human-in-the-loop.</h2>
+    <p class="section-sub">O padrão adotado</p>
+
+    <p class="body-text reveal">
+      O padrão adotado é o <strong style="color: var(--text); font-weight: 500;">Sequential Pipeline</strong>: cada agente recebe como contexto o output completo do agente anterior, criando uma cadeia de raciocínio acumulativa. Em dois pontos estratégicos, o pipeline pausa para aprovação humana antes de continuar.
+    </p>
+
+    <div class="pipeline reveal">
+      <div class="pipeline-header">
+        <span>#</span>
+        <span>Agente</span>
+        <span>O que faz nessa etapa</span>
+        <span style="text-align: right">Modo</span>
+      </div>
+      <div class="pipeline-row">
+        <span class="row-num">01</span>
+        <div class="row-agent"><span class="emoji">🎯</span> Prospecção</div>
+        <span class="row-desc">Analisa o lead recebido e estrutura o primeiro contato com contexto de negócio</span>
+        <div class="row-mode"><span class="badge badge-auto">Auto</span></div>
+      </div>
+      <div class="pipeline-row pause">
+        <span class="row-num">02</span>
+        <div class="row-agent"><span class="emoji">💼</span> Comercial</div>
+        <span class="row-desc">Gera proposta comercial com escopo, entregáveis e investimento</span>
+        <div class="row-mode"><span class="badge badge-human">⏸ Humano</span></div>
+      </div>
+      <div class="pipeline-row">
+        <span class="row-num">03</span>
+        <div class="row-agent"><span class="emoji">🧠</span> Estratégia</div>
+        <span class="row-desc">Traduz a proposta aprovada em plano estratégico executável por canal</span>
+        <div class="row-mode"><span class="badge badge-auto">Auto</span></div>
+      </div>
+      <div class="pipeline-row pause">
+        <span class="row-num">04</span>
+        <div class="row-agent"><span class="emoji">✍️</span> Criação</div>
+        <span class="row-desc">Produz briefing criativo completo com tom, referências e diretrizes visuais</span>
+        <div class="row-mode"><span class="badge badge-human">⏸ Humano</span></div>
+      </div>
+      <div class="pipeline-row">
+        <span class="row-num">05</span>
+        <div class="row-agent"><span class="emoji">📣</span> Mídia Paga</div>
+        <span class="row-desc">Estrutura campanhas pagas com segmentação, budget e copy de anúncios</span>
+        <div class="row-mode"><span class="badge badge-auto">Auto</span></div>
+      </div>
+      <div class="pipeline-row">
+        <span class="row-num">06</span>
+        <div class="row-agent"><span class="emoji">📋</span> Gestão de Projetos</div>
+        <span class="row-desc">Converte o plano em cronograma, marcos e responsabilidades</span>
+        <div class="row-mode"><span class="badge badge-auto">Auto</span></div>
+      </div>
+      <div class="pipeline-row">
+        <span class="row-num">07</span>
+        <div class="row-agent"><span class="emoji">📊</span> Analytics</div>
+        <span class="row-desc">Define KPIs, estrutura relatório e recomendações de otimização</span>
+        <div class="row-mode"><span class="badge badge-auto">Auto</span></div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;" class="reveal">
+      <div class="info-box" style="margin: 0;">
+        <div class="info-box-title">Por que pausar para aprovação humana?</div>
+        <p>Os agentes 02 e 04 pausam o pipeline porque são os momentos de maior impacto financeiro e criativo. Uma proposta aprovada define o escopo inteiro. Uma criação aprovada orienta toda a execução. IA executa — humano decide nas bifurcações que importam.</p>
+      </div>
+      <div class="info-box" style="margin: 0; border-color: rgba(124,110,242,0.12); background: rgba(124,110,242,0.04);">
+        <div class="info-box-title" style="color: var(--accent-2);">Como o contexto é preservado entre agentes</div>
+        <p>Cada output é salvo em memória e injetado no prompt do próximo agente. O agente 05 de Mídia Paga recebe o briefing criativo do 04 — e não precisa inferir nada. É o que diferencia uma cadeia de agentes de 7 perguntas soltas num chat.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 — PROMPT DESIGN -->
+<section>
+  <div class="container">
+    <span class="section-num">03 — Prompt Design</span>
+    <h2 class="section-title reveal">Como cada agente<br>foi instruído.</h2>
+    <p class="section-sub">Anatomia do prompt</p>
+
+    <p class="body-text reveal">
+      A eficácia de um sistema multi-agente depende quase inteiramente da qualidade dos prompts. Cada agente foi projetado com quatro componentes: papel, contexto, tarefa e formato de saída esperado.
+    </p>
+
+    <div class="prompt-anatomy reveal">
+      <div class="prompt-header">
+        <div class="prompt-dots"><i></i><i></i><i></i></div>
+        <span>Agente 03 — Estratégia · Prompt completo</span>
+        <span></span>
+      </div>
+      <div class="prompt-body">
+        <span class="prompt-comment">// Papel do agente</span>
+        <span class="prompt-text">Você é um <span class="prompt-highlight">estrategista de marketing digital</span> especializado em agências criativas. Seu trabalho é traduzir uma proposta comercial aprovada em um plano estratégico executável.</span>
+
+        <span class="prompt-comment">// Contexto acumulado</span>
+        <span class="prompt-text">Com a seguinte proposta aprovada pelo cliente: <span class="prompt-highlight-2">[output do Agente 02]</span>. Para o cliente descrito originalmente como: <span class="prompt-highlight-2">[input do usuário]</span>.</span>
+
+        <span class="prompt-comment">// Tarefa específica</span>
+        <span class="prompt-text">Crie um plano estratégico com: canais prioritários (orgânico + pago), pilares de conteúdo (3-4), frequência de publicação, tom de comunicação e métricas de sucesso.</span>
+
+        <span class="prompt-comment">// Formato de saída</span>
+        <span class="prompt-text">Responda em português brasileiro. Seja direto e prático — sem introduções genéricas. Estruture em tópicos claros que o <span class="prompt-highlight">próximo agente (Criação) possa usar como briefing</span>.</span>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;" class="reveal">
+      <div class="card">
+        <div class="skill-name" style="margin-bottom: 10px;">A instrução que faz o sistema funcionar</div>
+        <p class="skill-desc">A linha mais importante de cada prompt não é a tarefa — é a instrução de formato direcionada ao próximo agente. O Agente 03 é instruído a estruturar o output "de forma que o próximo agente possa usar como briefing". Isso cria coerência sem memória compartilhada.</p>
+      </div>
+      <div class="card">
+        <div class="skill-name" style="margin-bottom: 10px;">O que testei e descartei</div>
+        <p class="skill-desc">Prompts genéricos como "Crie uma estratégia de marketing" geravam outputs úteis mas desconectados do cliente real. Adicionar o output anterior como contexto explícito aumentou drasticamente a especificidade — e foi a principal iteração do projeto.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 — COMPETÊNCIAS -->
+<section>
+  <div class="container">
+    <span class="section-num">04 — Competências Demonstradas</span>
+    <h2 class="section-title reveal">O que esse projeto<br>prova sobre mim.</h2>
+
+    <div class="skills-grid reveal">
+      <div class="skill-card">
+        <span class="skill-icon">🧩</span>
+        <div class="skill-name">Prompt Engineering</div>
+        <p class="skill-desc">Cada agente tem papel, contexto, tarefa e formato definidos. Não é "escrever para IA" — é arquitetar instruções que geram outputs consistentes e encadeáveis.</p>
+        <span class="skill-tag">7 prompts especializados</span>
+      </div>
+      <div class="skill-card">
+        <span class="skill-icon">🔗</span>
+        <div class="skill-name">Orquestração de Agentes</div>
+        <p class="skill-desc">Projetei o fluxo de informação entre 7 especialistas: quem recebe o quê, quando pausa para aprovação humana e como o contexto é preservado e injetado.</p>
+        <span class="skill-tag">Sequential pipeline</span>
+      </div>
+      <div class="skill-card">
+        <span class="skill-icon">🤝</span>
+        <div class="skill-name">Human-in-the-Loop</div>
+        <p class="skill-desc">Identifiquei os dois pontos críticos do fluxo onde a decisão humana é insubstituível e projetei pausas que mantêm controle sem quebrar a automação.</p>
+        <span class="skill-tag">2 checkpoints</span>
+      </div>
+      <div class="skill-card">
+        <span class="skill-icon">🎯</span>
+        <div class="skill-name">Domínio de Negócio</div>
+        <p class="skill-desc">Vim de marketing e gestão de projetos. Esse contexto permitiu criar agentes muito mais realistas do que alguém que nunca trabalhou com clientes, propostas e execução de campanhas.</p>
+        <span class="skill-tag">+5 anos em agências</span>
+      </div>
+      <div class="skill-card">
+        <span class="skill-icon">🔄</span>
+        <div class="skill-name">Iteração e Teste</div>
+        <p class="skill-desc">A primeira versão tinha prompts genéricos que geravam outputs desconectados. A decisão de injetar o output anterior como contexto explícito foi resultado de teste e análise sistemática.</p>
+        <span class="skill-tag">Múltiplas iterações</span>
+      </div>
+      <div class="skill-card">
+        <span class="skill-icon">📐</span>
+        <div class="skill-name">Design de Sistemas</div>
+        <p class="skill-desc">Pensei o projeto como um sistema: entradas, processamentos, saídas, pontos de falha e pontos de controle. É o que diferencia um usuário de IA de um especialista.</p>
+        <span class="skill-tag">Arquitetura end-to-end</span>
+      </div>
+    </div>
+
+    <div class="metrics-row reveal">
+      <div class="metric">
+        <span class="metric-value blue">7</span>
+        <span class="metric-desc">Especialidades simuladas por IA</span>
+      </div>
+      <div class="metric">
+        <span class="metric-value teal">100%</span>
+        <span class="metric-desc">Contexto preservado entre agentes</span>
+      </div>
+      <div class="metric">
+        <span class="metric-value purple">&lt;2min</span>
+        <span class="metric-desc">Do input ao plano completo</span>
+      </div>
+      <div class="metric">
+        <span class="metric-value warm">R$0</span>
+        <span class="metric-desc">Custo de plataforma ou ferramenta</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 — LIMITAÇÕES -->
+<section>
+  <div class="container">
+    <span class="section-num">05 — Limitações & Próximos Passos</span>
+    <h2 class="section-title reveal">O que eu melhoraria<br>na próxima versão.</h2>
+    <p class="section-sub">Honestidade técnica</p>
+
+    <p class="body-text reveal">
+      Reconhecer as limitações de um sistema é tão importante quanto construí-lo. Aqui estão as três evoluções já identificadas.
+    </p>
+
+    <div class="limit-list reveal">
+      <div class="limit-item">
+        <div class="limit-dot"></div>
+        <div class="limit-content">
+          <div class="limit-label">Limitação atual</div>
+          <div class="limit-title">Sem memória entre sessões</div>
+          <p class="limit-desc">Cada vez que o sistema é iniciado, começa do zero. O histórico do cliente não é preservado. A próxima versão usaria <strong style="color: var(--text); font-weight: 500;">RAG (recuperação de documentos)</strong> para contextualizar sessões anteriores com histórico real do cliente.</p>
+        </div>
+      </div>
+      <div class="limit-item">
+        <div class="limit-dot"></div>
+        <div class="limit-content">
+          <div class="limit-label">Limitação atual</div>
+          <div class="limit-title">Outputs sem validação automática</div>
+          <p class="limit-desc">O sistema não verifica se o output do agente anterior está dentro do esperado antes de passar adiante. Um <strong style="color: var(--text); font-weight: 500;">agente validador</strong> poderia checar qualidade e solicitar revisão quando necessário, reduzindo erros em cascata.</p>
+        </div>
+      </div>
+      <div class="limit-item">
+        <div class="limit-dot"></div>
+        <div class="limit-content">
+          <div class="limit-label">Limitação atual</div>
+          <div class="limit-title">Agentes sem especialização fine-tuned</div>
+          <p class="limit-desc">Todos os agentes usam o mesmo modelo base. Em uma versão avançada, o agente de Mídia Paga usaria um <strong style="color: var(--text); font-weight: 500;">modelo fine-tuned com dados reais de campanhas</strong> para recomendações mais precisas de segmentação e budget.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="container">
+    <h2 class="cta-title reveal">Veja rodando<br>ao vivo.</h2>
+    <p class="cta-sub reveal">O sistema está funcional e disponível para demonstração.<br>Traga qualquer cenário de cliente — o pipeline executa em tempo real.</p>
+    <div class="cta-buttons reveal">
+      <a href="mailto:flavioguedesmkt@gmail.com" class="btn-primary">✉ Agendar conversa</a>
+      <a href="https://www.linkedin.com/in/oflavioguedes" target="_blank" class="btn-secondary">Ver LinkedIn →</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <span class="footer-copy">© 2026 · Flávio Guedes · AI Specialist</span>
+    <div class="footer-links">
+      <a href="mailto:flavioguedesmkt@gmail.com">flavioguedesmkt@gmail.com</a>
+      <a href="tel:+5521999719474">(21) 99971-9474</a>
+      <a href="https://www.behance.net/oflavioguedes" target="_blank">Behance</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Scroll progress line
+  const scrollLine = document.getElementById('scrollLine');
+  window.addEventListener('scroll', () => {
+    const scrolled = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+    scrollLine.style.width = scrolled + '%';
+  });
+
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

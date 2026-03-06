@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multi-Agent Marketing · Flávio Guedes</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --border: #2a2a38;
+    --accent: #7c6af7;
+    --accent2: #f7c26a;
+    --accent3: #6af7c2;
+    --text: #e8e8f0;
+    --muted: #6b6b88;
+    --human: #f7c26a;
+    --auto: #7c6af7;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(124,106,247,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124,106,247,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 24px 100px;
+    position: relative;
+    z-index: 1;
+  }
+
+  header { margin-bottom: 48px; }
+
+  .label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .label::before { content: '▶'; font-size: 8px; }
+
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(30px, 5vw, 44px);
+    line-height: 1.1;
+    margin-bottom: 14px;
+  }
+  h1 em { font-style: italic; color: var(--accent); }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.7;
+    max-width: 520px;
+  }
+
+  .input-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 32px;
+  }
+
+  .input-section label {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    margin-bottom: 10px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.1em;
+  }
+
+  textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    padding: 14px 16px;
+    resize: none;
+    height: 88px;
+    transition: border-color 0.2s;
+    line-height: 1.6;
+  }
+  textarea:focus { outline: none; border-color: var(--accent); }
+  textarea::placeholder { color: var(--muted); }
+
+  .btn-row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; align-items: center; }
+
+  .btn-start {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 11px 26px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: opacity 0.2s, transform 0.1s;
+    letter-spacing: 0.01em;
+  }
+  .btn-start:hover { opacity: 0.85; }
+  .btn-start:active { transform: scale(0.98); }
+  .btn-start:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .btn-reset {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 8px;
+    padding: 11px 18px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-reset:hover { border-color: var(--muted); color: var(--text); }
+
+  .sim-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: rgba(106,247,194,0.08);
+    border: 1px solid rgba(106,247,194,0.2);
+    color: var(--accent3);
+    margin-left: auto;
+  }
+
+  .progress-bar {
+    height: 2px;
+    background: var(--border);
+    border-radius: 1px;
+    margin-bottom: 32px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    border-radius: 1px;
+    transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+    width: 0%;
+  }
+
+  .pipeline { display: flex; flex-direction: column; }
+
+  .agent-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.35s, box-shadow 0.35s, opacity 0.35s;
+    margin-bottom: 4px;
+  }
+  .agent-card.waiting { opacity: 0.45; }
+  .agent-card.active {
+    border-color: rgba(124,106,247,0.5);
+    box-shadow: 0 0 0 1px rgba(124,106,247,0.1), 0 4px 24px rgba(124,106,247,0.08);
+    opacity: 1;
+  }
+  .agent-card.done {
+    border-color: rgba(106,247,194,0.28);
+    opacity: 1;
+  }
+
+  .agent-header {
+    padding: 15px 18px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .agent-icon {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    transition: background 0.3s, border-color 0.3s;
+  }
+  .agent-card.active .agent-icon { background: rgba(124,106,247,0.1); border-color: rgba(124,106,247,0.3); }
+  .agent-card.done .agent-icon  { background: rgba(106,247,194,0.07); border-color: rgba(106,247,194,0.22); }
+
+  .agent-info { flex: 1; min-width: 0; }
+  .agent-name { font-size: 13.5px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .agent-desc { font-size: 11.5px; color: var(--muted); font-family: 'DM Mono', monospace; }
+
+  .agent-badge {
+    font-size: 9.5px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.1em;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid;
+    flex-shrink: 0;
+  }
+  .badge-auto { color: var(--auto); border-color: rgba(124,106,247,0.3); background: rgba(124,106,247,0.07); }
+
+  .agent-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--border);
+    flex-shrink: 0;
+    transition: background 0.3s;
+  }
+  .agent-card.active .agent-dot { background: var(--accent); box-shadow: 0 0 6px var(--accent); animation: dotpulse 1.1s ease-in-out infinite; }
+  .agent-card.done .agent-dot  { background: var(--accent3); box-shadow: none; animation: none; }
+
+  @keyframes dotpulse {
+    0%,100% { opacity: 1; }
+    50%      { opacity: 0.3; }
+  }
+
+  .agent-body { display: none; padding: 0 18px 16px; }
+  .agent-body.open { display: block; }
+
+  .agent-output {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 13px 15px;
+    font-size: 13px;
+    line-height: 1.75;
+    color: #c8c8dc;
+    max-height: 200px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    font-family: 'DM Mono', monospace;
+    font-weight: 300;
+  }
+
+  .cursor {
+    display: inline-block;
+    width: 2px; height: 13px;
+    background: var(--accent);
+    animation: blink 0.65s step-end infinite;
+    vertical-align: text-bottom;
+    margin-left: 1px;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  .connector-line {
+    width: 1px; height: 22px;
+    background: var(--border);
+    margin: 0 0 4px 28px;
+    transition: background 0.5s;
+  }
+  .connector-line.lit { background: linear-gradient(180deg, rgba(124,106,247,0.6), rgba(106,247,194,0.4)); }
+
+  .checkpoint {
+    background: rgba(247,194,106,0.05);
+    border: 1px solid rgba(247,194,106,0.18);
+    border-radius: 12px;
+    padding: 15px 18px;
+    margin: 6px 0;
+    display: none;
+    align-items: center;
+    gap: 14px;
+    animation: fadeIn 0.3s ease;
+  }
+  .checkpoint.show { display: flex; }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:none} }
+
+  .cp-icon { font-size: 18px; flex-shrink: 0; }
+  .cp-text { flex: 1; }
+  .cp-text strong { display: block; font-size: 13px; font-weight: 600; color: var(--human); margin-bottom: 3px; }
+  .cp-text span { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  .btn-approve {
+    background: rgba(247,194,106,0.1);
+    border: 1px solid rgba(247,194,106,0.32);
+    color: var(--human);
+    border-radius: 7px;
+    padding: 8px 16px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .btn-approve:hover { background: rgba(247,194,106,0.18); }
+  .btn-approve:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .final-box {
+    margin-top: 28px;
+    padding: 22px 24px;
+    background: var(--surface);
+    border: 1px solid rgba(106,247,194,0.22);
+    border-radius: 14px;
+    display: none;
+    animation: fadeIn 0.4s ease;
+  }
+  .final-box.show { display: block; }
+  .final-box h3 { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--accent3); margin-bottom: 6px; }
+  .final-meta { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; margin-bottom: 14px; }
+  .final-box p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+  .stats-row { display: flex; gap: 32px; margin-top: 20px; flex-wrap: wrap; }
+  .stat-val { font-family: 'DM Serif Display', serif; font-size: 30px; color: var(--accent); }
+  .stat-lbl { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; margin-top: 2px; }
+
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="label">Sistema Multi-Agente · Protótipo Visual</div>
+    <h1>Um time de marketing<br><em>inteiro. Automático.</em></h1>
+    <p class="subtitle">7 agentes especializados em pipeline sequencial com 2 checkpoints humanos. Insira o perfil do cliente e veja o fluxo completo acontecer.</p>
+  </header>
+
+  <div class="input-section">
+    <label>// PERFIL DO CLIENTE · INPUT INICIAL</label>
+    <textarea id="clientInput" placeholder="Ex: Loja de moda feminina em São Paulo, ticket médio R$300, ativa há 3 anos, quer crescer no Instagram e vender mais no e-commerce..."></textarea>
+    <div class="btn-row">
+      <button class="btn-start" id="btnStart" onclick="start()">▶ &nbsp;Iniciar Pipeline</button>
+      <button class="btn-reset" onclick="reset()">↺ Reiniciar</button>
+      <span class="sim-badge">SIMULAÇÃO VISUAL</span>
+    </div>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+
+  <div class="pipeline">
+
+    <div class="agent-card waiting" id="c0">
+      <div class="agent-header" onclick="toggle(0)">
+        <div class="agent-icon">🎯</div>
+        <div class="agent-info">
+          <div class="agent-name">01 · Prospecção</div>
+          <div class="agent-desc">Qualifica o cliente e mapeia potencial de negócio</div>
+        </div>
+        <span class="agent-badge badge-auto">AUTO</span>
+        <div class="agent-dot" id="d0"></div>
+      </div>
+      <div class="agent-body" id="b0"><div class="agent-output" id="o0">—</div></div>
+    </div>
+
+    <div class="connector-line" id="l0"></div>
+
+    <div class="agent-card waiting" id="c1">
+      <div class="agent-header" onclick="toggle(1)">
+        <div class="agent-icon">💼</div>
+        <div class="agent-info">
+          <div class="agent-name">02 · Comercial</div>
+          <div class="agent-desc">Elabora proposta comercial personalizada</div>
+        </div>
+        <span class="agent-badge badge-auto">AUTO</span>
+        <div class="agent-dot" id="d1"></div>
+      </div>
+      <div class="agent-body" id="b1"><div class="agent-output" id="o1">—</div></div>
+    </div>
+
+    <div class="checkpoint" id="cp1">
+      <span class="cp-icon">🤝</span>
+      <div class="cp-text">
+        <strong>Human-in-the-Loop · Aprovação da Proposta Comercial</strong>
+        <span>Revise a proposta acima antes de prosseguir para a etapa de estratégia.</span>
+      </div>
+      <button class="btn-approve" id="ap1" onclick="approve(1)">Aprovar &nbsp;→</button>
+    </div>
+
+    <div class="connector-line" id="l1"></div>
+
+    <div class="agent-card waiting" id="c2">
+      <div class="agent-header" onclick="toggle(2)">
+        <div class="agent-icon">🧠</div>
+        <div class="agent-info">
+          <div class="agent-name">03 · Estratégia</div>
+          <div class="agent-desc">Traduz a proposta em plano estratégico executável</div>
+        </div>
+        <span class="agent-badge badge-auto">AUTO</span>
+        <div class="agent-dot" id="d2"></div>
+      </div>
+      <div class="agent-body" id="b2"><div class="agent-output" id="o2">—</div></div>
+    </div>
+
+    <div class="connector-line" id="l2"></div>
+
+    <div class="agent-card waiting" id="c3">
+      <div class="agent-header" onclick="toggle(3)">
+        <div class="agent-icon">✍️</div>
+        <div class="agent-info">
+          <div class="agent-name">04 · Criação</div>
+          <div class="agent-desc">Desenvolve conceito criativo e briefing de conteúdo</div>
+        </div>
+        <span class="agent-badge badge-auto">AUTO</span>
+        <div class="agent-dot" id="d3"></div>
+      </div>
+      <div class="agent-body" id="b3"><div class="agent-output" id="o3">—</div></div>
+    </div>
+
+    <div class="checkpoint" id="cp2">
+      <span class="cp-icon">🎨</span>
+      <div class="cp-text">
+        <strong>Human-in-the-Loop · Aprovação do Briefing Criativo</strong>
+        <span>Valide o conceito criativo antes de passar para mídia paga e gestão.</span>
+      </div>
+      <button class="btn-approve" id="ap2" onclick="approve(2)">Aprovar &nbsp;→</button>
+    </div>
+
+    <div class="connector-line" id="l3"></div>
+
+    <div class="agent-card waiting" id="c4">
+      <div class="agent-header" onclick="toggle(4)">
+        <div class="agent-icon">📣</div>
+        <div class="agent-info">
+          <div class="agent-name">05 · Mídia Paga</div>
+          <div class="agent-desc">Estrutura campanhas, budget e segmentação</div>
+        </div>
+        <span class="agent-badge badge-auto">AUTO</span>
+        <div class="agent-dot" id="d4"></div>
+      </div>
+      <div class="agent-body" id="b4"><div class="agent-output" id="o4">—</div></div>
+    </div>
+
+    <div class="connector-line" id="l4"></div>
+
+    <div class="agent-card waiting" id="c5">
+      <div class="agent-header" onclick="toggle(5)">
+        <div class="agent-icon">📋</div>
+        <div class="agent-info">
+          <div class="agent-name">06 · Gestão de Projetos</div>
+          <div class="agent-desc">Organiza cronograma, entregáveis e responsabilidades</div>
+        </div>
+        <span class="agent-badge badge-auto">AUTO</span>
+        <div class="agent-dot" id="d5"></div>
+      </div>
+      <div class="agent-body" id="b5"><div class="agent-output" id="o5">—</div></div>
+    </div>
+
+    <div class="connector-line" id="l5"></div>
+
+    <div class="agent-card waiting" id="c6">
+      <div class="agent-header" onclick="toggle(6)">
+        <div class="agent-icon">📊</div>
+        <div class="agent-info">
+          <div class="agent-name">07 · Analytics</div>
+          <div class="agent-desc">Define KPIs, metas e estrutura de relatório</div>
+        </div>
+        <span class="agent-badge badge-auto">AUTO</span>
+        <div class="agent-dot" id="d6"></div>
+      </div>
+      <div class="agent-body" id="b6"><div class="agent-output" id="o6">—</div></div>
+    </div>
+
+  </div>
+
+  <div class="final-box" id="final">
+    <h3>✦ Pipeline Completo</h3>
+    <div class="final-meta" id="finalMeta"></div>
+    <p>Todos os 7 agentes executaram com sucesso. O contexto foi preservado e acumulado ao longo de cada etapa — do primeiro contato ao plano de analytics — sem nenhuma plataforma paga.</p>
+    <div class="stats-row">
+      <div class="stat"><div class="stat-val">7</div><div class="stat-lbl">Agentes</div></div>
+      <div class="stat"><div class="stat-val">2</div><div class="stat-lbl">Checkpoints humanos</div></div>
+      <div class="stat"><div class="stat-val" id="timeVal">—</div><div class="stat-lbl">Tempo total</div></div>
+      <div class="stat"><div class="stat-val">R$0</div><div class="stat-lbl">Custo de plataforma</div></div>
+    </div>
+  </div>
+
+</div>
+<script>
+function getOutputs(client) {
+  const c = (client || "cliente").substring(0, 45);
+  return [
+`QUALIFICAÇÃO · ${c}
+
+Score: 8/10 — Alto potencial de conversão
+
+Potencial identificado:
+→ Mercado com alta demanda digital e consumidor ativo em redes sociais
+→ Ticket médio compatível com mídia paga escalável
+→ Ausência de estratégia estruturada = espaço imediato de crescimento
+
+Principais dores mapeadas:
+→ Baixa conversão no canal digital apesar de produto validado
+→ Dependência de tráfego orgânico sem consistência
+→ Falta de diferenciação de comunicação frente a concorrentes
+
+Próximo passo recomendado para o Comercial:
+→ Proposta focada em gestão de tráfego + conteúdo orgânico com metas
+   claras de CAC e ROAS para o primeiro trimestre.`,
+
+`PROPOSTA COMERCIAL · ${c}
+
+Serviços recomendados:
+1. Gestão de Tráfego Pago (Meta Ads + Google Shopping)
+2. Produção de Conteúdo Estratégico (feed + reels + stories)
+3. Consultoria de Conversão (landing page + e-commerce UX)
+
+Investimento sugerido:
+→ Gestão: R$ 3.500/mês
+→ Verba de mídia recomendada: R$ 5.000–8.000/mês
+
+Resultados esperados em 90 dias:
+→ Redução de CAC em até 30%
+→ ROAS mínimo de 3x nas campanhas de performance
+→ +40% de alcance orgânico com cadência de conteúdo
+
+Argumento de valor central:
+"Você já tem produto com mercado. Falta o sistema que conecta
+quem precisa ao que você vende — de forma previsível e escalável."`,
+
+`PLANO ESTRATÉGICO · Baseado na proposta aprovada
+
+Canais prioritários:
+→ Orgânico: Instagram (feed + reels) + TikTok (fase 2, mês 3)
+→ Pago: Meta Ads (conversão + remarketing) + Google Shopping
+
+Pilares de conteúdo (4):
+1. Lifestyle & Inspiração — "quem usa, como usa, onde vai"
+2. Bastidores & Autenticidade — processo, equipe, nova coleção
+3. Prova Social — depoimentos reais, antes/depois, avaliações
+4. Educação & Tendências — curadoria de moda, dicas de estilo
+
+Frequência: 5x/semana feed · 3 stories/dia · 2 reels/semana
+
+Tom de comunicação:
+→ Próximo e aspiracional — sem ser inacessível
+→ Linguagem feminina contemporânea, sem clichê de agência
+
+Métricas de sucesso:
+→ CTR > 2% campanhas · Engajamento orgânico > 4%
+→ Taxa de conversão e-commerce > 1,8% até o 60º dia`,
+
+`BRIEFING CRIATIVO · Baseado no plano estratégico
+
+Conceito central:
+"Do detalhe ao desejo — moda que conta a história de quem veste."
+
+Referências visuais & linguagem:
+→ Estética editorial limpa com toque quente e humano
+→ Paleta: tons terrosos + branco + acento vibrante da coleção
+→ Referência de mercado: @aritzia + @&otherstories (adaptado para BR)
+
+3 ideias de conteúdo — Mês 1:
+
+1. REELS "Get Ready With Me"
+   Fundadora ou cliente real se vestindo para uma ocasião real
+   Formato: 30–45s · vertical · música trending · legenda com CTA
+
+2. CARROSSEL "3 looks, 1 peça"
+   Mostra versatilidade do produto e aumenta tempo de engajamento
+   Formato: 6 slides · copy direto · último slide com link da loja
+
+3. STORY "Por dentro da coleção"
+   Bastidores da chegada de novas peças com enquete no final
+   Formato: sequência de 5 stories · tom casual · alta retenção
+
+Do's: autenticidade, luz natural, pessoas reais
+Don'ts: stock photos, filtros excessivos, copy genérico de agência`,
+
+`ESTRUTURA DE CAMPANHAS · Baseada no briefing aprovado
+
+Arquitetura Meta Ads (3 campanhas):
+→ Camp. 1 — Reconhecimento: Reels de topo de funil (CPM otimizado)
+→ Camp. 2 — Consideração: Tráfego para e-commerce (CPC)
+→ Camp. 3 — Conversão: Remarketing + carrinho abandonado (ROAS)
+
+Distribuição de budget:
+→ 20% Reconhecimento · 30% Consideração · 50% Conversão
+
+Públicos-alvo principais:
+→ Mulheres 25–42, interesses em moda, compras online recentes
+→ Lookalike 1% de clientes dos últimos 90 dias
+→ Remarketing: visitantes do site + adicionaram ao carrinho
+
+Formatos por canal:
+→ Meta: Reels (topo) · Imagem estática (conversão) · DPA (remarketing)
+→ Google: Shopping + Search com keywords de intent alta
+
+KPIs de campanha:
+→ ROAS meta: 3.5x · CPC < R$1,20 · CTR > 2,2% · CPM < R$18`,
+
+`CRONOGRAMA DE EXECUÇÃO · Primeiras 4 semanas
+
+Semana 1 — Setup & Fundação:
+→ Onboarding completo, acesso às contas e pixels instalados
+→ Produção antecipada dos 12 primeiros conteúdos do mês
+→ Configuração das campanhas de reconhecimento (ainda não ativas)
+
+Semana 2 — Ativação:
+→ Go-live das campanhas de topo de funil
+→ Início da publicação orgânica na frequência completa
+→ Primeiro relatório parcial de alcance e impressões
+
+Semana 3 — Otimização:
+→ Análise dos criativos com melhor CTR e engajamento
+→ Ativação das campanhas de conversão e remarketing
+→ Reunião de alinhamento 30min com cliente (assíncrono ok)
+
+Semana 4 — Consolidação & Planejamento:
+→ Relatório do mês 1 com aprendizados documentados
+→ Planejamento de conteúdo do mês 2
+→ Ajuste de budget com base em dados reais
+
+Riscos e mitigações:
+→ Aprovação lenta de criativos → buffer de 48h em cada entrega
+→ Acesso a contas: solicitar no dia 1, sem exceção`,
+
+`ESTRUTURA DE MENSURAÇÃO · KPIs & Dashboard
+
+6 métricas-chave do dashboard:
+1. ROAS (retorno sobre verba de mídia) ———— meta: 3.5x
+2. CAC (custo de aquisição por cliente) ———— meta: < R$85
+3. Taxa de conversão e-commerce ———————— meta: > 1,8%
+4. Alcance orgânico mensal ————————————— meta: +40% vs. baseline
+5. CPM das campanhas ————————————————— meta: < R$18
+6. LTV estimado (clientes recorrentes) ———— meta: 2.3x o CAC
+
+Metas por período:
+→ 30 dias: campanhas ativas, baseline de dados estabelecido
+→ 60 dias: ROAS > 3x, CAC reduzindo, conteúdo com padrão definido
+→ 90 dias: sistema previsível, escala de investimento autorizada
+
+Cadência de relatórios:
+→ Semanal: dashboard automático com alertas de desvio
+→ Mensal: reunião de 45min + relatório executivo
+
+Stack de ferramentas: Meta Ads Manager · GA4 · Hotjar · Notion
+
+⚠ Sinal de alerta — monitorar de perto:
+→ CTR < 1.5% por 3 dias consecutivos = revisar criativo imediatamente
+→ ROAS < 2x na semana 3 = revisar segmentação antes de escalar`
+  ];
+}
+
+let running = false, t0, simOutputs;
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+function setState(i, s) { document.getElementById('c'+i).className = 'agent-card ' + s; }
+function litLine(i) { const e = document.getElementById('l'+i); if(e) e.classList.add('lit'); }
+function setProgress(n) { document.getElementById('prog').style.width = (n/7*100)+'%'; }
+function toggle(i) { document.getElementById('b'+i).classList.toggle('open'); }
+
+async function typeText(id, text) {
+  const el = document.getElementById(id);
+  el.innerHTML = '<span class="cursor"></span>';
+  let out = '';
+  for (let i = 0; i < text.length; i++) {
+    out += text[i];
+    el.textContent = out;
+    el.scrollTop = el.scrollHeight;
+    if (text[i] === '\n') await sleep(35);
+    else if (i % 6 === 0) await sleep(10);
+  }
+}
+
+async function runAgent(i) {
+  setState(i, 'active');
+  document.getElementById('b'+i).classList.add('open');
+  await typeText('o'+i, simOutputs[i]);
+  setState(i, 'done');
+  litLine(i);
+  setProgress(i + 1);
+  await sleep(260);
+}
+
+async function start() {
+  const input = document.getElementById('clientInput').value.trim();
+  if (!input) {
+    const ta = document.getElementById('clientInput');
+    ta.style.borderColor = 'rgba(247,100,100,0.6)';
+    ta.focus();
+    setTimeout(() => ta.style.borderColor = '', 1600);
+    return;
+  }
+  if (running) return;
+  running = true;
+  t0 = Date.now();
+  simOutputs = getOutputs(input);
+
+  document.getElementById('btnStart').disabled = true;
+  document.getElementById('final').classList.remove('show');
+  document.getElementById('cp1').classList.remove('show');
+  document.getElementById('cp2').classList.remove('show');
+  document.getElementById('ap1').disabled = false;
+  document.getElementById('ap2').disabled = false;
+  document.getElementById('prog').style.width = '0%';
+
+  for (let i = 0; i < 7; i++) {
+    setState(i, 'waiting');
+    document.getElementById('o'+i).textContent = '—';
+    document.getElementById('b'+i).classList.remove('open');
+  }
+  ['l0','l1','l2','l3','l4','l5'].forEach(id => {
+    document.getElementById(id).classList.remove('lit');
+  });
+
+  await runAgent(0);
+  await runAgent(1);
+  document.getElementById('cp1').classList.add('show');
+}
+
+async function approve(n) {
+  document.getElementById('ap'+n).disabled = true;
+  document.getElementById('cp'+n).classList.remove('show');
+
+  if (n === 1) {
+    await runAgent(2);
+    await runAgent(3);
+    document.getElementById('cp2').classList.add('show');
+  } else {
+    await runAgent(4);
+    await runAgent(5);
+    await runAgent(6);
+
+    const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
+    document.getElementById('timeVal').textContent = elapsed + 's';
+    document.getElementById('finalMeta').textContent =
+      `Concluído em ${elapsed}s · Pipeline sequencial · Contexto preservado entre todos os agentes`;
+    const fin = document.getElementById('final');
+    fin.classList.add('show');
+    fin.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    running = false;
+    document.getElementById('btnStart').disabled = false;
+  }
+}
+
+function reset() {
+  running = false;
+  document.getElementById('btnStart').disabled = false;
+  document.getElementById('final').classList.remove('show');
+  document.getElementById('cp1').classList.remove('show');
+  document.getElementById('cp2').classList.remove('show');
+  document.getElementById('prog').style.width = '0%';
+  for (let i = 0; i < 7; i++) {
+    setState(i, 'waiting');
+    document.getElementById('o'+i).textContent = '—';
+    document.getElementById('b'+i).classList.remove('open');
+  }
+  ['l0','l1','l2','l3','l4','l5'].forEach(id => {
+    document.getElementById(id).classList.remove('lit');
+  });
+}
+</script>
+</body>
+</html>
