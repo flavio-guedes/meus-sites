@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Study — Python para Criativos · Flávio Guedes</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0c0b08;
+  --surface: #131208;
+  --card: #181710;
+  --border: #252318;
+  --border-mid: #333220;
+  --border-bright: #4a4830;
+  --text: #e2ddd0;
+  --muted: #72705f;
+  --dim: #3d3c2f;
+  --electric: #d4ed2a;
+  --orange: #e8622f;
+  --amber: #f0a030;
+  --cream: #f2edd8;
+  --steel: #8ab0c8;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+.progress { position:fixed;top:0;left:0;height:2px;width:0%;background:var(--electric);z-index:1000;transition:width 0.08s; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 48px;display:flex;justify-content:space-between;align-items:center;background:rgba(12,11,8,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border); }
+.nav-id { font-family:'Space Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--muted); }
+.nav-id span { color:var(--electric); }
+.nav-cta { font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--bg);background:var(--electric);padding:8px 18px;text-decoration:none;border-radius:2px;transition:opacity 0.2s; }
+.nav-cta:hover { opacity:0.85; }
+
+/* HERO */
+.hero { min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 48px;padding-top:90px;position:relative;overflow:hidden;border-bottom:1px solid var(--border); }
+.strings-bg { position:absolute;inset:0;pointer-events:none;overflow:hidden; }
+.strings-bg svg { position:absolute;bottom:0;left:0;width:100%;height:100%;opacity:0.06; }
+.hero-top { flex:1;display:flex;flex-direction:column;justify-content:center;padding-bottom:40px;position:relative;z-index:1; }
+.eyebrow { font-family:'Space Mono',monospace;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--electric);margin-bottom:28px;display:flex;align-items:center;gap:16px; }
+.eyebrow::before { content:'';display:block;width:40px;height:1px;background:var(--electric); }
+.hero-h1 { font-family:'Fraunces',serif;font-size:clamp(52px,8vw,108px);font-weight:900;line-height:0.92;letter-spacing:-3px;color:var(--cream);margin-bottom:40px;max-width:900px; }
+.hero-h1 em { font-style:italic;font-weight:300;color:var(--electric); }
+.hero-sub { font-size:17px;line-height:1.7;color:var(--muted);max-width:580px;margin-bottom:48px; }
+.hero-sub strong { color:var(--text);font-weight:500; }
+.hero-pills { display:flex;flex-wrap:wrap;gap:10px;margin-bottom:64px; }
+.pill { font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1.5px;padding:6px 14px;border:1px solid var(--border-mid);color:var(--muted);border-radius:2px;text-transform:uppercase; }
+.pill.e { border-color:var(--electric);color:var(--electric); }
+.pill.o { border-color:var(--orange);color:var(--orange); }
+.stats-bar { border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(4,1fr);position:relative;z-index:1; }
+.stat { padding:32px 28px;border-right:1px solid var(--border); }
+.stat:last-child { border-right:none; }
+.stat-n { font-family:'Fraunces',serif;font-size:48px;font-weight:700;color:var(--electric);line-height:1;margin-bottom:6px; }
+.stat-l { font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim); }
+
+/* LAYOUT */
+.wrap { max-width:1300px;margin:0 auto;padding:0 48px; }
+.section { padding:96px 0;border-bottom:1px solid var(--border); }
+.sec-label { font-family:'Space Mono',monospace;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--electric);margin-bottom:24px;display:flex;align-items:center;gap:14px; }
+.sec-label::before { content:'';width:28px;height:1px;background:var(--electric); }
+.sec-h2 { font-family:'Fraunces',serif;font-size:clamp(32px,4.5vw,58px);font-weight:700;line-height:1.0;letter-spacing:-1px;color:var(--cream);margin-bottom:20px; }
+.sec-h2 em { font-style:italic;font-weight:300;color:var(--electric); }
+.sec-body { font-size:16px;line-height:1.8;color:var(--muted);max-width:600px; }
+
+/* ANALOGY HERO */
+.analogy-block { background:var(--surface);border:1px solid var(--border-mid);padding:56px;position:relative;overflow:hidden;margin-top:56px; }
+.analogy-block::before { content:'🎸';position:absolute;right:40px;top:50%;transform:translateY(-50%);font-size:200px;opacity:0.05;pointer-events:none; }
+.analogy-eyebrow { font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--electric);margin-bottom:20px; }
+.analogy-quote { font-family:'Fraunces',serif;font-size:clamp(20px,2.8vw,34px);font-weight:300;font-style:italic;color:var(--cream);line-height:1.3;max-width:680px;margin-bottom:28px;border-left:3px solid var(--electric);padding-left:28px; }
+.analogy-desc { font-size:15px;line-height:1.8;color:var(--muted);max-width:640px; }
+.analogy-desc strong { color:var(--text);font-weight:500; }
+
+/* COMPARE TABLE */
+.compare { display:grid;grid-template-columns:1fr 36px 1fr;background:var(--border-mid);border:1px solid var(--border-mid);margin-top:56px; }
+.comp-head { padding:22px 28px;border-bottom:1px solid var(--border-mid);display:flex;align-items:center;gap:10px; }
+.comp-head-t { font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted); }
+.comp-cell { padding:18px 28px;border-bottom:1px solid var(--border);font-size:14px;line-height:1.5;color:var(--muted); }
+.comp-cell:last-child, .comp-cell.no-border { border-bottom:none; }
+.comp-cell.guitar-bg { background:var(--surface); }
+.comp-cell.code-bg { background:var(--card); }
+.comp-cell strong { color:var(--text);font-weight:500; }
+.comp-mid { background:var(--border-mid);display:flex;align-items:center;justify-content:center; }
+.comp-mid span { font-family:'Space Mono',monospace;font-size:11px;color:var(--dim); }
+
+/* TANK G */
+.tank-block { background:var(--card);border:1px solid var(--border-mid);border-left:4px solid var(--electric);padding:56px;margin-top:56px;position:relative;overflow:hidden; }
+.tank-block::after { content:'TANk G';position:absolute;right:-8px;bottom:-28px;font-family:'Fraunces',serif;font-size:120px;font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(212,237,42,0.05);pointer-events:none;user-select:none;line-height:1; }
+.tank-label { font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--electric);margin-bottom:14px; }
+.tank-title { font-family:'Fraunces',serif;font-size:clamp(24px,3vw,40px);font-weight:700;color:var(--cream);margin-bottom:18px;line-height:1.1; }
+.tank-desc { font-size:15px;line-height:1.8;color:var(--muted);max-width:660px;margin-bottom:16px; }
+.tank-desc strong { color:var(--text);font-weight:500; }
+.tank-features { display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border-mid);border:1px solid var(--border-mid);margin-top:36px; }
+.tank-feat { background:var(--surface);padding:28px 24px; }
+.tf-icon { font-size:22px;margin-bottom:12px; }
+.tf-title { font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text);margin-bottom:8px; }
+.tf-text { font-size:13px;line-height:1.6;color:var(--muted); }
+
+/* CTA BAND */
+.cta-band { background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:56px 48px;display:grid;grid-template-columns:1fr auto;gap:48px;align-items:center; }
+.cta-band.acc { background:rgba(212,237,42,0.03);border-color:rgba(212,237,42,0.15); }
+.cta-tag { font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--electric);margin-bottom:10px; }
+.cta-title { font-family:'Fraunces',serif;font-size:26px;font-weight:700;color:var(--cream);margin-bottom:8px; }
+.cta-desc { font-size:14px;line-height:1.6;color:var(--muted); }
+.cta-btns { display:flex;flex-direction:column;gap:10px;flex-shrink:0; }
+.btn-e { display:inline-flex;align-items:center;gap:8px;background:var(--electric);color:var(--bg);padding:13px 24px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;font-weight:700;border-radius:2px;transition:opacity 0.2s,transform 0.2s;white-space:nowrap; }
+.btn-e:hover { opacity:0.88;transform:translateY(-1px); }
+.btn-g { display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--muted);padding:12px 24px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;border:1px solid var(--border-mid);border-radius:2px;transition:all 0.2s;white-space:nowrap; }
+.btn-g:hover { color:var(--text);border-color:var(--border-bright); }
+
+/* LEVELS */
+.levels { margin-top:56px; }
+.lrow { display:grid;grid-template-columns:64px 1fr 1fr;border-bottom:1px solid var(--border);transition:background 0.2s; }
+.lrow:first-child { border-top:1px solid var(--border); }
+.lrow:hover { background:rgba(255,255,255,0.015); }
+.lnum { padding:32px 16px;border-right:1px solid var(--border);display:flex;align-items:flex-start;padding-top:36px; }
+.lnum span { font-family:'Fraunces',serif;font-size:36px;font-weight:700;color:transparent;-webkit-text-stroke:1px var(--border-bright);line-height:1; }
+.lmain { padding:28px 32px;border-right:1px solid var(--border); }
+.lname { font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--cream);margin-bottom:6px; }
+.lsub { font-size:13px;line-height:1.6;color:var(--muted);margin-bottom:12px; }
+.ltags { display:flex;flex-wrap:wrap;gap:6px; }
+.ltag { font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;padding:3px 10px;border:1px solid var(--border-mid);color:var(--dim);border-radius:2px;text-transform:uppercase; }
+.ltag.e { border-color:var(--electric);color:var(--electric); }
+.ltag.a { border-color:var(--amber);color:var(--amber); }
+.lanalogy { padding:28px 32px;display:flex;flex-direction:column;justify-content:center;gap:10px; }
+.ap { display:flex;align-items:flex-start;gap:10px; }
+.ap-i { font-size:15px;flex-shrink:0;width:24px;text-align:center;margin-top:1px; }
+.ap-t { font-size:13px;line-height:1.5;color:var(--muted); }
+.ap-t strong { color:var(--text);font-weight:500; }
+.ap-t code { color:var(--electric);font-family:'Space Mono',monospace;font-size:12px; }
+
+/* METHOD */
+.method-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-top:56px; }
+.method-card { background:var(--card);padding:44px 36px; }
+.method-n { font-family:'Fraunces',serif;font-size:64px;font-weight:700;color:transparent;-webkit-text-stroke:1px var(--border-bright);line-height:1;margin-bottom:20px; }
+.method-title { font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--cream);margin-bottom:10px; }
+.method-text { font-size:14px;line-height:1.7;color:var(--muted); }
+.method-text strong { color:var(--text);font-weight:500; }
+
+/* OUTCOMES */
+.outcomes { margin-top:56px;display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border); }
+.outcome-row { background:var(--card);padding:32px 36px;display:grid;grid-template-columns:44px 1fr 240px;gap:28px;align-items:start; }
+.oi { font-size:26px;line-height:1;padding-top:2px; }
+.ot { font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--cream);margin-bottom:6px; }
+.od { font-size:13px;line-height:1.6;color:var(--muted); }
+.og { padding:14px 18px;background:rgba(212,237,42,0.04);border:1px solid rgba(212,237,42,0.1);border-radius:2px; }
+.og-l { font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--electric);margin-bottom:6px; }
+.og-t { font-size:12px;line-height:1.5;color:var(--muted); }
+
+/* FINALE */
+.finale { padding:120px 48px;text-align:center;background:var(--surface);border-bottom:1px solid var(--border);position:relative;overflow:hidden; }
+.finale::before { content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(212,237,42,0.05) 0%,transparent 70%);pointer-events:none; }
+.finale-tag { font-family:'Space Mono',monospace;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--electric);margin-bottom:28px; }
+.finale-h2 { font-family:'Fraunces',serif;font-size:clamp(40px,6vw,80px);font-weight:900;line-height:0.9;color:var(--cream);margin-bottom:28px;letter-spacing:-2px; }
+.finale-h2 em { font-style:italic;font-weight:300;color:var(--electric); }
+.finale-desc { font-size:16px;line-height:1.7;color:var(--muted);max-width:440px;margin:0 auto 48px; }
+.finale-btns { display:flex;justify-content:center;gap:14px;flex-wrap:wrap; }
+footer { padding:28px 48px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center; }
+.ft { font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--dim); }
+.ft-links { display:flex;gap:24px; }
+.ft-link { font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);text-decoration:none;transition:color 0.2s; }
+.ft-link:hover { color:var(--muted); }
+
+/* ANIM */
+@keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+.anim { opacity:0; }
+.anim.show { animation:fadeUp 0.65s ease forwards; }
+
+@media (max-width:960px) {
+  nav{padding:14px 20px} .hero{padding:0 20px;padding-top:70px} .stats-bar{grid-template-columns:repeat(2,1fr)} .wrap{padding:0 20px} .compare{grid-template-columns:1fr} .comp-mid{display:none} .lrow{grid-template-columns:1fr} .lnum{display:none} .lanalogy{border-top:1px solid var(--border)} .method-grid{grid-template-columns:1fr} .tank-features{grid-template-columns:1fr} .outcome-row{grid-template-columns:44px 1fr} .og{display:none} .cta-band{grid-template-columns:1fr} .finale{padding:80px 20px} footer{padding:20px;flex-direction:column;gap:12px} .analogy-block{padding:36px 24px} .tank-block{padding:36px 24px}
+}
+</style>
+</head>
+<body>
+
+<div class="progress" id="prog"></div>
+
+<nav>
+  <div class="nav-id">Flávio<span>.</span>Guedes — Case Study</div>
+  <a href="https://flavio-guedes.github.io/portfolio/apresentacao.html" target="_blank" class="nav-cta">Portfólio →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="strings-bg">
+    <svg viewBox="0 0 1440 900" preserveAspectRatio="none">
+      <line x1="0" y1="220" x2="1440" y2="170" stroke="#d4ed2a" stroke-width="0.7"/>
+      <line x1="0" y1="310" x2="1440" y2="272" stroke="#d4ed2a" stroke-width="0.5"/>
+      <line x1="0" y1="390" x2="1440" y2="362" stroke="#d4ed2a" stroke-width="1.0"/>
+      <line x1="0" y1="460" x2="1440" y2="445" stroke="#d4ed2a" stroke-width="0.5"/>
+      <line x1="0" y1="530" x2="1440" y2="520" stroke="#d4ed2a" stroke-width="0.7"/>
+      <line x1="0" y1="600" x2="1440" y2="596" stroke="#d4ed2a" stroke-width="1.1"/>
+    </svg>
+  </div>
+
+  <div class="hero-top">
+    <div class="eyebrow">Case Study · 2025 · Marketing & Produto</div>
+    <h1 class="hero-h1">
+      Python para<br>
+      quem <em>toca</em><br>
+      criatividade
+    </h1>
+    <p class="hero-sub">
+      Um roadmap de aprendizado desenhado para <strong>profissionais de marketing e criação</strong> aprenderem Python com analogias de guitarra — e construírem, como projeto âncora, a <strong>reconstrução do app da pedaleira TANk G</strong>.
+    </p>
+    <div class="hero-pills">
+      <span class="pill e">🎸 Analogias de guitarra</span>
+      <span class="pill o">🎛️ Projeto: TANk G App</span>
+      <span class="pill">Python do zero</span>
+      <span class="pill">Agentes de IA</span>
+      <span class="pill">Marketing & Conteúdo</span>
+      <span class="pill">Automação editorial</span>
+    </div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-n">7</div><div class="stat-l">Níveis de aprendizado</div></div>
+    <div class="stat"><div class="stat-n">30+</div><div class="stat-l">Tópicos mapeados</div></div>
+    <div class="stat"><div class="stat-n">1</div><div class="stat-l">Projeto âncora: TANk G</div></div>
+    <div class="stat"><div class="stat-n">∞</div><div class="stat-l">Automações possíveis</div></div>
+  </div>
+</section>
+
+<!-- SEC 01 -->
+<div class="wrap">
+<section class="section anim">
+  <div class="sec-label">01 · O Problema</div>
+  <h2 class="sec-h2">Criativos que<br>dependem de <em>outros</em></h2>
+  <p class="sec-body">
+    Profissionais de marketing e criação têm ideias de automação, sabem o que querem construir — mas precisam de um desenvolvedor para qualquer coisa que envolva código. O resultado: espera, custo e perda de autonomia criativa.
+  </p>
+
+  <div class="analogy-block anim">
+    <div class="analogy-eyebrow">// A analogia que muda tudo</div>
+    <blockquote class="analogy-quote">
+      "Imagina tentar aprender guitarra estudando teoria musical abstrata, sem nunca tocar uma nota. É exatamente assim que a maioria dos cursos de programação trata quem vem de criação."
+    </blockquote>
+    <p class="analogy-desc">
+      O problema não é capacidade — é contexto. Quando você aprende cada conceito de Python dentro de algo que já conhece e ama (como uma pedaleira de guitarra), o aprendizado deixa de ser abstrato e passa a ser <strong>imediato, concreto e prazeroso</strong>. Este projeto nasce dessa premissa.
+    </p>
+  </div>
+</section>
+</div>
+
+<!-- SEC 02 — ANALOGIA -->
+<div class="wrap">
+<section class="section anim">
+  <div class="sec-label">02 · A Metodologia</div>
+  <h2 class="sec-h2">Cada conceito tem<br>um <em>acorde</em> equivalente</h2>
+  <p class="sec-body">
+    O roadmap usa a guitarra como sistema de analogias permanente — não como metáfora decorativa, mas como estrutura real de aprendizado. Cada tópico de Python é apresentado primeiro como algo que você já entende do universo musical.
+  </p>
+
+  <div class="compare anim">
+    <!-- HEADERS -->
+    <div style="background:var(--surface)"><div class="comp-head" style="border-bottom:1px solid var(--border-mid)"><span style="font-size:18px">🎸</span><span class="comp-head-t">Guitarra / Pedaleira</span></div></div>
+    <div class="comp-mid" style="border-bottom:1px solid var(--dim)"><span>≡</span></div>
+    <div style="background:var(--card)"><div class="comp-head" style="border-bottom:1px solid var(--border-mid)"><span style="font-size:18px">🐍</span><span class="comp-head-t">Python / Código</span></div></div>
+
+    <div class="comp-cell guitar-bg"><strong>Notas individuais</strong> — menor elemento, sem contexto ainda</div>
+    <div class="comp-mid"><span>→</span></div>
+    <div class="comp-cell code-bg"><strong>Variáveis</strong> — menor dado, um valor com nome</div>
+
+    <div class="comp-cell guitar-bg"><strong>Acordes</strong> — notas que fazem sentido juntas</div>
+    <div class="comp-mid"><span>→</span></div>
+    <div class="comp-cell code-bg"><strong>Dicionários e listas</strong> — dados que se relacionam</div>
+
+    <div class="comp-cell guitar-bg"><strong>Técnicas (bend, vibrato)</strong> — mesmo acorde, execução diferente</div>
+    <div class="comp-mid"><span>→</span></div>
+    <div class="comp-cell code-bg"><strong>Funções</strong> — mesma estrutura, parâmetros diferentes</div>
+
+    <div class="comp-cell guitar-bg"><strong>Pedaleira</strong> — processa o sinal e transforma o som em tempo real</div>
+    <div class="comp-mid"><span>→</span></div>
+    <div class="comp-cell code-bg"><strong>APIs e integrações</strong> — processa inputs e transforma outputs</div>
+
+    <div class="comp-cell guitar-bg"><strong>Banco de patches</strong> — presets salvos, configurações reutilizáveis</div>
+    <div class="comp-mid"><span>→</span></div>
+    <div class="comp-cell code-bg"><strong>Módulos e arquivos</strong> — código organizado e reutilizável</div>
+
+    <div class="comp-cell guitar-bg"><strong>Improvisação com harmonia</strong> — liberdade dentro de estrutura</div>
+    <div class="comp-mid"><span>→</span></div>
+    <div class="comp-cell code-bg"><strong>Agentes de IA</strong> — autonomia dentro de regras definidas</div>
+
+    <div class="comp-cell guitar-bg no-border"><strong>Tocar uma música completa</strong> — tudo junto com intenção</div>
+    <div class="comp-mid" style="border-bottom:none"><span>→</span></div>
+    <div class="comp-cell code-bg no-border"><strong>Projetos aplicados</strong> — sistemas completos funcionando</div>
+  </div>
+</section>
+</div>
+
+<!-- TANK G -->
+<div class="wrap">
+<div class="tank-block anim">
+  <div class="tank-label">🎛️ Projeto Âncora</div>
+  <h3 class="tank-title">Reconstruindo o app<br>da pedaleira TANk G</h3>
+  <p class="tank-desc">
+    O projeto final do roadmap não é um exercício genérico — é a <strong>reconstrução em Python do aplicativo da pedaleira multifeitos TANk G</strong>, que Flávio usa de verdade. O app original tem limitações reais que ele quer resolver: gerenciamento de patches, sugestão inteligente de sons e integração com IA.
+  </p>
+  <p class="tank-desc">
+    Cada nível entrega uma peça do app: fundamentos criam a estrutura de dados dos patches, funções organizam os efeitos, APIs integram com hardware, e os agentes sugerem configurações com base no tom desejado. <strong>Não existe teoria sem aplicação imediata.</strong>
+  </p>
+  <div class="tank-features">
+    <div class="tank-feat">
+      <div class="tf-icon">🗂️</div>
+      <div class="tf-title">Gerenciador de Patches</div>
+      <div class="tf-text">Salvar, nomear e organizar presets — aplicando dicionários, listas e arquivos dos primeiros níveis do roadmap.</div>
+    </div>
+    <div class="tank-feat">
+      <div class="tf-icon">🎚️</div>
+      <div class="tf-title">Controle de Efeitos</div>
+      <div class="tf-text">Funções que mapeiam parâmetros de efeito, condições que validam valores, loops que processam cadeias de sinal em sequência.</div>
+    </div>
+    <div class="tank-feat">
+      <div class="tf-icon">🤖</div>
+      <div class="tf-title">IA Sugerindo Sons</div>
+      <div class="tf-text">Agente que recebe "quero um som tipo Gilmour no Animals" e sugere a combinação de efeitos mais próxima nos patches disponíveis.</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- CTA 1 -->
+<div class="cta-band acc anim">
+  <div>
+    <div class="cta-tag">🎸 Projeto publicado e interativo</div>
+    <div class="cta-title">Acesse o Python Hotmap completo</div>
+    <div class="cta-desc">Todos os 7 níveis com exemplos de código aplicados ao universo de marketing — e as analogias de guitarra em cada tópico.</div>
+  </div>
+  <div class="cta-btns">
+    <a href="https://flavio-guedes.github.io/portfolio/Python-guitar.html" target="_blank" class="btn-e">🎛️ Ver o Projeto →</a>
+    <a href="https://flavio-guedes.github.io/portfolio/links.html" target="_blank" class="btn-g">Portfólio Geral</a>
+  </div>
+</div>
+
+<!-- SEC 03 — NÍVEIS -->
+<div class="wrap">
+<section class="section anim">
+  <div class="sec-label">03 · O Roadmap</div>
+  <h2 class="sec-h2">7 níveis, dois<br><em>mundos paralelos</em></h2>
+  <p class="sec-body">
+    Cada nível avança em Python e simultaneamente avança no app da TANk G. O aprendizado tem contexto duplo: o trabalho de marketing no dia a dia, e o hobby que dá a analogia emocional para cada conceito.
+  </p>
+
+  <div class="levels">
+
+    <div class="lrow anim">
+      <div class="lnum"><span>01</span></div>
+      <div class="lmain">
+        <div class="lname">Fundamentos & Lógica</div>
+        <div class="lsub">Variáveis, tipos de dados, condicionais e loops. Os primeiros sons antes de um acorde.</div>
+        <div class="ltags"><span class="ltag">Variáveis</span><span class="ltag">Condicionais</span><span class="ltag">Loops</span><span class="ltag e">Básico</span></div>
+      </div>
+      <div class="lanalogy">
+        <div class="ap"><span class="ap-i">🎵</span><span class="ap-t">Como aprender <strong>notas individuais</strong> — cada uma tem nome, valor e posição no braço</span></div>
+        <div class="ap"><span class="ap-i">🎛️</span><span class="ap-t">No TANk G: criar estrutura de dados de um patch com nome, categoria e nível de ganho</span></div>
+      </div>
+    </div>
+
+    <div class="lrow anim">
+      <div class="lnum"><span>02</span></div>
+      <div class="lmain">
+        <div class="lname">Pensamento Computacional</div>
+        <div class="lsub">Funções, modularização, dicionários. Organizar código em blocos reutilizáveis.</div>
+        <div class="ltags"><span class="ltag">Funções</span><span class="ltag">Dicionários</span><span class="ltag">Módulos</span><span class="ltag e">Essencial</span></div>
+      </div>
+      <div class="lanalogy">
+        <div class="ap"><span class="ap-i">🎸</span><span class="ap-t">Como aprender <strong>acordes</strong> — combinações que se repetem em músicas diferentes</span></div>
+        <div class="ap"><span class="ap-i">🎛️</span><span class="ap-t">No TANk G: função <code>aplicar_efeito(patch, tipo, gain)</code> reutilizável para qualquer preset</span></div>
+      </div>
+    </div>
+
+    <div class="lrow anim">
+      <div class="lnum"><span>03</span></div>
+      <div class="lmain">
+        <div class="lname">Arquivos & Automação</div>
+        <div class="lsub">Ler, gravar e organizar arquivos. Pipelines que executam sem intervenção humana.</div>
+        <div class="ltags"><span class="ltag">Arquivos</span><span class="ltag">CSV/JSON</span><span class="ltag a">Automação</span></div>
+      </div>
+      <div class="lanalogy">
+        <div class="ap"><span class="ap-i">💾</span><span class="ap-t">Como salvar um <strong>preset</strong> — estrutura que persiste entre sessões e shows</span></div>
+        <div class="ap"><span class="ap-i">🎛️</span><span class="ap-t">No TANk G: exportar/importar patches em JSON, backup automático da biblioteca de sons</span></div>
+      </div>
+    </div>
+
+    <div class="lrow anim">
+      <div class="lnum"><span>04</span></div>
+      <div class="lmain">
+        <div class="lname">Dados & Análise</div>
+        <div class="lsub">Pandas, métricas, visualização. Transformar números em decisões estratégicas.</div>
+        <div class="ltags"><span class="ltag">Pandas</span><span class="ltag">Análise</span><span class="ltag a">Avançado</span></div>
+      </div>
+      <div class="lanalogy">
+        <div class="ap"><span class="ap-i">📊</span><span class="ap-t">Como analisar <strong>quais efeitos você mais usa</strong> — padrões de uso ao longo do tempo</span></div>
+        <div class="ap"><span class="ap-i">🎛️</span><span class="ap-t">No TANk G: dashboard de uso de patches por setlist, análise de qual combinação domina</span></div>
+      </div>
+    </div>
+
+    <div class="lrow anim">
+      <div class="lnum"><span>05</span></div>
+      <div class="lmain">
+        <div class="lname">Python + IA</div>
+        <div class="lsub">Anthropic API, LLMs na prática. IA integrada ao fluxo de trabalho real.</div>
+        <div class="ltags"><span class="ltag e">Anthropic API</span><span class="ltag e">LLMs</span><span class="ltag">Prompts</span></div>
+      </div>
+      <div class="lanalogy">
+        <div class="ap"><span class="ap-i">🎼</span><span class="ap-t">Como um <strong>professor de guitarra virtual</strong> que responde "que acorde combina aqui?"</span></div>
+        <div class="ap"><span class="ap-i">🎛️</span><span class="ap-t">No TANk G: "Quero som sujo com sustain longo" → IA retorna config de distorção + reverb</span></div>
+      </div>
+    </div>
+
+    <div class="lrow anim">
+      <div class="lnum"><span>06</span></div>
+      <div class="lmain">
+        <div class="lname">Agentes Autônomos</div>
+        <div class="lsub">Agno, agentes com ferramentas, times de agentes. IAs que executam sozinhas.</div>
+        <div class="ltags"><span class="ltag e">Agno</span><span class="ltag e">Agentes</span><span class="ltag e">Especializado</span></div>
+      </div>
+      <div class="lanalogy">
+        <div class="ap"><span class="ap-i">🎶</span><span class="ap-t">Como uma <strong>banda inteira tocando junta</strong> — cada músico autônomo, mas em sincronia</span></div>
+        <div class="ap"><span class="ap-i">🎛️</span><span class="ap-t">No TANk G: agente que pesquisa o som de uma banda e sugere o patch mais próximo</span></div>
+      </div>
+    </div>
+
+    <div class="lrow anim">
+      <div class="lnum"><span>07</span></div>
+      <div class="lmain">
+        <div class="lname">Projetos Aplicados</div>
+        <div class="lsub">Quatro projetos de marketing + o TANk G App completo. Todo aprendizado convergindo.</div>
+        <div class="ltags"><span class="ltag e">Projeto Final</span><span class="ltag e">TANk G App</span><span class="ltag a">Mini Agência IA</span></div>
+      </div>
+      <div class="lanalogy">
+        <div class="ap"><span class="ap-i">🏆</span><span class="ap-t">Como tocar uma <strong>música autoral completa</strong> — aprendizado com intenção e identidade</span></div>
+        <div class="ap"><span class="ap-i">🎛️</span><span class="ap-t">O TANk G App: gerenciador de patches + IA de sugestão + análise de uso — integrados</span></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+</div>
+
+<!-- CTA 2 -->
+<div class="cta-band anim">
+  <div>
+    <div class="cta-tag">Esse perfil faz sentido pra você?</div>
+    <div class="cta-title">Criatividade + código + produto</div>
+    <div class="cta-desc">Estou construindo na interseção entre marketing, produto e IA. Se isso ressoa com o que você está desenvolvendo, vamos conversar.</div>
+  </div>
+  <div class="cta-btns">
+    <a href="https://flavio-guedes.github.io/portfolio/Python-guitar.html" target="_blank" class="btn-e">🎛️ Ver o Projeto →</a>
+    <a href="https://flavio-guedes.github.io/portfolio/apresentacao.html" target="_blank" class="btn-g">Apresentação</a>
+  </div>
+</div>
+
+<!-- SEC 04 — METODOLOGIA -->
+<div class="wrap">
+<section class="section anim">
+  <div class="sec-label">04 · Por que funciona</div>
+  <h2 class="sec-h2">Três princípios que<br><em>mudam</em> o aprendizado</h2>
+
+  <div class="method-grid">
+    <div class="method-card anim">
+      <div class="method-n">01</div>
+      <div class="method-title">Contexto Emocional</div>
+      <div class="method-text">Aprender algo novo fica muito mais rápido quando conectado a algo que você já ama. A guitarra não é decoração — é o <strong>gancho emocional</strong> que torna cada conceito memorável antes de qualquer linha de código.</div>
+    </div>
+    <div class="method-card anim">
+      <div class="method-n">02</div>
+      <div class="method-title">Projeto com Propósito Real</div>
+      <div class="method-text">O TANk G App existe. Flávio usa a pedaleira. Cada funcionalidade que aprende resolve um problema real que ele tem — o aprendizado nunca é abstrato, sempre há um <strong>"para que serve isso agora"</strong> imediato.</div>
+    </div>
+    <div class="method-card anim">
+      <div class="method-n">03</div>
+      <div class="method-title">Dupla Aplicação</div>
+      <div class="method-text">Cada tópico tem dois usos: o hobby (guitarra/TANk G) e o trabalho (marketing/conteúdo). Isso <strong>dobra o valor percebido</strong> de cada hora de estudo — você aprende e já sabe onde vai usar nos próximos dias.</div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- SEC 05 — RESULTADOS -->
+<div class="wrap">
+<section class="section anim">
+  <div class="sec-label">05 · O que este roadmap entrega</div>
+  <h2 class="sec-h2">Do rascunho à<br><em>ferramenta real</em></h2>
+
+  <div class="outcomes">
+    <div class="outcome-row anim">
+      <div class="oi">⚡</div>
+      <div><div class="ot">Automação Editorial</div><div class="od">Scripts que recebem tema e geram rascunhos para todos os canais, adaptados ao tom de cada marca — zero esforço manual.</div></div>
+      <div class="og"><div class="og-l">🎸 Equiv. TANk G</div><div class="og-t">Script que gera variações do patch para diferentes afinações ou instrumentos automaticamente</div></div>
+    </div>
+    <div class="outcome-row anim">
+      <div class="oi">📈</div>
+      <div><div class="ot">Análise de Performance com IA</div><div class="od">Pipeline que lê métricas de CSV e entrega relatório com recomendações estratégicas em linguagem natural.</div></div>
+      <div class="og"><div class="og-l">🎸 Equiv. TANk G</div><div class="og-t">Análise de quais patches foram mais usados e sugestão de quais configurações refinar</div></div>
+    </div>
+    <div class="outcome-row anim">
+      <div class="oi">🤖</div>
+      <div><div class="ot">Agente Monitor de Tendências</div><div class="od">Sistema autônomo que pesquisa tendências semanais e envia briefing estruturado de pauta — zero intervenção humana.</div></div>
+      <div class="og"><div class="og-l">🎸 Equiv. TANk G</div><div class="og-t">Agente que pesquisa o som de uma banda e mapeia a configuração de efeitos nos patches disponíveis</div></div>
+    </div>
+    <div class="outcome-row anim">
+      <div class="oi">🏆</div>
+      <div><div class="ot">TANk G App Completo</div><div class="od">Gerenciador de patches + controle de efeitos + sugestão por IA + análise de uso. Um app que resolve as limitações reais da pedaleira.</div></div>
+      <div class="og"><div class="og-l">🎸 É o projeto âncora</div><div class="og-t">Deu sentido a todo o aprendizado — e Flávio vai continuar evoluindo além do roadmap</div></div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- FINALE -->
+<div class="finale">
+  <div class="finale-tag">Flávio Guedes · Portfólio</div>
+  <h2 class="finale-h2">
+    Marketing.<br>
+    <em>Guitarra.</em><br>
+    Código.
+  </h2>
+  <p class="finale-desc">
+    Um perfil construído na interseção de criatividade, produto e tecnologia. Se isso fez sentido, veja o portfólio completo ou entre em contato.
+  </p>
+  <div class="finale-btns">
+    <a href="https://flavio-guedes.github.io/portfolio/Python-guitar.html" target="_blank" class="btn-e">🎛️ Ver o Projeto</a>
+    <a href="https://flavio-guedes.github.io/portfolio/links.html" target="_blank" class="btn-g">🔗 Portfólio Geral</a>
+    <a href="https://flavio-guedes.github.io/portfolio/apresentacao.html" target="_blank" class="btn-g">👤 Apresentação</a>
+  </div>
+</div>
+
+<footer>
+  <div class="ft">// case study · python para criativos · 2025</div>
+  <div class="ft-links">
+    <a href="https://flavio-guedes.github.io/portfolio/links.html" target="_blank" class="ft-link">Portfólio</a>
+    <a href="https://flavio-guedes.github.io/portfolio/apresentacao.html" target="_blank" class="ft-link">Apresentação</a>
+  </div>
+</footer>
+
+<script>
+window.addEventListener('scroll', () => {
+  const p = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  document.getElementById('prog').style.width = p + '%';
+});
+
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('show'), i * 70);
+      obs.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.anim').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
