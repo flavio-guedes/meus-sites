@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flavio Guedes · Mapa de Skills</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05060a;--surface:#0a0c12;--card:#0f1118;--border:#181c24;--border2:#222832;
+  --fit:#39ff85;--pay:#bf5fff;--overlap:#ffb800;--danger:#ff2d78;--neutral:#00e5ff;
+  --text:#e8edf5;--text2:#b0bcc8;--muted:#58646e;
+  --fit-bg:rgba(57,255,133,.06);--pay-bg:rgba(191,95,255,.06);
+  --overlap-bg:rgba(255,184,0,.06);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:16px;line-height:1.65;overflow-x:hidden;}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px);pointer-events:none;z-index:9999;}
+
+/* ── HEADER ── */
+.hdr{position:relative;z-index:10;padding:44px 52px 32px;border-bottom:1px solid var(--border2);background:var(--surface);}
+.hdr::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(57,255,133,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(191,95,255,.018) 1px,transparent 1px);background-size:28px 28px;mask-image:linear-gradient(to bottom,rgba(0,0,0,.7),transparent);}
+.hdr-inner{position:relative;z-index:1;display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center;}
+.eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--fit);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.eyebrow::before{content:'';width:20px;height:1px;background:var(--fit);box-shadow:0 0 6px var(--fit);}
+.logo{font-family:'Orbitron',monospace;font-size:clamp(28px,4vw,56px);font-weight:900;line-height:.95;}
+.logo .t1{display:block;background:linear-gradient(90deg,#fff,#c0ccd8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.logo .t2{display:block;background:linear-gradient(90deg,var(--fit),var(--overlap) 50%,var(--pay));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 16px rgba(57,255,133,.3));}
+.hdr-sub{margin-top:14px;font-size:16px;color:var(--muted);max-width:500px;}
+
+/* legend pill */
+.legend{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+.leg{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:100px;border:1px solid;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;white-space:nowrap;}
+.leg.fit{border-color:rgba(57,255,133,.5);background:var(--fit-bg);color:var(--fit);}
+.leg.pay{border-color:rgba(191,95,255,.5);background:var(--pay-bg);color:var(--pay);}
+.leg.both{border-color:rgba(255,184,0,.5);background:var(--overlap-bg);color:var(--overlap);}
+.leg.gap{border-color:rgba(0,229,255,.4);background:rgba(0,229,255,.05);color:var(--neutral);}
+.leg-dot{width:8px;height:8px;border-radius:50%;}
+.leg.fit .leg-dot{background:var(--fit);box-shadow:0 0 6px var(--fit);}
+.leg.pay .leg-dot{background:var(--pay);box-shadow:0 0 6px var(--pay);}
+.leg.both .leg-dot{background:var(--overlap);box-shadow:0 0 6px var(--overlap);}
+.leg.gap .leg-dot{background:var(--neutral);box-shadow:0 0 6px var(--neutral);}
+
+/* ── NAV ── */
+.nav{position:sticky;top:0;z-index:100;display:flex;overflow-x:auto;padding:0 52px;border-bottom:1px solid var(--border2);background:var(--surface);backdrop-filter:blur(8px);}
+.nav::-webkit-scrollbar{display:none;}
+.nav-btn{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:14px 20px;background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:600;letter-spacing:.5px;color:var(--muted);white-space:nowrap;transition:all .25s;}
+.nav-btn:hover{color:var(--text);}
+.nav-btn.on{color:var(--text);}
+.nav-btn[data-t="all"].on{border-bottom-color:var(--text2);}
+.nav-btn[data-t="overlap"].on{border-bottom-color:var(--overlap);color:var(--overlap);}
+.nav-btn[data-t="fit"].on{border-bottom-color:var(--fit);color:var(--fit);}
+.nav-btn[data-t="pay"].on{border-bottom-color:var(--pay);color:var(--pay);}
+.nav-btn[data-t="gap"].on{border-bottom-color:var(--neutral);color:var(--neutral);}
+.nav-icon{font-size:14px;}
+
+/* ── MAIN ── */
+.main{position:relative;z-index:10;padding:40px 52px 100px;}
+
+/* ── MATRIX VISUAL ── */
+.matrix-wrap{margin-bottom:48px;}
+.section-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--muted);margin-bottom:24px;display:flex;align-items:center;gap:12px;}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border2);}
+
+.matrix{position:relative;background:var(--card);border:1px solid var(--border2);border-radius:20px;overflow:hidden;padding:48px 48px 0;}
+.matrix-axes{position:relative;height:420px;}
+/* quadrant backgrounds */
+.matrix-axes::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 40% 40% at 25% 25%,rgba(0,229,255,.04) 0%,transparent 70%),
+    radial-gradient(ellipse 40% 40% at 75% 25%,rgba(255,184,0,.05) 0%,transparent 70%),
+    radial-gradient(ellipse 40% 40% at 25% 75%,rgba(255,45,120,.03) 0%,transparent 70%),
+    radial-gradient(ellipse 40% 40% at 75% 75%,rgba(57,255,133,.05) 0%,transparent 70%);
+}
+.axis-line-h{position:absolute;left:0;right:0;top:50%;height:1px;background:var(--border2);}
+.axis-line-v{position:absolute;top:0;bottom:0;left:50%;width:1px;background:var(--border2);}
+.q-label{position:absolute;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:4px;border:1px solid;}
+.q-label.tl{top:12px;left:12px;color:var(--neutral);border-color:rgba(0,229,255,.2);background:rgba(0,229,255,.04);}
+.q-label.tr{top:12px;right:12px;color:var(--overlap);border-color:rgba(255,184,0,.25);background:rgba(255,184,0,.04);}
+.q-label.bl{bottom:12px;left:12px;color:var(--danger);border-color:rgba(255,45,120,.2);background:rgba(255,45,120,.04);}
+.q-label.br{bottom:12px;right:12px;color:var(--fit);border-color:rgba(57,255,133,.25);background:rgba(57,255,133,.04);}
+
+/* skill dots */
+.skill-dot{position:absolute;cursor:pointer;transform:translate(-50%,-50%);transition:transform .2s,z-index 0s;}
+.skill-dot:hover{transform:translate(-50%,-50%) scale(1.25);z-index:50;}
+.skill-dot .dot{width:14px;height:14px;border-radius:50%;border:2px solid;transition:box-shadow .2s;}
+.skill-dot:hover .dot{box-shadow:0 0 14px var(--dc);}
+.skill-dot .dot-label{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 6px);white-space:nowrap;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.5px;padding:3px 8px;border-radius:4px;border:1px solid;pointer-events:none;opacity:0;transition:opacity .2s;}
+.skill-dot:hover .dot-label{opacity:1;}
+.skill-dot.fit-type .dot{background:rgba(57,255,133,.2);border-color:var(--fit);--dc:var(--fit);}
+.skill-dot.fit-type .dot-label{background:var(--card);border-color:rgba(57,255,133,.4);color:var(--fit);}
+.skill-dot.pay-type .dot{background:rgba(191,95,255,.2);border-color:var(--pay);--dc:var(--pay);}
+.skill-dot.pay-type .dot-label{background:var(--card);border-color:rgba(191,95,255,.4);color:var(--pay);}
+.skill-dot.both-type .dot{background:rgba(255,184,0,.25);border-color:var(--overlap);--dc:var(--overlap);}
+.skill-dot.both-type .dot-label{background:var(--card);border-color:rgba(255,184,0,.5);color:var(--overlap);}
+.skill-dot.gap-type .dot{background:rgba(0,229,255,.1);border-color:rgba(0,229,255,.5);--dc:var(--neutral);}
+.skill-dot.gap-type .dot-label{background:var(--card);border-color:rgba(0,229,255,.3);color:var(--neutral);}
+
+/* big dots */
+.skill-dot.lg .dot{width:20px;height:20px;}
+
+.matrix-footer{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:14px 0 16px;border-top:1px solid var(--border2);margin-top:0;}
+.ax-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);}
+.ax-lbl.right{text-align:right;}
+.ax-center{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);text-align:center;}
+
+/* ── SKILL CARDS ── */
+.skill-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;margin-bottom:48px;}
+
+.sk-card{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:20px 22px;transition:border-color .25s,box-shadow .25s;cursor:default;position:relative;overflow:hidden;}
+.sk-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.sk-card.fit-card::before{background:linear-gradient(90deg,var(--fit),transparent);}
+.sk-card.pay-card::before{background:linear-gradient(90deg,var(--pay),transparent);}
+.sk-card.both-card::before{background:linear-gradient(90deg,var(--overlap),var(--fit));}
+.sk-card.gap-card::before{background:linear-gradient(90deg,var(--neutral),transparent);}
+
+.sk-card:hover{transform:translateY(-2px);}
+.sk-card.fit-card:hover{border-color:rgba(57,255,133,.4);box-shadow:0 8px 32px rgba(57,255,133,.05);}
+.sk-card.pay-card:hover{border-color:rgba(191,95,255,.4);box-shadow:0 8px 32px rgba(191,95,255,.05);}
+.sk-card.both-card:hover{border-color:rgba(255,184,0,.4);box-shadow:0 8px 32px rgba(255,184,0,.06);}
+.sk-card.gap-card:hover{border-color:rgba(0,229,255,.35);box-shadow:0 8px 32px rgba(0,229,255,.04);}
+
+.sk-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;}
+.sk-name{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;letter-spacing:.5px;color:var(--text);margin-bottom:3px;}
+.sk-cat{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;}
+.sk-type{font-family:'Orbitron',monospace;font-size:9px;font-weight:700;padding:4px 10px;border-radius:100px;border:1px solid;white-space:nowrap;flex-shrink:0;}
+.fit-card .sk-type{border-color:rgba(57,255,133,.4);background:var(--fit-bg);color:var(--fit);}
+.pay-card .sk-type{border-color:rgba(191,95,255,.4);background:var(--pay-bg);color:var(--pay);}
+.both-card .sk-type{border-color:rgba(255,184,0,.4);background:var(--overlap-bg);color:var(--overlap);}
+.gap-card .sk-type{border-color:rgba(0,229,255,.3);background:rgba(0,229,255,.05);color:var(--neutral);}
+
+.sk-bars{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+.sk-bar-row{display:flex;align-items:center;gap:10px;}
+.sk-bar-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.5px;color:var(--muted);width:56px;flex-shrink:0;text-transform:uppercase;}
+.sk-bar-track{flex:1;height:6px;background:rgba(255,255,255,.05);border-radius:100px;overflow:hidden;}
+.sk-bar-fill{height:100%;border-radius:100px;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+.sk-bar-fill.f{background:linear-gradient(90deg,var(--fit),rgba(57,255,133,.6));box-shadow:0 0 6px rgba(57,255,133,.4);}
+.sk-bar-fill.p{background:linear-gradient(90deg,var(--pay),rgba(191,95,255,.6));box-shadow:0 0 6px rgba(191,95,255,.4);}
+.sk-bar-val{font-family:'Orbitron',monospace;font-size:10px;font-weight:700;width:28px;text-align:right;flex-shrink:0;}
+.fit-card .sk-bar-val,.fit-card .sk-bar-fill.f{color:var(--fit);}
+.pay-card .sk-bar-val,.pay-card .sk-bar-fill.p{color:var(--pay);}
+.both-card .sk-bar-val{color:var(--overlap);}
+.gap-card .sk-bar-val{color:var(--neutral);}
+
+.sk-desc{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:12px;}
+.sk-desc strong{color:var(--text2);}
+
+.sk-tools{display:flex;flex-wrap:wrap;gap:6px;}
+.sk-tool{font-family:'DM Mono',monospace;font-size:10px;padding:3px 9px;border-radius:100px;border:1px solid;letter-spacing:.3px;}
+.fit-card .sk-tool{border-color:rgba(57,255,133,.25);background:rgba(57,255,133,.04);color:rgba(57,255,133,.8);}
+.pay-card .sk-tool{border-color:rgba(191,95,255,.25);background:rgba(191,95,255,.04);color:rgba(191,95,255,.8);}
+.both-card .sk-tool{border-color:rgba(255,184,0,.3);background:rgba(255,184,0,.05);color:rgba(255,184,0,.9);}
+.gap-card .sk-tool{border-color:rgba(0,229,255,.2);background:rgba(0,229,255,.03);color:rgba(0,229,255,.7);}
+
+/* ── CATEGORY SECTIONS ── */
+.cat-section{margin-bottom:52px;}
+.cat-header{display:flex;align-items:center;gap:16px;margin-bottom:20px;padding:16px 22px;border-radius:12px;border:1px solid var(--border2);background:rgba(255,255,255,.015);}
+.cat-icon{font-size:24px;}
+.cat-title{font-family:'Orbitron',monospace;font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.cat-sub{font-size:13px;color:var(--muted);}
+.cat-count{margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;padding:4px 12px;border-radius:100px;border:1px solid var(--border2);color:var(--muted);}
+
+/* ── PRIORITY TABLE ── */
+.priority-table{background:var(--card);border:1px solid var(--border2);border-radius:16px;overflow:hidden;margin-bottom:48px;}
+.pt-head{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 2fr;gap:0;border-bottom:1px solid var(--border2);padding:12px 24px;}
+.pt-hcell{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.pt-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 2fr;gap:0;padding:14px 24px;border-bottom:1px solid var(--border);align-items:center;transition:background .2s;}
+.pt-row:last-child{border-bottom:none;}
+.pt-row:hover{background:rgba(255,255,255,.015);}
+.pt-name{font-size:15px;font-weight:600;color:var(--text);letter-spacing:.3px;}
+.pt-cat{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px;}
+.pt-pill{display:inline-flex;padding:3px 9px;border-radius:100px;border:1px solid;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.5px;font-weight:700;}
+.pt-pill.F{border-color:rgba(57,255,133,.4);background:var(--fit-bg);color:var(--fit);}
+.pt-pill.P{border-color:rgba(191,95,255,.4);background:var(--pay-bg);color:var(--pay);}
+.pt-pill.B{border-color:rgba(255,184,0,.4);background:var(--overlap-bg);color:var(--overlap);}
+.pt-pill.G{border-color:rgba(0,229,255,.3);background:rgba(0,229,255,.04);color:var(--neutral);}
+.pt-bar-wrap{display:flex;align-items:center;gap:6px;}
+.pt-bar{flex:1;height:5px;background:rgba(255,255,255,.05);border-radius:100px;overflow:hidden;}
+.pt-bar-f{height:100%;border-radius:100px;}
+.pt-bar-f.fc{background:var(--fit);box-shadow:0 0 5px var(--fit);}
+.pt-bar-f.pc{background:var(--pay);box-shadow:0 0 5px var(--pay);}
+.pt-bar-f.oc{background:var(--overlap);box-shadow:0 0 5px var(--overlap);}
+.pt-bar-f.nc{background:var(--neutral);box-shadow:0 0 5px var(--neutral);}
+.pt-v{font-family:'Orbitron',monospace;font-size:10px;width:28px;text-align:right;}
+.pt-priority{font-family:'Orbitron',monospace;font-size:9px;font-weight:700;padding:4px 10px;border-radius:4px;border:1px solid;}
+.pt-priority.P1{border-color:rgba(255,184,0,.5);background:rgba(255,184,0,.08);color:var(--overlap);}
+.pt-priority.P2{border-color:rgba(57,255,133,.4);background:rgba(57,255,133,.06);color:var(--fit);}
+.pt-priority.P3{border-color:rgba(191,95,255,.4);background:rgba(191,95,255,.06);color:var(--pay);}
+.pt-priority.P4{border-color:rgba(0,229,255,.3);background:rgba(0,229,255,.04);color:var(--neutral);}
+
+/* ── SUMMARY CARDS ── */
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:48px;}
+@media(max-width:1100px){.summary-grid{grid-template-columns:1fr 1fr;}}
+.sum-card{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:22px 20px;position:relative;overflow:hidden;}
+.sum-card::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top left,var(--sc) 0%,transparent 70%);opacity:0;transition:opacity .3s;}
+.sum-card:hover::after{opacity:.06;}
+.sum-card.c1{--sc:var(--overlap);}
+.sum-card.c2{--sc:var(--fit);}
+.sum-card.c3{--sc:var(--pay);}
+.sum-card.c4{--sc:var(--neutral);}
+.sum-bar{height:2px;width:100%;border-radius:2px;margin-bottom:18px;}
+.sum-card.c1 .sum-bar{background:var(--overlap);box-shadow:0 0 8px var(--overlap);}
+.sum-card.c2 .sum-bar{background:var(--fit);box-shadow:0 0 8px var(--fit);}
+.sum-card.c3 .sum-bar{background:var(--pay);box-shadow:0 0 8px var(--pay);}
+.sum-card.c4 .sum-bar{background:var(--neutral);box-shadow:0 0 8px var(--neutral);}
+.sum-n{font-family:'Orbitron',monospace;font-size:38px;font-weight:900;line-height:1;margin-bottom:6px;}
+.sum-card.c1 .sum-n{color:var(--overlap);}
+.sum-card.c2 .sum-n{color:var(--fit);}
+.sum-card.c3 .sum-n{color:var(--pay);}
+.sum-card.c4 .sum-n{color:var(--neutral);}
+.sum-name{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text);margin-bottom:6px;}
+.sum-desc{font-size:13px;color:var(--muted);line-height:1.45;}
+
+/* panel system */
+.panel{display:none;animation:fadeUp .35s ease;}
+.panel.on{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .hdr{padding:32px 24px;}
+  .main{padding:28px 24px 80px;}
+  .nav{padding:0 24px;}
+  .skill-grid{grid-template-columns:1fr;}
+  .pt-head,.pt-row{grid-template-columns:2fr 1fr 1fr;gap:0;}
+  .pt-hcell:nth-child(4),.pt-hcell:nth-child(5),.pt-row>*:nth-child(4),.pt-row>*:nth-child(5){display:none;}
+  .summary-grid{grid-template-columns:1fr 1fr;}
+}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:28px;right:28px;background:var(--card);border:1px solid var(--overlap);border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:10px;z-index:10000;box-shadow:0 0 30px rgba(255,184,0,.15);transform:translateY(70px);opacity:0;transition:all .4s cubic-bezier(.4,0,.2,1);}
+.toast.on{transform:none;opacity:1;}
+.t-ico{font-size:20px;}
+.t-t{font-family:'Orbitron',monospace;font-size:11px;font-weight:700;color:var(--overlap);}
+.t-s{font-size:13px;color:var(--muted);}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-inner">
+    <div>
+      <div class="eyebrow">// mapa de skills · fit vs. remuneração</div>
+      <div class="logo"><span class="t1">FLAVIO</span><span class="t2">SKILLS MAP</span></div>
+      <div class="hdr-sub">Mapeamento estratégico de competências: onde seu fit natural encontra — ou não — as áreas que mais pagam no mercado.</div>
+    </div>
+    <div class="legend">
+      <div class="leg both"><div class="leg-dot"></div>Zona Dourada · Fit + Paga Bem</div>
+      <div class="leg fit"><div class="leg-dot"></div>Alto Fit · Menor Remuneração</div>
+      <div class="leg pay"><div class="leg-dot"></div>Alta Remuneração · Gap a Fechar</div>
+      <div class="leg gap"><div class="leg-dot"></div>A Desenvolver</div>
+    </div>
+  </div>
+</header>
+
+<nav class="nav">
+  <button class="nav-btn on" data-t="all" onclick="filterSkills('all',this)"><span class="nav-icon">⬡</span>Todos</button>
+  <button class="nav-btn" data-t="overlap" onclick="filterSkills('overlap',this)"><span class="nav-icon">⭐</span>Zona Dourada</button>
+  <button class="nav-btn" data-t="fit" onclick="filterSkills('fit',this)"><span class="nav-icon">✦</span>Alto Fit</button>
+  <button class="nav-btn" data-t="pay" onclick="filterSkills('pay',this)"><span class="nav-icon">💎</span>Maior Renda</button>
+  <button class="nav-btn" data-t="gap" onclick="filterSkills('gap',this)"><span class="nav-icon">🎯</span>A Desenvolver</button>
+  <button class="nav-btn" data-t="matrix" onclick="filterSkills('matrix',this)"><span class="nav-icon">◫</span>Matriz 2×2</button>
+  <button class="nav-btn" data-t="table" onclick="filterSkills('table',this)"><span class="nav-icon">▤</span>Tabela Completa</button>
+</nav>
+
+<main class="main">
+
+<!-- ════ PANEL: OVERVIEW ════ -->
+<div id="panel-all" class="panel on">
+
+  <div class="summary-grid">
+    <div class="sum-card c1">
+      <div class="sum-bar"></div>
+      <div class="sum-n">12</div>
+      <div class="sum-name">Zona Dourada</div>
+      <div class="sum-desc">Skills onde você tem fit natural E que pagam bem. Aposte aqui primeiro.</div>
+    </div>
+    <div class="sum-card c2">
+      <div class="sum-bar"></div>
+      <div class="sum-n">8</div>
+      <div class="sum-name">Alto Fit</div>
+      <div class="sum-desc">Você já domina, mas o mercado paga menos. Use como suporte ou reposicione.</div>
+    </div>
+    <div class="sum-card c3">
+      <div class="sum-bar"></div>
+      <div class="sum-n">9</div>
+      <div class="sum-name">Alta Renda</div>
+      <div class="sum-desc">Mercado paga muito bem. Gap a fechar para maximizar salário.</div>
+    </div>
+    <div class="sum-card c4">
+      <div class="sum-bar"></div>
+      <div class="sum-n">6</div>
+      <div class="sum-name">A Desenvolver</div>
+      <div class="sum-desc">Emergentes e estratégicas. Desenvolvê-las agora abre futuro.</div>
+    </div>
+  </div>
+
+  <!-- CATEGORIA: Design & Visual -->
+  <div class="cat-section">
+    <div class="cat-header">
+      <div class="cat-icon">🎨</div>
+      <div>
+        <div class="cat-title">Design & Criação Visual</div>
+        <div class="cat-sub">Ferramentas, técnicas e linguagens visuais</div>
+      </div>
+      <div class="cat-count">8 skills</div>
+    </div>
+    <div class="skill-grid" id="grid-design">
+
+      <div class="sk-card both-card" data-type="overlap">
+        <div class="sk-top">
+          <div><div class="sk-name">Brand Identity & Design Systems</div><div class="sk-cat">Design Estratégico</div></div>
+          <div class="sk-type">⭐ ZONA DOURADA</div>
+        </div>
+        <div class="sk-bars">
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Fit</span><div class="sk-bar-track"><div class="sk-bar-fill f" style="width:95%"></div></div><span class="sk-bar-val" style="color:var(--fit)">95</span></div>
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Renda</span><div class="sk-bar-track"><div class="sk-bar-fill p" style="width:88%"></div></div><span class="sk-bar-val" style="color:var(--pay)">88</span></div>
+        </div>
+        <div class="sk-desc">Construção de identidades visuais completas + guias de marca escaláveis. <strong>R$ 12k–22k/mês</strong> em roles de Brand Lead. Experiência com Colgate, AstraZeneca e ANBIMA é prova concreta.</div>
+        <div class="sk-tools"><span class="sk-tool">Figma</span><span class="sk-tool">Illustrator</span><span class="sk-tool">Brand Guidelines</span><span class="sk-tool">Design Tokens</span><span class="sk-tool">Style Guides</span></div>
+      </div>
+
+      <div class="sk-card both-card" data-type="overlap">
+        <div class="sk-top">
+          <div><div class="sk-name">Direção de Arte · Estratégia</div><div class="sk-cat">Liderança Criativa</div></div>
+          <div class="sk-type">⭐ ZONA DOURADA</div>
+        </div>
+        <div class="sk-bars">
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Fit</span><div class="sk-bar-track"><div class="sk-bar-fill f" style="width:98%"></div></div><span class="sk-bar-val" style="color:var(--fit)">98</span></div>
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Renda</span><div class="sk-bar-track"><div class="sk-bar-fill p" style="width:82%"></div></div><span class="sk-bar-val" style="color:var(--pay)">82</span></div>
+        </div>
+        <div class="sk-desc">Seu core skill. Diretor de Arte Sênior com 12 anos de progressão, liderança de times e marcas tier 1. <strong>R$ 10k–18k/mês</strong> + caminho para Creative Director.</div>
+        <div class="sk-tools"><span class="sk-tool">Conceito Visual</span><span class="sk-tool">Briefing Criativo</span><span class="sk-tool">Direção de Equipe</span><span class="sk-tool">Apresentação</span></div>
+      </div>
+
+      <div class="sk-card both-card" data-type="overlap">
+        <div class="sk-top">
+          <div><div class="sk-name">Motion Design & Animação</div><div class="sk-cat">Produção Digital</div></div>
+          <div class="sk-type">⭐ ZONA DOURADA</div>
+        </div>
+        <div class="sk-bars">
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Fit</span><div class="sk-bar-track"><div class="sk-bar-fill f" style="width:80%"></div></div><span class="sk-bar-val" style="color:var(--fit)">80</span></div>
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Renda</span><div class="sk-bar-track"><div class="sk-bar-fill p" style="width:85%"></div></div><span class="sk-bar-val" style="color:var(--pay)">85</span></div>
+        </div>
+        <div class="sk-desc">Motion é um dos skills criativos que mais paga no mercado atual. <strong>Motion Designer sênior: R$ 9k–15k</strong>. Combinado com direção de arte eleva o teto para R$ 20k+ em studios.</div>
+        <div class="sk-tools"><span class="sk-tool">After Effects</span><span class="sk-tool">Adobe Animate</span><span class="sk-tool">Lottie</span><span class="sk-tool">Cinema 4D (básico)</span></div>
+      </div>
+
+      <div class="sk-card fit-card" data-type="fit">
+        <div class="sk-top">
+          <div><div class="sk-name">Design Gráfico Editorial</div><div class="sk-cat">Produção Visual</div></div>
+          <div class="sk-type">✦ ALTO FIT</div>
+        </div>
+        <div class="sk-bars">
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Fit</span><div class="sk-bar-track"><div class="sk-bar-fill f" style="width:90%"></div></div><span class="sk-bar-val" style="color:var(--fit)">90</span></div>
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Renda</span><div class="sk-bar-track"><div class="sk-bar-fill p" style="width:52%"></div></div><span class="sk-bar-val" style="color:var(--pay)">52</span></div>
+        </div>
+        <div class="sk-desc">Você domina com excelência, mas layout editorial puro está sendo commoditizado por IA. Reposicionar para design editorial estratégico (relatórios anuais, brand publishing) melhora o valor.</div>
+        <div class="sk-tools"><span class="sk-tool">InDesign</span><span class="sk-tool">Photoshop</span><span class="sk-tool">Illustrator</span><span class="sk-tool">Acrobat</span></div>
+      </div>
+
+      <div class="sk-card pay-card" data-type="pay">
+        <div class="sk-top">
+          <div><div class="sk-name">Product Design (UI/UX)</div><div class="sk-cat">Design de Produto Digital</div></div>
+          <div class="sk-type">💎 ALTA RENDA</div>
+        </div>
+        <div class="sk-bars">
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Fit</span><div class="sk-bar-track"><div class="sk-bar-fill f" style="width:55%"></div></div><span class="sk-bar-val" style="color:var(--fit)">55</span></div>
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Renda</span><div class="sk-bar-track"><div class="sk-bar-fill p" style="width:92%"></div></div><span class="sk-bar-val" style="color:var(--pay)">92</span></div>
+        </div>
+        <div class="sk-desc">O role que mais paga na trilha criativa. <strong>Senior Product Designer: R$ 11k–18k CLT</strong>, USD 3.5k–5k remoto. Gap atual: exposição a produto digital, discovery e métricas. Fechável em 6 meses.</div>
+        <div class="sk-tools"><span class="sk-tool">Figma avançado</span><span class="sk-tool">Prototyping</span><span class="sk-tool">User Research</span><span class="sk-tool">Design System</span><span class="sk-tool">Hotjar</span></div>
+      </div>
+
+      <div class="sk-card fit-card" data-type="fit">
+        <div class="sk-top">
+          <div><div class="sk-name">Fotografia & Direção de Fotografia</div><div class="sk-cat">Produção Visual</div></div>
+          <div class="sk-type">✦ ALTO FIT</div>
+        </div>
+        <div class="sk-bars">
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Fit</span><div class="sk-bar-track"><div class="sk-bar-fill f" style="width:82%"></div></div><span class="sk-bar-val" style="color:var(--fit)">82</span></div>
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Renda</span><div class="sk-bar-track"><div class="sk-bar-fill p" style="width:45%"></div></div><span class="sk-bar-val" style="color:var(--pay)">45</span></div>
+        </div>
+        <div class="sk-desc">Excelente para direção de ensaios e campanhas, mas como skill isolada tem teto de renda baixo. Máximo valor quando aplicada como arte-finalista de campanhas fotográficas de marcas premium.</div>
+        <div class="sk-tools"><span class="sk-tool">Lightroom</span><span class="sk-tool">Photoshop</span><span class="sk-tool">Direção de Cena</span><span class="sk-tool">Estética Visual</span></div>
+      </div>
+
+      <div class="sk-card pay-card" data-type="pay">
+        <div class="sk-top">
+          <div><div class="sk-name">3D & Visualização Avançada</div><div class="sk-cat">Design Digital</div></div>
+          <div class="sk-type">💎 ALTA RENDA</div>
+        </div>
+        <div class="sk-bars">
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Fit</span><div class="sk-bar-track"><div class="sk-bar-fill f" style="width:40%"></div></div><span class="sk-bar-val" style="color:var(--fit)">40</span></div>
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Renda</span><div class="sk-bar-track"><div class="sk-bar-fill p" style="width:88%"></div></div><span class="sk-bar-val" style="color:var(--pay)">88</span></div>
+        </div>
+        <div class="sk-desc">Blender, Cinema 4D e Spline para motion e branding 3D. Gap alto de fit atual, mas studios pagam 40–60% a mais por designers com 3D + marca. Investimento de médio prazo com alto retorno.</div>
+        <div class="sk-tools"><span class="sk-tool">Blender</span><span class="sk-tool">Cinema 4D</span><span class="sk-tool">Spline</span><span class="sk-tool">Octane Render</span></div>
+      </div>
+
+      <div class="sk-card both-card" data-type="overlap">
+        <div class="sk-top">
+          <div><div class="sk-name">Campanha 360° · Criação Integrada</div><div class="sk-cat">Creative Strategy</div></div>
+          <div class="sk-type">⭐ ZONA DOURADA</div>
+        </div>
+        <div class="sk-bars">
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Fit</span><div class="sk-bar-track"><div class="sk-bar-fill f" style="width:88%"></div></div><span class="sk-bar-val" style="color:var(--fit)">88</span></div>
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Renda</span><div class="sk-bar-track"><div class="sk-bar-fill p" style="width:80%"></div></div><span class="sk-bar-val" style="color:var(--pay)">80</span></div>
+        </div>
+        <div class="sk-desc">Criar campanhas que integram offline, digital, OOH e social. Seu histórico com ANBIMA, AstraZeneca e outras marcas reguladas comprova capacidade. <strong>Creative Lead nesse escopo: R$ 14k–22k</strong>.</div>
+        <div class="sk-tools"><span class="sk-tool">Estratégia Criativa</span><span class="sk-tool">Briefing</span><span class="sk-tool">Execução Multi-canal</span><span class="sk-tool">Apresentação</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORIA: Estratégia & Liderança -->
+  <div class="cat-section">
+    <div class="cat-header">
+      <div class="cat-icon">🧠</div>
+      <div>
+        <div class="cat-title">Estratégia, Liderança & Gestão</div>
+        <div class="cat-sub">Competências de nível sênior-liderança</div>
+      </div>
+      <div class="cat-count">6 skills</div>
+    </div>
+    <div class="skill-grid" id="grid-strategy">
+
+      <div class="sk-card both-card" data-type="overlap">
+        <div class="sk-top">
+          <div><div class="sk-name">Gestão de Times Criativos</div><div class="sk-cat">People Management</div></div>
+          <div class="sk-type">⭐ ZONA DOURADA</div>
+        </div>
+        <div class="sk-bars">
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Fit</span><div class="sk-bar-track"><div class="sk-bar-fill f" style="width:92%"></div></div><span class="sk-bar-val" style="color:var(--fit)">92</span></div>
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Renda</span><div class="sk-bar-track"><div class="sk-bar-fill p" style="width:86%"></div></div><span class="sk-bar-val" style="color:var(--pay)">86</span></div>
+        </div>
+        <div class="sk-desc">Liderar, contratar, desenvolver e avaliar designers e criativos. Sua progressão de estagiário → head é prova concreta. <strong>Head of Design com gestão: R$ 18k–28k CLT</strong>.</div>
+        <div class="sk-tools"><span class="sk-tool">1:1 & Feedback</span><span class="sk-tool">OKRs</span><span class="sk-tool">Gestão de Carga</span><span class="sk-tool">Hiring</span><span class="sk-tool">Onboarding</span></div>
+      </div>
+
+      <div class="sk-card both-card" data-type="overlap">
+        <div class="sk-top">
+          <div><div class="sk-name">Estratégia de Marca · Brand Strategy</div><div class="sk-cat">Branding Estratégico</div></div>
+          <div class="sk-type">⭐ ZONA DOURADA</div>
+        </div>
+        <div class="sk-bars">
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Fit</span><div class="sk-bar-track"><div class="sk-bar-fill f" style="width:86%"></div></div><span class="sk-bar-val" style="color:var(--fit)">86</span></div>
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Renda</span><div class="sk-bar-track"><div class="sk-bar-fill p" style="width:84%"></div></div><span class="sk-bar-val" style="color:var(--pay)">84</span></div>
+        </div>
+        <div class="sk-desc">Posicionamento de marca, arquitetura de portfólio, storytelling institucional. Consultores de branding cobram <strong>R$ 30k–100k por projeto</strong>. Rota mais clara para renda muito alta de forma autônoma.</div>
+        <div class="sk-tools"><span class="sk-tool">Brand Positioning</span><span class="sk-tool">Brand Voice</span><span class="sk-tool">Naming</span><span class="sk-tool">Visual Identity</span><span class="sk-tool">Brand Audit</span></div>
+      </div>
+
+      <div class="sk-card pay-card" data-type="pay">
+        <div class="sk-top">
+          <div><div class="sk-name">Gestão de Produto Digital</div><div class="sk-cat">Product Management</div></div>
+          <div class="sk-type">💎 ALTA RENDA</div>
+        </div>
+        <div class="sk-bars">
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Fit</span><div class="sk-bar-track"><div class="sk-bar-fill f" style="width:42%"></div></div><span class="sk-bar-val" style="color:var(--fit)">42</span></div>
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Renda</span><div class="sk-bar-track"><div class="sk-bar-fill p" style="width:94%"></div></div><span class="sk-bar-val" style="color:var(--pay)">94</span></div>
+        </div>
+        <div class="sk-desc">PM Sênior: <strong>R$ 16k–24k CLT</strong>, highest demand no mercado tech. Gap: requer mudança de mentalidade (construtor de produto vs. criativo). Transição de 12–18 meses viável dado background em descoberta.</div>
+        <div class="sk-tools"><span class="sk-tool">Roadmapping</span><span class="sk-tool">OKRs</span><span class="sk-tool">SQL básico</span><span class="sk-tool">Jira</span><span class="sk-tool">A/B Testing</span><span class="sk-tool">Discovery</span></div>
+      </div>
+
+      <div class="sk-card fit-card" data-type="fit">
+        <div class="sk-top">
+          <div><div class="sk-name">Gestão de Fornecedores & Budget</div><div class="sk-cat">Gestão Operacional</div></div>
+          <div class="sk-type">✦ ALTO FIT</div>
+        </div>
+        <div class="sk-bars">
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Fit</span><div class="sk-bar-track"><div class="sk-bar-fill f" style="width:80%"></div></div><span class="sk-bar-val" style="color:var(--fit)">80</span></div>
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Renda</span><div class="sk-bar-track"><div class="sk-bar-fill p" style="width:58%"></div></div><span class="sk-bar-val" style="color:var(--pay)">58</span></div>
+        </div>
+        <div class="sk-desc">Gestão de fornecedores, orçamentos criativos e P&L parcial. Skill de suporte que diferencia você de peers sem experiência operacional. Valor indireto alto para roles de Head e CCO.</div>
+        <div class="sk-tools"><span class="sk-tool">Gestão de Budget</span><span class="sk-tool">Briefing</span><span class="sk-tool">SLA</span><span class="sk-tool">Avaliação de Fornecedores</span></div>
+      </div>
+
+      <div class="sk-card pay-card" data-type="pay">
+        <div class="sk-top">
+          <div><div class="sk-name">Análise de Dados & Métricas</div><div class="sk-cat">Data-Driven Design</div></div>
+          <div class="sk-type">💎 ALTA RENDA</div>
+        </div>
+        <div class="sk-bars">
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Fit</span><div class="sk-bar-track"><div class="sk-bar-fill f" style="width:38%"></div></div><span class="sk-bar-val" style="color:var(--fit)">38</span></div>
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Renda</span><div class="sk-bar-track"><div class="sk-bar-fill p" style="width:88%"></div></div><span class="sk-bar-val" style="color:var(--pay)">88</span></div>
+        </div>
+        <div class="sk-desc">Designers que leem métricas ganham <strong>20–35% a mais</strong> que pares. Para Product Design, é requisito. Foco: Google Analytics, Amplitude, Hotjar, SQL básico. Gap fechável em 3 meses de estudo focado.</div>
+        <div class="sk-tools"><span class="sk-tool">Google Analytics 4</span><span class="sk-tool">Amplitude</span><span class="sk-tool">Hotjar</span><span class="sk-tool">SQL básico</span><span class="sk-tool">Looker Studio</span></div>
+      </div>
+
+      <div class="sk-card both-card" data-type="overlap">
+        <div class="sk-top">
+          <div><div class="sk-name">Apresentação & Comunicação Executiva</div><div class="sk-cat">Soft Skills de Liderança</div></div>
+          <div class="sk-type">⭐ ZONA DOURADA</div>
+        </div>
+        <div class="sk-bars">
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Fit</span><div class="sk-bar-track"><div class="sk-bar-fill f" style="width:88%"></div></div><span class="sk-bar-val" style="color:var(--fit)">88</span></div>
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Renda</span><div class="sk-bar-track"><div class="sk-bar-fill p" style="width:78%"></div></div><span class="sk-bar-val" style="color:var(--pay)">78</span></div>
+        </div>
+        <div class="sk-desc">Apresentar estratégia criativa para C-suite, defender conceitos e influenciar decisões. Diferencial raro em criativos. Amplifica valor de qualquer role de liderança em <strong>+25–40%</strong> nas negociações.</div>
+        <div class="sk-tools"><span class="sk-tool">Storytelling</span><span class="sk-tool">Keynote/Slides</span><span class="sk-tool">Facilitação</span><span class="sk-tool">Narrativa de Negócio</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CATEGORIA: Tecnologia & IA -->
+  <div class="cat-section">
+    <div class="cat-header">
+      <div class="cat-icon">🤖</div>
+      <div>
+        <div class="cat-title">Tecnologia, IA & Ferramentas Digitais</div>
+        <div class="cat-sub">Skills técnicas e ferramentas emergentes</div>
+      </div>
+      <div class="cat-count">7 skills</div>
+    </div>
+    <div class="skill-grid" id="grid-tech">
+
+      <div class="sk-card both-card" data-type="overlap">
+        <div class="sk-top">
+          <div><div class="sk-name">AI-Augmented Design</div><div class="sk-cat">IA Generativa</div></div>
+          <div class="sk-type">⭐ ZONA DOURADA</div>
+        </div>
+        <div class="sk-bars">
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Fit</span><div class="sk-bar-track"><div class="sk-bar-fill f" style="width:78%"></div></div><span class="sk-bar-val" style="color:var(--fit)">78</span></div>
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Renda</span><div class="sk-bar-track"><div class="sk-bar-fill p" style="width:90%"></div></div><span class="sk-bar-val" style="color:var(--pay)">90</span></div>
+        </div>
+        <div class="sk-desc">Integrar Midjourney, RunwayML, Sora e ferramentas AI no fluxo criativo. Profissionais que dominam ganham <strong>20–35% a mais</strong>. É um multiplicador de produtividade que qualquer cliente quer.</div>
+        <div class="sk-tools"><span class="sk-tool">Midjourney</span><span class="sk-tool">RunwayML</span><span class="sk-tool">Adobe Firefly</span><span class="sk-tool">Sora</span><span class="sk-tool">Stable Diffusion</span><span class="sk-tool">Claude/GPT-4</span></div>
+      </div>
+
+      <div class="sk-card both-card" data-type="overlap">
+        <div class="sk-top">
+          <div><div class="sk-name">Adobe Creative Suite · Master</div><div class="sk-cat">Produção Criativa</div></div>
+          <div class="sk-type">⭐ ZONA DOURADA</div>
+        </div>
+        <div class="sk-bars">
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Fit</span><div class="sk-bar-track"><div class="sk-bar-fill f" style="width:96%"></div></div><span class="sk-bar-val" style="color:var(--fit)">96</span></div>
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Renda</span><div class="sk-bar-track"><div class="sk-bar-fill p" style="width:72%"></div></div><span class="sk-bar-val" style="color:var(--pay)">72</span></div>
+        </div>
+        <div class="sk-desc">Domínio completo da suite como alavancador de produção. Não é o skill que define salário, mas é a infraestrutura que habilita todos os outros. Essential para posicionamento de especialista.</div>
+        <div class="sk-tools"><span class="sk-tool">Photoshop</span><span class="sk-tool">Illustrator</span><span class="sk-tool">InDesign</span><span class="sk-tool">After Effects</span><span class="sk-tool">Premiere</span><span class="sk-tool">Acrobat</span></div>
+      </div>
+
+      <div class="sk-card both-card" data-type="overlap">
+        <div class="sk-top">
+          <div><div class="sk-name">Figma · Design Colaborativo</div><div class="sk-cat">Ferramenta de Produto</div></div>
+          <div class="sk-type">⭐ ZONA DOURADA</div>
+        </div>
+        <div class="sk-bars">
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Fit</span><div class="sk-bar-track"><div class="sk-bar-fill f" style="width:85%"></div></div><span class="sk-bar-val" style="color:var(--fit)">85</span></div>
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Renda</span><div class="sk-bar-track"><div class="sk-bar-fill p" style="width:88%"></div></div><span class="sk-bar-val" style="color:var(--pay)">88</span></div>
+        </div>
+        <div class="sk-desc">A ferramenta mais demandada em Product Design. Dominar Figma avançado (Auto Layout, Variables, Prototyping interativo) é requisito para qualquer role de PD sênior pagando R$ 11k+.</div>
+        <div class="sk-tools"><span class="sk-tool">Components</span><span class="sk-tool">Auto Layout</span><span class="sk-tool">Variables</span><span class="sk-tool">Prototyping</span><span class="sk-tool">Dev Mode</span><span class="sk-tool">FigJam</span></div>
+      </div>
+
+      <div class="sk-card fit-card" data-type="fit">
+        <div class="sk-top">
+          <div><div class="sk-name">Articulate Storyline · E-learning</div><div class="sk-cat">EdTech</div></div>
+          <div class="sk-type">✦ ALTO FIT</div>
+        </div>
+        <div class="sk-bars">
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Fit</span><div class="sk-bar-track"><div class="sk-bar-fill f" style="width:82%"></div></div><span class="sk-bar-val" style="color:var(--fit)">82</span></div>
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Renda</span><div class="sk-bar-track"><div class="sk-bar-fill p" style="width:58%"></div></div><span class="sk-bar-val" style="color:var(--pay)">58</span></div>
+        </div>
+        <div class="sk-desc">Skill raro no mercado, diferencial para EdTech. Teto de renda médio quando usado isolado, mas EdTechs que escalam contratam Instructional Designers + Motion sênior por R$ 12k–16k.</div>
+        <div class="sk-tools"><span class="sk-tool">Articulate Storyline</span><span class="sk-tool">Rise 360</span><span class="sk-tool">SCORM</span><span class="sk-tool">LMS</span></div>
+      </div>
+
+      <div class="sk-card gap-card" data-type="gap">
+        <div class="sk-top">
+          <div><div class="sk-name">HTML/CSS · Prototipagem</div><div class="sk-cat">Frontend Básico</div></div>
+          <div class="sk-type">🎯 A DESENVOLVER</div>
+        </div>
+        <div class="sk-bars">
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Fit</span><div class="sk-bar-track"><div class="sk-bar-fill f" style="width:30%"></div></div><span class="sk-bar-val" style="color:var(--fit)">30</span></div>
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Renda</span><div class="sk-bar-track"><div class="sk-bar-fill p" style="width:80%"></div></div><span class="sk-bar-val" style="color:var(--pay)">80</span></div>
+        </div>
+        <div class="sk-desc">Designers que escrevem HTML/CSS básico ganham mais e se comunicam melhor com devs. Não precisa ser expert — basta entender o suficiente para prototipar em código e dialogar com engenharia.</div>
+        <div class="sk-tools"><span class="sk-tool">HTML5</span><span class="sk-tool">CSS3</span><span class="sk-tool">Framer</span><span class="sk-tool">Webflow</span></div>
+      </div>
+
+      <div class="sk-card gap-card" data-type="gap">
+        <div class="sk-top">
+          <div><div class="sk-name">No-code · Framer / Webflow</div><div class="sk-cat">Design + Desenvolvimento</div></div>
+          <div class="sk-type">🎯 A DESENVOLVER</div>
+        </div>
+        <div class="sk-bars">
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Fit</span><div class="sk-bar-track"><div class="sk-bar-fill f" style="width:45%"></div></div><span class="sk-bar-val" style="color:var(--fit)">45</span></div>
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Renda</span><div class="sk-bar-track"><div class="sk-bar-fill p" style="width:82%"></div></div><span class="sk-bar-val" style="color:var(--pay)">82</span></div>
+        </div>
+        <div class="sk-desc">Framer e Webflow permitem entregar sites completos sem dev. Designers que constroem em no-code cobram 2–3x mais por projeto do que quem entrega apenas layout. ROI de aprendizagem alto.</div>
+        <div class="sk-tools"><span class="sk-tool">Framer</span><span class="sk-tool">Webflow</span><span class="sk-tool">Notion</span><span class="sk-tool">Relume</span></div>
+      </div>
+
+      <div class="sk-card gap-card" data-type="gap">
+        <div class="sk-top">
+          <div><div class="sk-name">Growth Design & Experimentação</div><div class="sk-cat">Design de Negócio</div></div>
+          <div class="sk-type">🎯 A DESENVOLVER</div>
+        </div>
+        <div class="sk-bars">
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Fit</span><div class="sk-bar-track"><div class="sk-bar-fill f" style="width:35%"></div></div><span class="sk-bar-val" style="color:var(--fit)">35</span></div>
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Renda</span><div class="sk-bar-track"><div class="sk-bar-fill p" style="width:90%"></div></div><span class="sk-bar-val" style="color:var(--pay)">90</span></div>
+        </div>
+        <div class="sk-desc">Growth Designers conduzem experimentos que impactam KPIs de negócio. Alta demanda em fintechs e startups de crescimento. Combina design com mentalidade analítica — próxima fronteira para renda elevada.</div>
+        <div class="sk-tools"><span class="sk-tool">A/B Testing</span><span class="sk-tool">Mixpanel</span><span class="sk-tool">Optimizely</span><span class="sk-tool">Funil de Conversão</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORIA: Negócio & Mercado -->
+  <div class="cat-section">
+    <div class="cat-header">
+      <div class="cat-icon">💼</div>
+      <div>
+        <div class="cat-title">Negócio, Mercado & Setores</div>
+        <div class="cat-sub">Conhecimento de domínio e setores específicos</div>
+      </div>
+      <div class="cat-count">6 skills</div>
+    </div>
+    <div class="skill-grid" id="grid-business">
+
+      <div class="sk-card both-card" data-type="overlap">
+        <div class="sk-top">
+          <div><div class="sk-name">Mercado Regulado · Saúde & Finanças</div><div class="sk-cat">Expertise de Domínio</div></div>
+          <div class="sk-type">⭐ ZONA DOURADA</div>
+        </div>
+        <div class="sk-bars">
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Fit</span><div class="sk-bar-track"><div class="sk-bar-fill f" style="width:80%"></div></div><span class="sk-bar-val" style="color:var(--fit)">80</span></div>
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Renda</span><div class="sk-bar-track"><div class="sk-bar-fill p" style="width:90%"></div></div><span class="sk-bar-val" style="color:var(--pay)">90</span></div>
+        </div>
+        <div class="sk-desc">AstraZeneca e ANBIMA no CV = <strong>25–40% de prêmio salarial</strong> em roles criativos de saúde e finanças. Poucos criativos têm esse histórico. Pode ser explorado como especialidade de nicho altamente remunerada.</div>
+        <div class="sk-tools"><span class="sk-tool">Comunicação Regulada</span><span class="sk-tool">Compliance Visual</span><span class="sk-tool">Farmacêutico</span><span class="sk-tool">Financeiro</span></div>
+      </div>
+
+      <div class="sk-card pay-card" data-type="pay">
+        <div class="sk-top">
+          <div><div class="sk-name">Inglês Avançado · Mercado Global</div><div class="sk-cat">Fluência Internacional</div></div>
+          <div class="sk-type">💎 ALTA RENDA</div>
+        </div>
+        <div class="sk-bars">
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Fit</span><div class="sk-bar-track"><div class="sk-bar-fill f" style="width:70%"></div></div><span class="sk-bar-val" style="color:var(--fit)">70</span></div>
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Renda</span><div class="sk-bar-track"><div class="sk-bar-fill p" style="width:96%"></div></div><span class="sk-bar-val" style="color:var(--pay)">96</span></div>
+        </div>
+        <div class="sk-desc">Com inglês fluente + portfólio em inglês → acesso a mercado de <strong>USD 3k–5k/mês</strong> via Arc.dev, Toptal e agências internacionais. O multiplicador de renda mais potente disponível para seu perfil.</div>
+        <div class="sk-tools"><span class="sk-tool">Comunicação Escrita</span><span class="sk-tool">Apresentação em Inglês</span><span class="sk-tool">Portfólio EN</span><span class="sk-tool">LinkedIn EN</span></div>
+      </div>
+
+      <div class="sk-card fit-card" data-type="fit">
+        <div class="sk-top">
+          <div><div class="sk-name">Social Media · Conteúdo Digital</div><div class="sk-cat">Marketing Digital</div></div>
+          <div class="sk-type">✦ ALTO FIT</div>
+        </div>
+        <div class="sk-bars">
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Fit</span><div class="sk-bar-track"><div class="sk-bar-fill f" style="width:85%"></div></div><span class="sk-bar-val" style="color:var(--fit)">85</span></div>
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Renda</span><div class="sk-bar-track"><div class="sk-bar-fill p" style="width:48%"></div></div><span class="sk-bar-val" style="color:var(--pay)">48</span></div>
+        </div>
+        <div class="sk-desc">Criação para redes tem teto baixo como especialidade isolada — está sendo automatizado. Reposicionamento: Social Media Strategist para marcas premium ou Conteúdo B2B/LinkedIn eleva o valor significativamente.</div>
+        <div class="sk-tools"><span class="sk-tool">Instagram</span><span class="sk-tool">LinkedIn</span><span class="sk-tool">TikTok/Reels</span><span class="sk-tool">Meta Ads criativo</span></div>
+      </div>
+
+      <div class="sk-card pay-card" data-type="pay">
+        <div class="sk-top">
+          <div><div class="sk-name">Design para Conversão · CRO</div><div class="sk-cat">Marketing de Performance</div></div>
+          <div class="sk-type">💎 ALTA RENDA</div>
+        </div>
+        <div class="sk-bars">
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Fit</span><div class="sk-bar-track"><div class="sk-bar-fill f" style="width:48%"></div></div><span class="sk-bar-val" style="color:var(--fit)">48</span></div>
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Renda</span><div class="sk-bar-track"><div class="sk-bar-fill p" style="width:86%"></div></div><span class="sk-bar-val" style="color:var(--pay)">86</span></div>
+        </div>
+        <div class="sk-desc">Landing pages e criativos de performance que aumentam conversão. E-commerce e fintechs pagam muito bem por designers que entendem tanto visual quanto métricas de negócio. Gap médio de fit.</div>
+        <div class="sk-tools"><span class="sk-tool">Landing Pages</span><span class="sk-tool">CRO</span><span class="sk-tool">Criativo de Performance</span><span class="sk-tool">Meta Ads</span><span class="sk-tool">Google Ads</span></div>
+      </div>
+
+      <div class="sk-card fit-card" data-type="fit">
+        <div class="sk-top">
+          <div><div class="sk-name">Produção Gráfica · Impresso</div><div class="sk-cat">Design Gráfico</div></div>
+          <div class="sk-type">✦ ALTO FIT</div>
+        </div>
+        <div class="sk-bars">
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Fit</span><div class="sk-bar-track"><div class="sk-bar-fill f" style="width:88%"></div></div><span class="sk-bar-val" style="color:var(--fit)">88</span></div>
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Renda</span><div class="sk-bar-track"><div class="sk-bar-fill p" style="width:40%"></div></div><span class="sk-bar-val" style="color:var(--pay)">40</span></div>
+        </div>
+        <div class="sk-desc">Expertise em produção gráfica para impresso tem alto fit mas baixo teto no mercado atual. Valor como skill de suporte para direção de arte completa, mas não deve ser posicionada como especialidade principal.</div>
+        <div class="sk-tools"><span class="sk-tool">Pré-impressão</span><span class="sk-tool">CMYK</span><span class="sk-tool">Fornecedores</span><span class="sk-tool">Prova de Cor</span></div>
+      </div>
+
+      <div class="sk-card gap-card" data-type="gap">
+        <div class="sk-top">
+          <div><div class="sk-name">Consultoria Independente · Solo</div><div class="sk-cat">Empreendedorismo</div></div>
+          <div class="sk-type">🎯 A DESENVOLVER</div>
+        </div>
+        <div class="sk-bars">
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Fit</span><div class="sk-bar-track"><div class="sk-bar-fill f" style="width:62%"></div></div><span class="sk-bar-val" style="color:var(--fit)">62</span></div>
+          <div class="sk-bar-row"><span class="sk-bar-lbl">Renda</span><div class="sk-bar-track"><div class="sk-bar-fill p" style="width:95%"></div></div><span class="sk-bar-val" style="color:var(--pay)">95</span></div>
+        </div>
+        <div class="sk-desc">Estruturar oferta, precificar valor, captação de clientes e delivery como consultor. Rota de maior potencial de renda (R$ 30k–50k/mês equivalente). Fit médio atual — requer construção de reputação e rede.</div>
+        <div class="sk-tools"><span class="sk-tool">Proposta de Valor</span><span class="sk-tool">Precificação por Valor</span><span class="sk-tool">Network</span><span class="sk-tool">Case Building</span><span class="sk-tool">Contratos</span></div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /panel-all -->
+
+<!-- ════ PANEL: OVERLAP ════ -->
+<div id="panel-overlap" class="panel">
+  <div style="margin-bottom:32px;padding:24px;background:rgba(255,184,0,.04);border:1px solid rgba(255,184,0,.25);border-radius:16px;">
+    <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--overlap);text-transform:uppercase;margin-bottom:8px;">⭐ Zona Dourada — Prioridade Máxima</div>
+    <div style="font-size:16px;color:var(--text2);">Estas são as skills onde seu <strong style="color:var(--text)">fit natural é alto E a remuneração de mercado é elevada</strong>. São seu principal ativo competitivo — invista em aprofundar e comunicar melhor cada uma delas.</div>
+  </div>
+  <div class="skill-grid" id="grid-overlap"></div>
+</div>
+
+<!-- ════ PANEL: FIT ════ -->
+<div id="panel-fit" class="panel">
+  <div style="margin-bottom:32px;padding:24px;background:rgba(57,255,133,.04);border:1px solid rgba(57,255,133,.22);border-radius:16px;">
+    <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--fit);text-transform:uppercase;margin-bottom:8px;">✦ Alto Fit · Rever Posicionamento</div>
+    <div style="font-size:16px;color:var(--text2);">Skills que você <strong style="color:var(--text)">domina com naturalidade mas que pagam menos no mercado atual</strong>. Use como base e suporte, mas evite posicioná-las como especialidade principal sem reframe estratégico.</div>
+  </div>
+  <div class="skill-grid" id="grid-fit"></div>
+</div>
+
+<!-- ════ PANEL: PAY ════ -->
+<div id="panel-pay" class="panel">
+  <div style="margin-bottom:32px;padding:24px;background:rgba(191,95,255,.04);border:1px solid rgba(191,95,255,.25);border-radius:16px;">
+    <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--pay);text-transform:uppercase;margin-bottom:8px;">💎 Alta Remuneração · Gap a Fechar</div>
+    <div style="font-size:16px;color:var(--text2);">Estas áreas <strong style="color:var(--text)">pagam significativamente mais que sua posição atual</strong> mas exigem desenvolvimento. O gap de fit é real, mas fechável. Cada uma representa um salto de 20–80% de renda.</div>
+  </div>
+  <div class="skill-grid" id="grid-pay"></div>
+</div>
+
+<!-- ════ PANEL: GAP ════ -->
+<div id="panel-gap" class="panel">
+  <div style="margin-bottom:32px;padding:24px;background:rgba(0,229,255,.03);border:1px solid rgba(0,229,255,.2);border-radius:16px;">
+    <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--neutral);text-transform:uppercase;margin-bottom:8px;">🎯 A Desenvolver · Apostas Estratégicas</div>
+    <div style="font-size:16px;color:var(--text2);">Skills emergentes que <strong style="color:var(--text)">abrem novos mercados e plataformas de renda</strong>. Fit atual baixo-médio, mas são investimentos com alto ROI no médio prazo dado o momentum de mercado.</div>
+  </div>
+  <div class="skill-grid" id="grid-gap"></div>
+</div>
+
+<!-- ════ PANEL: MATRIX ════ -->
+<div id="panel-matrix" class="panel">
+  <div class="matrix-wrap">
+    <div class="section-title">matriz fit × remuneração de mercado</div>
+    <div class="matrix">
+      <div class="matrix-axes">
+        <div class="axis-line-h"></div>
+        <div class="axis-line-v"></div>
+        <div class="q-label tl">baixo fit · alta renda</div>
+        <div class="q-label tr">alto fit · alta renda</div>
+        <div class="q-label bl">baixo fit · baixa renda</div>
+        <div class="q-label br">alto fit · baixa renda</div>
+
+        <!-- ZONA DOURADA (alto fit · alta renda) — quadrante superior direito -->
+        <div class="skill-dot both-type lg" style="left:72%;top:12%"><div class="dot"></div><div class="dot-label">Direção de Arte</div></div>
+        <div class="skill-dot both-type lg" style="left:80%;top:20%"><div class="dot"></div><div class="dot-label">Brand Strategy</div></div>
+        <div class="skill-dot both-type" style="left:65%;top:28%"><div class="dot"></div><div class="dot-label">Gestão de Times</div></div>
+        <div class="skill-dot both-type lg" style="left:78%;top:8%"><div class="dot"></div><div class="dot-label">Brand Identity</div></div>
+        <div class="skill-dot both-type" style="left:60%;top:18%"><div class="dot"></div><div class="dot-label">Campanha 360°</div></div>
+        <div class="skill-dot both-type" style="left:88%;top:30%"><div class="dot"></div><div class="dot-label">Mercado Regulado</div></div>
+        <div class="skill-dot both-type" style="left:70%;top:38%"><div class="dot"></div><div class="dot-label">AI-Augmented Design</div></div>
+        <div class="skill-dot both-type" style="left:82%;top:42%"><div class="dot"></div><div class="dot-label">Motion Design</div></div>
+        <div class="skill-dot both-type" style="left:63%;top:8%"><div class="dot"></div><div class="dot-label">Figma Avançado</div></div>
+        <div class="skill-dot both-type" style="left:58%;top:34%"><div class="dot"></div><div class="dot-label">Exec. Communication</div></div>
+        <div class="skill-dot both-type" style="left:90%;top:18%"><div class="dot"></div><div class="dot-label">Adobe Suite</div></div>
+        <div class="skill-dot both-type" style="left:74%;top:46%"><div class="dot"></div><div class="dot-label">Criação Integrada</div></div>
+
+        <!-- ALTA RENDA / BAIXO FIT — quadrante superior esquerdo -->
+        <div class="skill-dot pay-type lg" style="left:22%;top:6%"><div class="dot"></div><div class="dot-label">Product Design</div></div>
+        <div class="skill-dot pay-type lg" style="left:14%;top:14%"><div class="dot"></div><div class="dot-label">Inglês · Mercado Global</div></div>
+        <div class="skill-dot pay-type" style="left:30%;top:10%"><div class="dot"></div><div class="dot-label">Product Management</div></div>
+        <div class="skill-dot pay-type" style="left:18%;top:26%"><div class="dot"></div><div class="dot-label">Análise de Dados</div></div>
+        <div class="skill-dot pay-type" style="left:38%;top:18%"><div class="dot"></div><div class="dot-label">3D Avançado</div></div>
+        <div class="skill-dot pay-type" style="left:26%;top:36%"><div class="dot"></div><div class="dot-label">CRO · Performance</div></div>
+        <div class="skill-dot pay-type" style="left:10%;top:38%"><div class="dot"></div><div class="dot-label">Consultoria Independente</div></div>
+        <div class="skill-dot pay-type" style="left:42%;top:30%"><div class="dot"></div><div class="dot-label">Growth Design</div></div>
+
+        <!-- ALTO FIT / BAIXA RENDA — quadrante inferior direito -->
+        <div class="skill-dot fit-type" style="left:68%;top:62%"><div class="dot"></div><div class="dot-label">Design Editorial</div></div>
+        <div class="skill-dot fit-type" style="left:80%;top:70%"><div class="dot"></div><div class="dot-label">Fotografia</div></div>
+        <div class="skill-dot fit-type" style="left:58%;top:78%"><div class="dot"></div><div class="dot-label">Social Media</div></div>
+        <div class="skill-dot fit-type" style="left:72%;top:86%"><div class="dot"></div><div class="dot-label">Produção Gráfica</div></div>
+        <div class="skill-dot fit-type" style="left:88%;top:62%"><div class="dot"></div><div class="dot-label">Articulate Storyline</div></div>
+        <div class="skill-dot fit-type" style="left:64%;top:72%"><div class="dot"></div><div class="dot-label">Gestão de Budget</div></div>
+
+        <!-- GAP / A DESENVOLVER -->
+        <div class="skill-dot gap-type" style="left:28%;top:60%"><div class="dot"></div><div class="dot-label">HTML/CSS</div></div>
+        <div class="skill-dot gap-type" style="left:38%;top:72%"><div class="dot"></div><div class="dot-label">Framer · Webflow</div></div>
+        <div class="skill-dot gap-type" style="left:18%;top:78%"><div class="dot"></div><div class="dot-label">No-code</div></div>
+        <div class="skill-dot gap-type" style="left:44%;top:64%"><div class="dot"></div><div class="dot-label">Growth Design</div></div>
+
+      </div>
+      <div class="matrix-footer">
+        <span class="ax-lbl">← baixo fit</span>
+        <span class="ax-center">eixo horizontal: fit natural do perfil →</span>
+        <span class="ax-lbl right">alto fit →</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">
+        <div style="width:8px;height:8px;border-radius:50%;background:var(--overlap);box-shadow:0 0 6px var(--overlap);"></div>Zona Dourada (aposte aqui)
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">
+        <div style="width:8px;height:8px;border-radius:50%;background:var(--pay);box-shadow:0 0 6px var(--pay);"></div>Alta Renda · Gap a Fechar
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">
+        <div style="width:8px;height:8px;border-radius:50%;background:var(--fit);box-shadow:0 0 6px var(--fit);"></div>Alto Fit · Rever Posicionamento
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">
+        <div style="width:8px;height:8px;border-radius:50%;background:rgba(0,229,255,.8);box-shadow:0 0 6px var(--neutral);"></div>A Desenvolver
+      </div>
+      <div style="margin-left:auto;font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);">eixo vertical: remuneração de mercado ↑</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ PANEL: TABLE ════ -->
+<div id="panel-table" class="panel">
+  <div class="section-title">ranking completo de skills · fit × remuneração</div>
+  <div class="priority-table">
+    <div class="pt-head">
+      <div class="pt-hcell">skill / categoria</div>
+      <div class="pt-hcell">tipo</div>
+      <div class="pt-hcell">fit</div>
+      <div class="pt-hcell">renda</div>
+      <div class="pt-hcell">prioridade</div>
+    </div>
+
+    <div class="pt-row">
+      <div><div class="pt-name">Direção de Arte · Estratégia</div><div class="pt-cat">Liderança Criativa</div></div>
+      <div><div class="pt-pill B">ZONA DOURADA</div></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f oc" style="width:98%"></div></div><span class="pt-v" style="color:var(--overlap)">98</span></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f oc" style="width:82%"></div></div><span class="pt-v" style="color:var(--overlap)">82</span></div>
+      <div><div class="pt-priority P1">P1 · CORE</div></div>
+    </div>
+    <div class="pt-row">
+      <div><div class="pt-name">Inglês · Mercado Global</div><div class="pt-cat">Fluência Internacional</div></div>
+      <div><div class="pt-pill P">ALTA RENDA</div></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f pc" style="width:70%"></div></div><span class="pt-v" style="color:var(--pay)">70</span></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f pc" style="width:96%"></div></div><span class="pt-v" style="color:var(--pay)">96</span></div>
+      <div><div class="pt-priority P1">P1 · URGENTE</div></div>
+    </div>
+    <div class="pt-row">
+      <div><div class="pt-name">Brand Identity & Design Systems</div><div class="pt-cat">Design Estratégico</div></div>
+      <div><div class="pt-pill B">ZONA DOURADA</div></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f oc" style="width:95%"></div></div><span class="pt-v" style="color:var(--overlap)">95</span></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f oc" style="width:88%"></div></div><span class="pt-v" style="color:var(--overlap)">88</span></div>
+      <div><div class="pt-priority P1">P1 · CORE</div></div>
+    </div>
+    <div class="pt-row">
+      <div><div class="pt-name">Product Design (UI/UX)</div><div class="pt-cat">Design de Produto Digital</div></div>
+      <div><div class="pt-pill P">ALTA RENDA</div></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f pc" style="width:55%"></div></div><span class="pt-v" style="color:var(--pay)">55</span></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f pc" style="width:92%"></div></div><span class="pt-v" style="color:var(--pay)">92</span></div>
+      <div><div class="pt-priority P1">P1 · INVESTIR</div></div>
+    </div>
+    <div class="pt-row">
+      <div><div class="pt-name">Gestão de Times Criativos</div><div class="pt-cat">People Management</div></div>
+      <div><div class="pt-pill B">ZONA DOURADA</div></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f oc" style="width:92%"></div></div><span class="pt-v" style="color:var(--overlap)">92</span></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f oc" style="width:86%"></div></div><span class="pt-v" style="color:var(--overlap)">86</span></div>
+      <div><div class="pt-priority P1">P1 · ATIVAR</div></div>
+    </div>
+    <div class="pt-row">
+      <div><div class="pt-name">AI-Augmented Design</div><div class="pt-cat">IA Generativa</div></div>
+      <div><div class="pt-pill B">ZONA DOURADA</div></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f oc" style="width:78%"></div></div><span class="pt-v" style="color:var(--overlap)">78</span></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f oc" style="width:90%"></div></div><span class="pt-v" style="color:var(--overlap)">90</span></div>
+      <div><div class="pt-priority P1">P1 · APROFUNDAR</div></div>
+    </div>
+    <div class="pt-row">
+      <div><div class="pt-name">Estratégia de Marca · Brand Strategy</div><div class="pt-cat">Branding Estratégico</div></div>
+      <div><div class="pt-pill B">ZONA DOURADA</div></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f oc" style="width:86%"></div></div><span class="pt-v" style="color:var(--overlap)">86</span></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f oc" style="width:84%"></div></div><span class="pt-v" style="color:var(--overlap)">84</span></div>
+      <div><div class="pt-priority P1">P1 · EXPANDIR</div></div>
+    </div>
+    <div class="pt-row">
+      <div><div class="pt-name">Mercado Regulado · Saúde & Finanças</div><div class="pt-cat">Expertise de Domínio</div></div>
+      <div><div class="pt-pill B">ZONA DOURADA</div></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f oc" style="width:80%"></div></div><span class="pt-v" style="color:var(--overlap)">80</span></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f oc" style="width:90%"></div></div><span class="pt-v" style="color:var(--overlap)">90</span></div>
+      <div><div class="pt-priority P2">P2 · EXPLORAR</div></div>
+    </div>
+    <div class="pt-row">
+      <div><div class="pt-name">Motion Design & Animação</div><div class="pt-cat">Produção Digital</div></div>
+      <div><div class="pt-pill B">ZONA DOURADA</div></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f oc" style="width:80%"></div></div><span class="pt-v" style="color:var(--overlap)">80</span></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f oc" style="width:85%"></div></div><span class="pt-v" style="color:var(--overlap)">85</span></div>
+      <div><div class="pt-priority P2">P2 · MANTER</div></div>
+    </div>
+    <div class="pt-row">
+      <div><div class="pt-name">Figma · Design Colaborativo</div><div class="pt-cat">Ferramenta de Produto</div></div>
+      <div><div class="pt-pill B">ZONA DOURADA</div></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f oc" style="width:85%"></div></div><span class="pt-v" style="color:var(--overlap)">85</span></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f oc" style="width:88%"></div></div><span class="pt-v" style="color:var(--overlap)">88</span></div>
+      <div><div class="pt-priority P2">P2 · DOMINAR</div></div>
+    </div>
+    <div class="pt-row">
+      <div><div class="pt-name">Gestão de Produto Digital</div><div class="pt-cat">Product Management</div></div>
+      <div><div class="pt-pill P">ALTA RENDA</div></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f pc" style="width:42%"></div></div><span class="pt-v" style="color:var(--pay)">42</span></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f pc" style="width:94%"></div></div><span class="pt-v" style="color:var(--pay)">94</span></div>
+      <div><div class="pt-priority P2">P2 · AVALIAR</div></div>
+    </div>
+    <div class="pt-row">
+      <div><div class="pt-name">Análise de Dados & Métricas</div><div class="pt-cat">Data-Driven Design</div></div>
+      <div><div class="pt-pill P">ALTA RENDA</div></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f pc" style="width:38%"></div></div><span class="pt-v" style="color:var(--pay)">38</span></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f pc" style="width:88%"></div></div><span class="pt-v" style="color:var(--pay)">88</span></div>
+      <div><div class="pt-priority P2">P2 · FECHAR GAP</div></div>
+    </div>
+    <div class="pt-row">
+      <div><div class="pt-name">Consultoria Independente</div><div class="pt-cat">Empreendedorismo</div></div>
+      <div><div class="pt-pill G">A DESENVOLVER</div></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f nc" style="width:62%"></div></div><span class="pt-v" style="color:var(--neutral)">62</span></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f nc" style="width:95%"></div></div><span class="pt-v" style="color:var(--neutral)">95</span></div>
+      <div><div class="pt-priority P2">P2 · ESTRUTURAR</div></div>
+    </div>
+    <div class="pt-row">
+      <div><div class="pt-name">3D & Visualização Avançada</div><div class="pt-cat">Design Digital</div></div>
+      <div><div class="pt-pill P">ALTA RENDA</div></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f pc" style="width:40%"></div></div><span class="pt-v" style="color:var(--pay)">40</span></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f pc" style="width:88%"></div></div><span class="pt-v" style="color:var(--pay)">88</span></div>
+      <div><div class="pt-priority P3">P3 · MÉDIO PRAZO</div></div>
+    </div>
+    <div class="pt-row">
+      <div><div class="pt-name">Adobe Creative Suite</div><div class="pt-cat">Produção Criativa</div></div>
+      <div><div class="pt-pill B">ZONA DOURADA</div></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f oc" style="width:96%"></div></div><span class="pt-v" style="color:var(--overlap)">96</span></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f oc" style="width:72%"></div></div><span class="pt-v" style="color:var(--overlap)">72</span></div>
+      <div><div class="pt-priority P3">P3 · MANTER</div></div>
+    </div>
+    <div class="pt-row">
+      <div><div class="pt-name">No-code · Framer / Webflow</div><div class="pt-cat">Design + Dev</div></div>
+      <div><div class="pt-pill G">A DESENVOLVER</div></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f nc" style="width:45%"></div></div><span class="pt-v" style="color:var(--neutral)">45</span></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f nc" style="width:82%"></div></div><span class="pt-v" style="color:var(--neutral)">82</span></div>
+      <div><div class="pt-priority P3">P3 · APOSTAR</div></div>
+    </div>
+    <div class="pt-row">
+      <div><div class="pt-name">Apresentação & Comunicação Executiva</div><div class="pt-cat">Soft Skills</div></div>
+      <div><div class="pt-pill B">ZONA DOURADA</div></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f oc" style="width:88%"></div></div><span class="pt-v" style="color:var(--overlap)">88</span></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f oc" style="width:78%"></div></div><span class="pt-v" style="color:var(--overlap)">78</span></div>
+      <div><div class="pt-priority P3">P3 · USAR</div></div>
+    </div>
+    <div class="pt-row">
+      <div><div class="pt-name">Design Gráfico Editorial</div><div class="pt-cat">Produção Visual</div></div>
+      <div><div class="pt-pill F">ALTO FIT</div></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f fc" style="width:90%"></div></div><span class="pt-v" style="color:var(--fit)">90</span></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f fc" style="width:52%"></div></div><span class="pt-v" style="color:var(--fit)">52</span></div>
+      <div><div class="pt-priority P4">P4 · SUPORTE</div></div>
+    </div>
+    <div class="pt-row">
+      <div><div class="pt-name">Social Media · Conteúdo Digital</div><div class="pt-cat">Marketing Digital</div></div>
+      <div><div class="pt-pill F">ALTO FIT</div></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f fc" style="width:85%"></div></div><span class="pt-v" style="color:var(--fit)">85</span></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f fc" style="width:48%"></div></div><span class="pt-v" style="color:var(--fit)">48</span></div>
+      <div><div class="pt-priority P4">P4 · REPOSICIONAR</div></div>
+    </div>
+    <div class="pt-row">
+      <div><div class="pt-name">Articulate Storyline · E-learning</div><div class="pt-cat">EdTech</div></div>
+      <div><div class="pt-pill F">ALTO FIT</div></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f fc" style="width:82%"></div></div><span class="pt-v" style="color:var(--fit)">82</span></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f fc" style="width:58%"></div></div><span class="pt-v" style="color:var(--fit)">58</span></div>
+      <div><div class="pt-priority P4">P4 · NICHO</div></div>
+    </div>
+    <div class="pt-row">
+      <div><div class="pt-name">Produção Gráfica · Impresso</div><div class="pt-cat">Design Gráfico</div></div>
+      <div><div class="pt-pill F">ALTO FIT</div></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f fc" style="width:88%"></div></div><span class="pt-v" style="color:var(--fit)">88</span></div>
+      <div class="pt-bar-wrap"><div class="pt-bar"><div class="pt-bar-f fc" style="width:40%"></div></div><span class="pt-v" style="color:var(--fit)">40</span></div>
+      <div><div class="pt-priority P4">P4 · DEPRECAR</div></div>
+    </div>
+
+  </div>
+</div>
+
+</main>
+
+<div class="toast" id="toast">
+  <div class="t-ico">⭐</div>
+  <div><div class="t-t">Skills Map Carregado</div><div class="t-s">Flavio Guedes · 35 skills mapeadas</div></div>
+</div>
+
+<script>
+// ── populate filter panels ──
+document.addEventListener('DOMContentLoaded', () => {
+  const allCards = document.querySelectorAll('#panel-all .sk-card');
+  const gridOverlap = document.getElementById('grid-overlap');
+  const gridFit = document.getElementById('grid-fit');
+  const gridPay = document.getElementById('grid-pay');
+  const gridGap = document.getElementById('grid-gap');
+
+  allCards.forEach(card => {
+    const type = card.dataset.type;
+    const clone = card.cloneNode(true);
+    if (type === 'overlap') gridOverlap.appendChild(clone);
+    else if (type === 'fit') gridFit.appendChild(clone);
+    else if (type === 'pay') gridPay.appendChild(clone);
+    else if (type === 'gap') gridGap.appendChild(clone);
+  });
+
+  // animate bars after load
+  setTimeout(() => {
+    document.querySelectorAll('.sk-bar-fill').forEach(b => {
+      const w = b.style.width;
+      b.style.width = '0';
+      requestAnimationFrame(() => {
+        setTimeout(() => { b.style.width = w; }, 50);
+      });
+    });
+  }, 200);
+});
+
+function filterSkills(type, btn) {
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('on'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  btn.classList.add('on');
+  const panelMap = {
+    all: 'panel-all',
+    overlap: 'panel-overlap',
+    fit: 'panel-fit',
+    pay: 'panel-pay',
+    gap: 'panel-gap',
+    matrix: 'panel-matrix',
+    table: 'panel-table'
+  };
+  const panel = document.getElementById(panelMap[type]);
+  if (panel) panel.classList.add('on');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// toast
+setTimeout(() => {
+  const t = document.getElementById('toast');
+  t.classList.add('on');
+  setTimeout(() => t.classList.remove('on'), 3500);
+}, 700);
+</script>
+</body>
+</html>
