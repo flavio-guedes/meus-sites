@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zona Dourada — Produto / UX · Liderança</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --ink: #0A0A0F;
+  --ink2: #13131A;
+  --ink3: #1C1C26;
+  --ink4: #252532;
+  --line: rgba(255,255,255,0.06);
+  --text: #E4E0F0;
+  --text-dim: #7A7590;
+  --text-faint: #3D3A50;
+
+  --amber: #D4A843;
+  --amber-light: #F2CA70;
+  --amber-dim: rgba(212,168,67,0.15);
+  --amber-glow: rgba(212,168,67,0.06);
+
+  --violet: #9B7FE8;
+  --violet-dim: rgba(155,127,232,0.15);
+  --teal: #4ECBA8;
+  --teal-dim: rgba(78,203,168,0.12);
+  --coral: #F07060;
+  --coral-dim: rgba(240,112,96,0.12);
+  --sky: #60A8E8;
+  --sky-dim: rgba(96,168,232,0.12);
+
+  --r1: 20px;
+  --r2: 14px;
+  --r3: 8px;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--ink);
+  color: var(--text);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ── NOISE TEXTURE OVERLAY ── */
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none; z-index:0;
+}
+
+/* ── HEADER ── */
+.header {
+  position: relative; z-index:1;
+  padding: 40px 48px 32px;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  align-items: end;
+  background: linear-gradient(180deg, rgba(212,168,67,0.04) 0%, transparent 100%);
+}
+.header-eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--amber);
+  opacity: 0.8;
+  margin-bottom: 10px;
+  display:flex; align-items:center; gap:8px;
+}
+.header-eyebrow::before { content:''; display:block; width:24px; height:1px; background:var(--amber); opacity:0.5; }
+.header-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(36px, 5vw, 58px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -1px;
+  color: var(--text);
+}
+.header-title em {
+  font-style: italic;
+  background: linear-gradient(120deg, var(--amber-light), var(--amber));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.header-meta {
+  margin-top: 12px;
+  display: flex; gap: 16px; flex-wrap:wrap;
+}
+.header-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 100px;
+  border: 1px solid;
+}
+.tag-area { color: var(--violet); border-color: rgba(155,127,232,0.3); background: var(--violet-dim); }
+.tag-level { color: var(--teal); border-color: rgba(78,203,168,0.25); background: var(--teal-dim); }
+.tag-goal { color: var(--amber); border-color: rgba(212,168,67,0.3); background: var(--amber-dim); }
+
+/* dim tags */
+.header-dimensions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+}
+.dim-item {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  display: flex; align-items: center; gap: 6px;
+}
+.dim-dot { width:6px; height:6px; border-radius:50%; background: var(--amber); }
+
+/* ── BODY ── */
+.body { position:relative; z-index:1; max-width:1380px; margin:0 auto; padding: 36px 48px 60px; }
+
+/* ── SALARY BAND ── */
+.salary-band {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 40px;
+}
+@media(max-width:900px){ .salary-band { grid-template-columns: repeat(2,1fr); } }
+@media(max-width:500px){ .salary-band { grid-template-columns: 1fr; } }
+
+.sal-card {
+  background: var(--ink2);
+  border: 1px solid var(--line);
+  border-radius: var(--r1);
+  padding: 22px 20px;
+  position: relative; overflow:hidden;
+  transition: border-color 0.25s, transform 0.25s;
+}
+.sal-card:hover { transform: translateY(-3px); }
+.sal-card.featured { border-color: rgba(212,168,67,0.3); background: linear-gradient(135deg, #120e00, var(--ink2)); }
+.sal-card.featured::before {
+  content:''; position:absolute; top:-40px; right:-40px;
+  width:120px; height:120px;
+  background: radial-gradient(circle, rgba(212,168,67,0.12) 0%, transparent 70%);
+}
+.sal-card-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; letter-spacing:2px; text-transform:uppercase;
+  margin-bottom: 10px;
+}
+.sal-card-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 38px; font-weight:700; line-height:1;
+  margin-bottom: 4px;
+}
+.sal-card-range {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; color: var(--text-dim);
+  margin-bottom: 8px;
+}
+.sal-card-note { font-size: 11px; color: var(--text-dim); line-height: 1.4; }
+
+/* ── SECTION HEADER ── */
+.sec-head {
+  display: flex; align-items: baseline; gap: 12px;
+  margin-bottom: 20px; margin-top: 40px;
+}
+.sec-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; letter-spacing:2px; color: var(--amber); opacity:0.6;
+}
+.sec-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight:600; color: var(--text);
+}
+.sec-line { flex:1; height:1px; background: var(--line); }
+
+/* ── SKILLS MATRIX ── */
+.skills-matrix {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 10px;
+}
+@media(max-width:900px){ .skills-matrix { grid-template-columns: repeat(2,1fr); } }
+@media(max-width:560px){ .skills-matrix { grid-template-columns: 1fr; } }
+
+.sk-card {
+  background: var(--ink2);
+  border: 1px solid var(--line);
+  border-radius: var(--r2);
+  padding: 18px 18px 16px;
+  cursor: default;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+.sk-card:hover { border-color: rgba(212,168,67,0.25); box-shadow: 0 6px 24px rgba(0,0,0,0.5); }
+
+.sk-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; gap:8px; }
+.sk-name { font-size:13px; font-weight:600; color:var(--text); line-height:1.3; }
+
+.sk-badge {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:8px; letter-spacing:1.5px; text-transform:uppercase;
+  padding: 3px 9px; border-radius:100px; flex-shrink:0;
+  border:1px solid;
+}
+.b-focar    { color:var(--amber);  border-color:rgba(212,168,67,0.4);  background:var(--amber-dim); }
+.b-mudar    { color:var(--violet); border-color:rgba(155,127,232,0.35); background:var(--violet-dim); }
+.b-tecnico  { color:var(--teal);   border-color:rgba(78,203,168,0.3);   background:var(--teal-dim); }
+.b-mercado  { color:var(--sky);    border-color:rgba(96,168,232,0.3);   background:var(--sky-dim); }
+
+.sk-desc { font-size:11px; color:var(--text-dim); line-height:1.55; margin-bottom:12px; }
+
+.sk-bottom { display:flex; justify-content:space-between; align-items:center; }
+.sk-impact-wrap { display:flex; flex-direction:column; gap:4px; }
+.sk-impact-label { font-family:'IBM Plex Mono',monospace; font-size:8px; letter-spacing:1px; text-transform:uppercase; color:var(--text-faint); }
+.sk-dots { display:flex; gap:3px; }
+.sk-dot { width:14px; height:4px; border-radius:2px; background: var(--ink4); }
+.sk-dot.on-amber  { background: var(--amber); }
+.sk-dot.on-violet { background: var(--violet); }
+.sk-dot.on-teal   { background: var(--teal); }
+.sk-dot.on-sky    { background: var(--sky); }
+
+.sk-roi {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  text-align:right;
+}
+
+/* urgency stripe */
+.sk-card::before {
+  content:''; position:absolute;
+  left:0; top:16px; bottom:16px;
+  width:3px; border-radius:0 2px 2px 0;
+}
+.sk-card.urg-high::before { background: var(--amber); }
+.sk-card.urg-mid::before  { background: var(--violet); }
+.sk-card.urg-low::before  { background: var(--sky); }
+
+/* ── LEGEND ── */
+.legend-row {
+  display:flex; gap:20px; flex-wrap:wrap;
+  margin-bottom:20px;
+}
+.leg-item {
+  display:flex; align-items:center; gap:7px;
+  font-family:'IBM Plex Mono',monospace; font-size:9px;
+  letter-spacing:1px; text-transform:uppercase; color:var(--text-dim);
+}
+.leg-swatch { width:10px; height:10px; border-radius:3px; }
+.ls-amber  { background:var(--amber); }
+.ls-violet { background:var(--violet); }
+.ls-teal   { background:var(--teal); }
+.ls-sky    { background:var(--sky); }
+
+/* ── ROLES TABLE ── */
+.roles-wrap {
+  background: var(--ink2);
+  border: 1px solid var(--line);
+  border-radius: var(--r1);
+  overflow:hidden;
+  margin-bottom: 10px;
+}
+.roles-thead {
+  display:grid;
+  grid-template-columns: 2.2fr 1.8fr 1fr 1.2fr 1.5fr;
+  padding: 11px 20px;
+  background: rgba(212,168,67,0.06);
+  border-bottom: 1px solid rgba(212,168,67,0.12);
+}
+.roles-thead span, .roles-td-label {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:8px; letter-spacing:2px; text-transform:uppercase;
+  color:var(--amber); opacity:0.7;
+}
+.roles-row {
+  display:grid;
+  grid-template-columns: 2.2fr 1.8fr 1fr 1.2fr 1.5fr;
+  padding:13px 20px;
+  border-bottom: 1px solid var(--line);
+  align-items:center;
+  transition: background 0.15s;
+}
+.roles-row:last-child { border-bottom:none; }
+.roles-row:hover { background: rgba(212,168,67,0.03); }
+.r-name { font-size:13px; font-weight:500; color:var(--text); }
+.r-name small { display:block; font-size:10px; font-weight:300; color:var(--text-dim); margin-top:1px; }
+.r-skills { font-size:10px; color:var(--text-dim); line-height:1.4; }
+.r-level {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9px; padding:3px 9px; border-radius:100px;
+  display:inline-block;
+}
+.lv-sr    { background:rgba(212,168,67,0.1);    color:var(--amber); }
+.lv-lead  { background:rgba(240,112,96,0.1);    color:var(--coral); }
+.lv-staff { background:rgba(155,127,232,0.1);   color:var(--violet); }
+.lv-exec  { background:rgba(78,203,168,0.1);    color:var(--teal); }
+.r-sal {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px; font-weight:500;
+}
+.r-sal.hi { color:var(--amber); }
+.r-sal.md { color:var(--teal); }
+.r-mkt { font-size:10px; color:var(--text-dim); line-height:1.35; }
+
+@media(max-width:860px){
+  .roles-thead, .roles-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .roles-thead span:nth-child(n+3), .roles-row > *:nth-child(n+3) { display:none; }
+}
+
+/* ── MARKET CARDS ── */
+.market-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+@media(max-width:860px){ .market-grid { grid-template-columns: repeat(2,1fr); } }
+@media(max-width:540px){ .market-grid { grid-template-columns: 1fr; } }
+
+.mkt-card {
+  background: var(--ink2);
+  border: 1px solid var(--line);
+  border-radius: var(--r2);
+  padding: 20px;
+  transition: border-color 0.2s, transform 0.2s;
+  display:flex; flex-direction:column; gap:10px;
+}
+.mkt-card:hover { border-color: rgba(212,168,67,0.2); transform:translateY(-2px); }
+.mkt-card.starred { border-color: rgba(212,168,67,0.3); background: linear-gradient(135deg, #0e0c00, var(--ink2)); }
+.mkt-header { display:flex; justify-content:space-between; align-items:flex-start; }
+.mkt-icon { font-size:22px; }
+.mkt-star {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:8px; letter-spacing:1.5px; text-transform:uppercase;
+  padding:3px 8px; border-radius:100px;
+  color:var(--amber); border:1px solid rgba(212,168,67,0.3); background:var(--amber-dim);
+}
+.mkt-name { font-size:13px; font-weight:600; color:var(--text); }
+.mkt-fit {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:8px; letter-spacing:1px; text-transform:uppercase;
+  color:var(--text-dim); margin-top:-4px;
+}
+.mkt-desc { font-size:11px; color:var(--text-dim); line-height:1.55; }
+.mkt-tags { display:flex; flex-wrap:wrap; gap:5px; }
+.mkt-tag {
+  font-size:10px; padding:3px 8px; border-radius:6px;
+  background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07);
+  color:var(--text-dim);
+}
+.mkt-pay {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px; color:var(--amber);
+  padding-top:6px; border-top:1px solid var(--line);
+}
+.mkt-access {
+  font-size:10px; color:var(--text-dim);
+  display:flex; align-items:center; gap:5px;
+}
+.mkt-access::before { content:'→'; color:var(--amber); font-size:10px; }
+
+/* ── APPROACH CARDS ── */
+.approach-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+@media(max-width:700px){ .approach-grid { grid-template-columns:1fr; } }
+
+.appr-card {
+  background: var(--ink2);
+  border: 1px solid var(--line);
+  border-radius: var(--r2);
+  padding: 24px;
+  display:flex; gap:18px;
+  transition: border-color 0.2s;
+}
+.appr-card:hover { border-color: rgba(212,168,67,0.2); }
+.appr-card.priority { border-color: rgba(212,168,67,0.35); background: linear-gradient(135deg, #100e00, var(--ink2)); }
+.appr-num {
+  font-family:'Cormorant Garamond',serif;
+  font-size:52px; font-weight:700; line-height:1;
+  color:rgba(212,168,67,0.15);
+  min-width:42px;
+}
+.appr-card.priority .appr-num { color:rgba(212,168,67,0.3); }
+.appr-body {}
+.appr-tag {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:8px; letter-spacing:2px; text-transform:uppercase;
+  color:var(--amber); margin-bottom:6px;
+}
+.appr-title { font-size:14px; font-weight:600; color:var(--text); margin-bottom:8px; line-height:1.3; }
+.appr-desc  { font-size:11px; color:var(--text-dim); line-height:1.55; margin-bottom:12px; }
+.appr-steps { display:flex; flex-direction:column; gap:6px; }
+.appr-step  { font-size:11px; color:var(--text-dim); display:flex; align-items:flex-start; gap:8px; line-height:1.4; }
+.step-arrow { color:var(--amber); font-size:10px; flex-shrink:0; margin-top:2px; }
+.appr-timeline {
+  margin-top:12px; padding-top:10px; border-top:1px solid var(--line);
+  font-family:'IBM Plex Mono',monospace; font-size:9px;
+  letter-spacing:1px; text-transform:uppercase;
+  color:var(--teal);
+}
+
+/* ── PIVOT GRID ── */
+.pivot-grid {
+  display:grid;
+  grid-template-columns: repeat(3,1fr);
+  gap:14px;
+}
+@media(max-width:800px){ .pivot-grid { grid-template-columns:1fr 1fr; } }
+@media(max-width:500px){ .pivot-grid { grid-template-columns:1fr; } }
+
+.pivot-card {
+  background:var(--ink2);
+  border:1px solid var(--line);
+  border-radius:var(--r2);
+  padding:18px;
+  transition:border-color 0.2s;
+}
+.pivot-card:hover { border-color:rgba(212,168,67,0.2); }
+.pivot-card.hot { border-color:rgba(212,168,67,0.3); }
+.pivot-from { font-size:10px; color:var(--text-dim); margin-bottom:4px; }
+.pivot-to { font-size:13px; font-weight:600; color:var(--text); margin-bottom:8px; }
+.pivot-arrow { font-size:10px; color:var(--amber); display:inline-block; margin:0 4px; }
+.pivot-delta {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px; color:var(--amber); margin-bottom:8px;
+}
+.pivot-desc { font-size:11px; color:var(--text-dim); line-height:1.5; margin-bottom:10px; }
+.pivot-skills { display:flex; flex-wrap:wrap; gap:4px; }
+.pivot-skill {
+  font-size:9px; padding:2px 7px; border-radius:5px;
+  background:rgba(212,168,67,0.06); color:var(--text-dim);
+  border:1px solid rgba(212,168,67,0.15);
+}
+.pivot-effort {
+  margin-top:10px; padding-top:8px; border-top:1px solid var(--line);
+  font-family:'IBM Plex Mono',monospace; font-size:8px;
+  letter-spacing:1px; text-transform:uppercase; color:var(--text-faint);
+}
+
+/* ── FOOTER ── */
+.footer {
+  position:relative; z-index:1;
+  border-top:1px solid var(--line);
+  padding:20px 48px;
+  display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;
+  background: linear-gradient(0deg, rgba(212,168,67,0.02) 0%, transparent 100%);
+}
+.footer-brand {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9px; letter-spacing:3px; text-transform:uppercase;
+  color:var(--amber); opacity:0.5;
+}
+.footer-note {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9px; letter-spacing:1px;
+  color:var(--text-faint);
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+.sal-card  { animation: fadeUp .5s ease both; }
+.sal-card:nth-child(1) { animation-delay:.05s }
+.sal-card:nth-child(2) { animation-delay:.12s }
+.sal-card:nth-child(3) { animation-delay:.19s }
+.sal-card:nth-child(4) { animation-delay:.26s }
+.sk-card   { animation: fadeUp .5s ease both; }
+.sk-card:nth-child(1){ animation-delay:.08s }
+.sk-card:nth-child(2){ animation-delay:.14s }
+.sk-card:nth-child(3){ animation-delay:.20s }
+.sk-card:nth-child(4){ animation-delay:.26s }
+.sk-card:nth-child(5){ animation-delay:.32s }
+.sk-card:nth-child(6){ animation-delay:.38s }
+.sk-card:nth-child(7){ animation-delay:.44s }
+.sk-card:nth-child(8){ animation-delay:.50s }
+.sk-card:nth-child(9){ animation-delay:.56s }
+
+</style>
+</head>
+<body>
+
+<!-- ══════════ HEADER ══════════ -->
+<div class="header">
+  <div>
+    <div class="header-eyebrow">Zona Dourada · Painel de Carreira Personalizado</div>
+    <div class="header-title">Produto / UX<br><em>em Liderança</em></div>
+    <div class="header-meta">
+      <span class="header-tag tag-area">Produto &amp; UX</span>
+      <span class="header-tag tag-level">Liderança / Gestão</span>
+      <span class="header-tag tag-goal">Todas as dimensões ativas</span>
+    </div>
+  </div>
+  <div class="header-dimensions">
+    <div class="dim-item"><div class="dim-dot" style="background:var(--amber)"></div>Maximizar remuneração</div>
+    <div class="dim-item"><div class="dim-dot" style="background:var(--violet)"></div>Mudar de cargo/área</div>
+    <div class="dim-item"><div class="dim-dot" style="background:var(--teal)"></div>Crescer tecnicamente</div>
+    <div class="dim-item"><div class="dim-dot" style="background:var(--sky)"></div>Expandir mercado</div>
+  </div>
+</div>
+
+<!-- ══════════ BODY ══════════ -->
+<div class="body">
+
+  <!-- ── 1. FAIXAS SALARIAIS ── -->
+  <div class="sec-head" style="margin-top:0">
+    <div class="sec-num">01</div>
+    <div class="sec-title">Faixas de Remuneração — onde você está e onde pode chegar</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="salary-band">
+    <div class="sal-card">
+      <div class="sal-card-label" style="color:var(--teal)">Head of Product · BR</div>
+      <div class="sal-card-value" style="color:var(--teal)">R$30k</div>
+      <div class="sal-card-range">R$ 22k – R$ 42k / mês</div>
+      <div class="sal-card-note">Scale-ups, unicórnios e BigTechs nacionais. Requer equity na negociação.</div>
+    </div>
+    <div class="sal-card featured">
+      <div class="sal-card-label" style="color:var(--amber-light)">◆ VP / CPO · BR</div>
+      <div class="sal-card-value" style="color:var(--amber-light)">R$50k</div>
+      <div class="sal-card-range">R$ 38k – R$ 65k + equity / mês</div>
+      <div class="sal-card-note">Teto nacional. Disponível em unicórnios e empresas pré-IPO. Equity pode valer 10–50x o salário.</div>
+    </div>
+    <div class="sal-card">
+      <div class="sal-card-label" style="color:var(--sky)">Director of Product · Remoto Internacional</div>
+      <div class="sal-card-value" style="color:var(--sky)">$170k</div>
+      <div class="sal-card-range">$130k – $230k USD / ano</div>
+      <div class="sal-card-note">Empresas de produto americanas e europeias com times remotos. Inglês fluente indispensável.</div>
+    </div>
+    <div class="sal-card">
+      <div class="sal-card-label" style="color:var(--violet)">Consultoria / Fractional CPO</div>
+      <div class="sal-card-value" style="color:var(--violet)">R$600/h</div>
+      <div class="sal-card-range">R$ 350 – R$ 900 por hora</div>
+      <div class="sal-card-note">Modelo autônomo. 15–20h/semana = R$ 30–50k/mês. Múltiplos clientes simultâneos.</div>
+    </div>
+  </div>
+
+  <!-- ── 2. SKILLS MATRIX ── -->
+  <div class="sec-head">
+    <div class="sec-num">02</div>
+    <div class="sec-title">Skills para Desenvolver, Focar &amp; Aperfeiçoar</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="legend-row">
+    <div class="leg-item"><div class="leg-swatch ls-amber"></div>Focar — impacto imediato em remuneração</div>
+    <div class="leg-item"><div class="leg-swatch ls-violet"></div>Mudar de cargo/área</div>
+    <div class="leg-item"><div class="leg-swatch ls-teal"></div>Crescer tecnicamente</div>
+    <div class="leg-item"><div class="leg-swatch ls-sky"></div>Expandir mercado/empresas</div>
+  </div>
+
+  <div class="skills-matrix">
+
+    <div class="sk-card urg-high">
+      <div class="sk-top">
+        <div class="sk-name">Strategic Storytelling para C-Level</div>
+        <div class="sk-badge b-focar">Focar</div>
+      </div>
+      <div class="sk-desc">Comunicar visão de produto em linguagem de negócio para board, CFO e CEO. É a diferença entre Head e CPO. Dominar narrativas com dados financeiros (LTV, CAC, payback) é obrigatório.</div>
+      <div class="sk-bottom">
+        <div class="sk-impact-wrap">
+          <div class="sk-impact-label">Impacto salarial</div>
+          <div class="sk-dots">
+            <div class="sk-dot on-amber"></div><div class="sk-dot on-amber"></div><div class="sk-dot on-amber"></div><div class="sk-dot on-amber"></div><div class="sk-dot on-amber"></div>
+          </div>
+        </div>
+        <div class="sk-roi" style="color:var(--amber)">+60–80% vs. Head</div>
+      </div>
+    </div>
+
+    <div class="sk-card urg-high">
+      <div class="sk-top">
+        <div class="sk-name">AI Product Management</div>
+        <div class="sk-badge b-focar">Focar</div>
+      </div>
+      <div class="sk-desc">Definir specs para features com LLMs, avaliar qualidade de outputs de IA, gerenciar risco de alucinação e dados sensíveis. O gap de mercado mais crítico: quase nenhum PM sênior tem isso.</div>
+      <div class="sk-bottom">
+        <div class="sk-impact-wrap">
+          <div class="sk-impact-label">Impacto salarial</div>
+          <div class="sk-dots">
+            <div class="sk-dot on-amber"></div><div class="sk-dot on-amber"></div><div class="sk-dot on-amber"></div><div class="sk-dot on-amber"></div><div class="sk-dot on-amber"></div>
+          </div>
+        </div>
+        <div class="sk-roi" style="color:var(--amber)">+40–70% em AI products</div>
+      </div>
+    </div>
+
+    <div class="sk-card urg-high">
+      <div class="sk-top">
+        <div class="sk-name">Product-Led Growth (PLG)</div>
+        <div class="sk-badge b-focar">Focar</div>
+      </div>
+      <div class="sk-desc">Onboarding viral, loops de ativação, freemium, métricas PQL. Empresas PLG são as que mais pagam para PMs de liderança, pois o produto é o canal de vendas.</div>
+      <div class="sk-bottom">
+        <div class="sk-impact-wrap">
+          <div class="sk-impact-label">Impacto salarial</div>
+          <div class="sk-dots">
+            <div class="sk-dot on-amber"></div><div class="sk-dot on-amber"></div><div class="sk-dot on-amber"></div><div class="sk-dot on-amber"></div><div class="sk-dot"></div>
+          </div>
+        </div>
+        <div class="sk-roi" style="color:var(--amber)">+35–55% em SaaS/B2B</div>
+      </div>
+    </div>
+
+    <div class="sk-card urg-mid">
+      <div class="sk-top">
+        <div class="sk-name">P&amp;L Ownership e Unit Economics</div>
+        <div class="sk-badge b-mudar">Mudar cargo</div>
+      </div>
+      <div class="sk-desc">Gerir receita, custo e margem do produto como um GM. Conhecer LTV:CAC, churn, payback period, cohort analysis. O unlock definitivo para CPO e cargos executivos.</div>
+      <div class="sk-bottom">
+        <div class="sk-impact-wrap">
+          <div class="sk-impact-label">Impacto salarial</div>
+          <div class="sk-dots">
+            <div class="sk-dot on-violet"></div><div class="sk-dot on-violet"></div><div class="sk-dot on-violet"></div><div class="sk-dot on-violet"></div><div class="sk-dot on-violet"></div>
+          </div>
+        </div>
+        <div class="sk-roi" style="color:var(--violet)">Chave p/ CPO / VP</div>
+      </div>
+    </div>
+
+    <div class="sk-card urg-mid">
+      <div class="sk-top">
+        <div class="sk-name">Design Thinking + Systems Thinking</div>
+        <div class="sk-badge b-mudar">Mudar cargo</div>
+      </div>
+      <div class="sk-desc">Liderar design estratégico de produto além de UX tático. Mapear interdependências de sistemas complexos, efeitos de rede, loops causais. Diferencial para CPO e advisory roles.</div>
+      <div class="sk-bottom">
+        <div class="sk-impact-wrap">
+          <div class="sk-impact-label">Diferencial competitivo</div>
+          <div class="sk-dots">
+            <div class="sk-dot on-violet"></div><div class="sk-dot on-violet"></div><div class="sk-dot on-violet"></div><div class="sk-dot on-violet"></div><div class="sk-dot"></div>
+          </div>
+        </div>
+        <div class="sk-roi" style="color:var(--violet)">Posicionamento único</div>
+      </div>
+    </div>
+
+    <div class="sk-card urg-mid">
+      <div class="sk-top">
+        <div class="sk-name">Gestão de Times de Produto (5–20 pessoas)</div>
+        <div class="sk-badge b-mudar">Mudar cargo</div>
+      </div>
+      <div class="sk-desc">Contratar PMs, criar ritmo de discovery/delivery, calibrar performance, reter talentos. Gestão de múltiplos squads é pré-requisito para VP+.</div>
+      <div class="sk-bottom">
+        <div class="sk-impact-wrap">
+          <div class="sk-impact-label">Escalabilidade de cargo</div>
+          <div class="sk-dots">
+            <div class="sk-dot on-violet"></div><div class="sk-dot on-violet"></div><div class="sk-dot on-violet"></div><div class="sk-dot on-violet"></div><div class="sk-dot on-violet"></div>
+          </div>
+        </div>
+        <div class="sk-roi" style="color:var(--violet)">VP / CPO gate</div>
+      </div>
+    </div>
+
+    <div class="sk-card urg-low">
+      <div class="sk-top">
+        <div class="sk-name">Engenharia de Prompt &amp; LLM Basics</div>
+        <div class="sk-badge b-tecnico">Técnico</div>
+      </div>
+      <div class="sk-desc">Construir e avaliar pipelines de prompts, entender RAG, tokens, temperatura, context window. Permite conversar com devs de IA como par técnico — e liderar produtos de IA com credibilidade.</div>
+      <div class="sk-bottom">
+        <div class="sk-impact-wrap">
+          <div class="sk-impact-label">Credibilidade técnica</div>
+          <div class="sk-dots">
+            <div class="sk-dot on-teal"></div><div class="sk-dot on-teal"></div><div class="sk-dot on-teal"></div><div class="sk-dot on-teal"></div><div class="sk-dot"></div>
+          </div>
+        </div>
+        <div class="sk-roi" style="color:var(--teal)">Fluência em IA</div>
+      </div>
+    </div>
+
+    <div class="sk-card urg-low">
+      <div class="sk-top">
+        <div class="sk-name">SQL &amp; Analytics Avançados</div>
+        <div class="sk-badge b-tecnico">Técnico</div>
+      </div>
+      <div class="sk-desc">Window functions, cohort queries, funis no SQL, integração com Amplitude/Mixpanel. Líderes que tiram próprios insights sem esperar o time de dados têm ciclos de decisão 3x mais rápidos.</div>
+      <div class="sk-bottom">
+        <div class="sk-impact-wrap">
+          <div class="sk-impact-label">Velocidade de decisão</div>
+          <div class="sk-dots">
+            <div class="sk-dot on-teal"></div><div class="sk-dot on-teal"></div><div class="sk-dot on-teal"></div><div class="sk-dot"></div><div class="sk-dot"></div>
+          </div>
+        </div>
+        <div class="sk-roi" style="color:var(--teal)">Autonomia analítica</div>
+      </div>
+    </div>
+
+    <div class="sk-card urg-low">
+      <div class="sk-top">
+        <div class="sk-name">Inglês Executivo &amp; Negociação Int'l</div>
+        <div class="sk-badge b-mercado">Expandir mercado</div>
+      </div>
+      <div class="sk-desc">Apresentar product vision para board internacional, negociar pacotes em USD, conduzir entrevistas executivas. O maior multiplicador de renda disponível — abre mercado de 3–5x.</div>
+      <div class="sk-bottom">
+        <div class="sk-impact-wrap">
+          <div class="sk-impact-label">Multiplicador de renda</div>
+          <div class="sk-dots">
+            <div class="sk-dot on-sky"></div><div class="sk-dot on-sky"></div><div class="sk-dot on-sky"></div><div class="sk-dot on-sky"></div><div class="sk-dot on-sky"></div>
+          </div>
+        </div>
+        <div class="sk-roi" style="color:var(--sky)">3–5x mercado BR</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── 3. CARGOS + REMUNERAÇÃO ── -->
+  <div class="sec-head">
+    <div class="sec-num">03</div>
+    <div class="sec-title">Cargos, Remuneração &amp; Skills Críticas</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="roles-wrap">
+    <div class="roles-thead">
+      <span>Cargo</span>
+      <span>Skills Críticas</span>
+      <span>Nível</span>
+      <span>Remuneração</span>
+      <span>Mercado Ideal</span>
+    </div>
+
+    <div class="roles-row">
+      <div class="r-name">Head of Product<small>Gestão de múltiplos squads</small></div>
+      <div class="r-skills">Gestão de PMs, roadmap estratégico, stakeholders, OKRs</div>
+      <div><span class="r-level lv-lead">Lead</span></div>
+      <div class="r-sal md">R$ 22–35k</div>
+      <div class="r-mkt">Scale-ups séries B–D, fintechs, healthtechs</div>
+    </div>
+
+    <div class="roles-row">
+      <div class="r-name">VP of Product<small>Dono de P&amp;L e visão</small></div>
+      <div class="r-skills">P&amp;L, estratégia, gestão de Head PMs, board reporting</div>
+      <div><span class="r-level lv-exec">VP</span></div>
+      <div class="r-sal hi">R$ 35–55k + equity</div>
+      <div class="r-mkt">Unicórnios, pré-IPO, corporações digitais</div>
+    </div>
+
+    <div class="roles-row">
+      <div class="r-name">Chief Product Officer (CPO)<small>C-Level com equity</small></div>
+      <div class="r-skills">Visão de produto, cultura, P&amp;L, board, fundraising narrativo</div>
+      <div><span class="r-level lv-exec">C-Level</span></div>
+      <div class="r-sal hi">R$ 45–70k + 0.5–3% equity</div>
+      <div class="r-mkt">Startups série A–C, scale-ups em crescimento</div>
+    </div>
+
+    <div class="roles-row">
+      <div class="r-name">Director of Product (Remoto Int'l)<small>Time global distribuído</small></div>
+      <div class="r-skills">Inglês fluente, estratégia, gestão remota, métricas</div>
+      <div><span class="r-level lv-staff">Director</span></div>
+      <div class="r-sal hi">$130–200k USD/ano</div>
+      <div class="r-mkt">EUA, Europa, empresas remote-first</div>
+    </div>
+
+    <div class="roles-row">
+      <div class="r-name">AI Product Lead<small>Produto com IA generativa</small></div>
+      <div class="r-skills">LLMs, RAG, AI UX, métricas de IA, trust &amp; safety</div>
+      <div><span class="r-level lv-staff">Staff</span></div>
+      <div class="r-sal hi">R$ 28–45k</div>
+      <div class="r-mkt">Startups de IA, BigTechs, AI SaaS</div>
+    </div>
+
+    <div class="roles-row">
+      <div class="r-name">Fractional CPO / Advisor<small>Modelo autônomo</small></div>
+      <div class="r-skills">Autoridade pública, network, PLG, estratégia de produto</div>
+      <div><span class="r-level lv-exec">Exec</span></div>
+      <div class="r-sal hi">R$ 30–60k/mês (PJ)</div>
+      <div class="r-mkt">Startups early-stage, scale-ups em expansão</div>
+    </div>
+
+    <div class="roles-row">
+      <div class="r-name">Head of Design / VP Design<small>UX + estratégia</small></div>
+      <div class="r-skills">Design systems, research, visão de UX, gestão de designers</div>
+      <div><span class="r-level lv-lead">Lead</span></div>
+      <div class="r-sal md">R$ 18–32k</div>
+      <div class="r-mkt">Empresas de produto digital, design-led companies</div>
+    </div>
+
+    <div class="roles-row">
+      <div class="r-name">Product &amp; Growth Consultant<small>Projetos por sprint</small></div>
+      <div class="r-skills">PLG, funis, experimentos, analytics, SEO de produto</div>
+      <div><span class="r-level lv-staff">Consult.</span></div>
+      <div class="r-sal hi">R$ 350–700/hora</div>
+      <div class="r-mkt">E-commerce, SaaS, marketplaces</div>
+    </div>
+
+  </div>
+
+  <!-- ── 4. MUDANÇAS DE CARGO ── -->
+  <div class="sec-head">
+    <div class="sec-num">04</div>
+    <div class="sec-title">Pivôs de Cargo — para onde você pode ir daqui</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="pivot-grid">
+
+    <div class="pivot-card hot">
+      <div class="pivot-from">De: Head/Director of Product</div>
+      <div class="pivot-to">CPO / VP Product<span class="pivot-arrow">→</span></div>
+      <div class="pivot-delta">+60–100% remuneração + equity</div>
+      <div class="pivot-desc">Expansão de escopo para C-Level. Requer P&L ownership, board reporting e narrativa de produto para investidores.</div>
+      <div class="pivot-skills">
+        <span class="pivot-skill">P&amp;L</span><span class="pivot-skill">Board storytelling</span><span class="pivot-skill">Fundraising narrativo</span><span class="pivot-skill">Contratação executiva</span>
+      </div>
+      <div class="pivot-effort">⏱ 12–24 meses · Alta alavancagem</div>
+    </div>
+
+    <div class="pivot-card hot">
+      <div class="pivot-from">De: PM Liderança · BR</div>
+      <div class="pivot-to">Director of Product Int'l<span class="pivot-arrow">→</span></div>
+      <div class="pivot-delta">+200–400% renda em USD</div>
+      <div class="pivot-desc">O maior salto de renda disponível. Inglês fluente + portfólio em inglês + preparação para entrevistas executivas no padrão americano.</div>
+      <div class="pivot-skills">
+        <span class="pivot-skill">Inglês C1+</span><span class="pivot-skill">System design PM</span><span class="pivot-skill">Métricas de growth</span><span class="pivot-skill">Cross-cultural leadership</span>
+      </div>
+      <div class="pivot-effort">⏱ 6–18 meses · Maior ROI possível</div>
+    </div>
+
+    <div class="pivot-card hot">
+      <div class="pivot-from">De: Liderança de Produto</div>
+      <div class="pivot-to">AI Product Lead<span class="pivot-arrow">→</span></div>
+      <div class="pivot-delta">+40–70% vs. PM tradicional</div>
+      <div class="pivot-desc">Nicho com escassez extrema. Combinar experiência de produto com fluência em IA generativa cria um perfil raro valiosíssimo.</div>
+      <div class="pivot-skills">
+        <span class="pivot-skill">LLM basics</span><span class="pivot-skill">AI UX patterns</span><span class="pivot-skill">Prompt engineering</span><span class="pivot-skill">Trust &amp; Safety</span>
+      </div>
+      <div class="pivot-effort">⏱ 3–9 meses · Janela aberta agora</div>
+    </div>
+
+    <div class="pivot-card">
+      <div class="pivot-from">De: Produto</div>
+      <div class="pivot-to">Fractional CPO / Advisor<span class="pivot-arrow">→</span></div>
+      <div class="pivot-delta">R$ 30–60k/mês autônomo</div>
+      <div class="pivot-desc">Para quem tem autoridade construída e quer autonomia. Atuar como CPO externo em 2–3 startups simultâneas. Requer marca pessoal forte.</div>
+      <div class="pivot-skills">
+        <span class="pivot-skill">Marca pessoal</span><span class="pivot-skill">Network</span><span class="pivot-skill">Proposta de valor clara</span><span class="pivot-skill">Casos documentados</span>
+      </div>
+      <div class="pivot-effort">⏱ 6–12 meses · Alta recompensa</div>
+    </div>
+
+    <div class="pivot-card">
+      <div class="pivot-from">De: UX / Design Lead</div>
+      <div class="pivot-to">Head of Product<span class="pivot-arrow">→</span></div>
+      <div class="pivot-delta">+50–80% vs. Design Lead</div>
+      <div class="pivot-desc">Transição natural com forte viés de usuário. Requer desenvolvimento de habilidades de negócio, métricas e ownership de roadmap estratégico.</div>
+      <div class="pivot-skills">
+        <span class="pivot-skill">Métricas de produto</span><span class="pivot-skill">Roadmap estratégico</span><span class="pivot-skill">Stakeholder mgmt</span><span class="pivot-skill">SQL básico</span>
+      </div>
+      <div class="pivot-effort">⏱ 12–18 meses · Natural</div>
+    </div>
+
+    <div class="pivot-card">
+      <div class="pivot-from">De: Produto + Liderança</div>
+      <div class="pivot-to">Co-Founder / CEO de Startup<span class="pivot-arrow">→</span></div>
+      <div class="pivot-delta">Equity como ativo principal</div>
+      <div class="pivot-desc">PMs de liderança têm o skillset mais completo para fundar startups. Visão de produto + execução + gestão de time = perfil de founder ideal.</div>
+      <div class="pivot-skills">
+        <span class="pivot-skill">Fundraising</span><span class="pivot-skill">GTM strategy</span><span class="pivot-skill">Visão de mercado</span><span class="pivot-skill">Resiliência</span>
+      </div>
+      <div class="pivot-effort">⏱ Qualquer momento · Equity ilimitado</div>
+    </div>
+
+  </div>
+
+  <!-- ── 5. MERCADOS ── -->
+  <div class="sec-head">
+    <div class="sec-num">05</div>
+    <div class="sec-title">Mapeamento de Mercados &amp; Tipos de Empresa</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="market-grid">
+
+    <div class="mkt-card starred">
+      <div class="mkt-header"><div class="mkt-icon">🤖</div><div class="mkt-star">Máxima prioridade</div></div>
+      <div class="mkt-name">Startups de IA Nativas</div>
+      <div class="mkt-fit">Melhor fit para o seu perfil agora</div>
+      <div class="mkt-desc">Empresas construídas sobre LLMs e IA generativa. Escassez extrema de PMs com experiência em produto E fluência em IA. Pagam premium por esse perfil híbrido.</div>
+      <div class="mkt-tags"><span class="mkt-tag">AI SaaS</span><span class="mkt-tag">LLM Infra</span><span class="mkt-tag">Seed–Series B</span><span class="mkt-tag">Remote-friendly</span></div>
+      <div class="mkt-pay">R$ 28–45k · Equity de alto potencial · Stock options</div>
+      <div class="mkt-access">Entre pelo LinkedIn + posts técnicos sobre IA em produto</div>
+    </div>
+
+    <div class="mkt-card starred">
+      <div class="mkt-header"><div class="mkt-icon">🏦</div><div class="mkt-star">Alta remuneração</div></div>
+      <div class="mkt-name">Fintechs &amp; Bancos Digitais</div>
+      <div class="mkt-fit">Maior volume de vagas sênior no Brasil</div>
+      <div class="mkt-desc">Maior concentração de vagas de liderança de produto no Brasil. Produto financeiro complexo, PLG em crédito, seguros, investimentos. Remuneração acima da média.</div>
+      <div class="mkt-tags"><span class="mkt-tag">Nubank</span><span class="mkt-tag">Inter</span><span class="mkt-tag">C6 Bank</span><span class="mkt-tag">Stone</span><span class="mkt-tag">Méliuz</span></div>
+      <div class="mkt-pay">R$ 22–42k + PLR + RSUs</div>
+      <div class="mkt-access">Indicação interna tem 3x mais conversão — priorize network</div>
+    </div>
+
+    <div class="mkt-card starred">
+      <div class="mkt-header"><div class="mkt-icon">🌐</div><div class="mkt-star">Maior ROI</div></div>
+      <div class="mkt-name">Empresas Remotas Internacionais</div>
+      <div class="mkt-fit">Máximo multiplicador de renda</div>
+      <div class="mkt-desc">Remote-first americanas e europeias buscam PMs seniores para times distribuídos. Inglês C1+ + portfólio em inglês = acesso a salários de 3–5x o mercado nacional.</div>
+      <div class="mkt-tags"><span class="mkt-tag">EUA</span><span class="mkt-tag">Europa</span><span class="mkt-tag">Arc.dev</span><span class="mkt-tag">Deel jobs</span><span class="mkt-tag">Remote OK</span></div>
+      <div class="mkt-pay">$100–200k USD/ano · Benefícios internacionais</div>
+      <div class="mkt-access">LinkedIn em inglês + blog técnico em inglês + mocks de entrevista</div>
+    </div>
+
+    <div class="mkt-card">
+      <div class="mkt-header"><div class="mkt-icon">🚀</div></div>
+      <div class="mkt-name">Scale-ups (Série B–D)</div>
+      <div class="mkt-fit">Equilíbrio entre equity e salário</div>
+      <div class="mkt-desc">Empresas entre 100–1000 funcionários em crescimento acelerado. Maior autonomia, ownership real de P&amp;L, equity ainda valioso. O cargo cresce junto com a empresa.</div>
+      <div class="mkt-tags"><span class="mkt-tag">SaaS B2B</span><span class="mkt-tag">Marketplace</span><span class="mkt-tag">Edtech</span><span class="mkt-tag">Logística</span></div>
+      <div class="mkt-pay">R$ 20–35k + equity (0.1–1%)</div>
+      <div class="mkt-access">Founders investem muito em PM líder — candidate-se diretamente ao CEO</div>
+    </div>
+
+    <div class="mkt-card">
+      <div class="mkt-header"><div class="mkt-icon">🏥</div></div>
+      <div class="mkt-name">Healthtech &amp; EdTech</div>
+      <div class="mkt-fit">Nicho com demanda crescente</div>
+      <div class="mkt-desc">Setores em transformação digital acelerada. PMs com experiência em produto de consumo + domínio do setor são raros e valorizados. Impacto social como diferencial.</div>
+      <div class="mkt-tags"><span class="mkt-tag">Einstein</span><span class="mkt-tag">Dasa</span><span class="mkt-tag">Descomplica</span><span class="mkt-tag">Arco Educação</span></div>
+      <div class="mkt-pay">R$ 18–30k · Missão como diferencial</div>
+      <div class="mkt-access">Cases de produto com impacto em usuários vulneráveis valem mais aqui</div>
+    </div>
+
+    <div class="mkt-card">
+      <div class="mkt-header"><div class="mkt-icon">🏛️</div></div>
+      <div class="mkt-name">Consultorias Premium &amp; Advisory</div>
+      <div class="mkt-fit">Autonomia + diversidade de projetos</div>
+      <div class="mkt-desc">Para quem quer atuar em múltiplos contextos simultaneamente. Hourly rate alto, exposição a setores variados, construção acelerada de network e autoridade pública.</div>
+      <div class="mkt-tags"><span class="mkt-tag">McKinsey Digital</span><span class="mkt-tag">Thoughtworks</span><span class="mkt-tag">Accenture Song</span><span class="mkt-tag">Independente</span></div>
+      <div class="mkt-pay">R$ 300–700/hora · Variável sem teto</div>
+      <div class="mkt-access">1–2 primeiros clientes sempre vêm de indicação — ative seu network agora</div>
+    </div>
+
+  </div>
+
+  <!-- ── 6. ABORDAGENS ── -->
+  <div class="sec-head">
+    <div class="sec-num">06</div>
+    <div class="sec-title">Abordagens Estratégicas para a Zona Dourada</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="approach-grid">
+
+    <div class="appr-card priority">
+      <div class="appr-num">01</div>
+      <div class="appr-body">
+        <div class="appr-tag">◆ Maior ROI · Prioridade Alta</div>
+        <div class="appr-title">Posicionamento como AI Product Leader</div>
+        <div class="appr-desc">A janela está aberta agora. Combinar experiência de liderança de produto com fluência em IA cria um perfil de escassez extrema. Esse posicionamento multiplica remuneração e abre portas internacionais simultaneamente.</div>
+        <div class="appr-steps">
+          <div class="appr-step"><div class="step-arrow">→</div>Dedique 2–3h/semana a aprender LLMs, RAG e AI UX patterns</div>
+          <div class="appr-step"><div class="step-arrow">→</div>Construa ou lidere 1 projeto interno com IA generativa</div>
+          <div class="appr-step"><div class="step-arrow">→</div>Documente o caso: problema, decisões, resultados, aprendizados</div>
+          <div class="appr-step"><div class="step-arrow">→</div>Publique 2–3 artigos/posts sobre AI Product Management</div>
+          <div class="appr-step"><div class="step-arrow">→</div>Atualize LinkedIn para "AI Product Leader" como identidade</div>
+          <div class="appr-step"><div class="step-arrow">→</div>Mire entrevistas em startups de IA e BigTechs com divisão de IA</div>
+        </div>
+        <div class="appr-timeline">⏱ Resultado visível em 3–6 meses</div>
+      </div>
+    </div>
+
+    <div class="appr-card priority">
+      <div class="appr-num">02</div>
+      <div class="appr-body">
+        <div class="appr-tag">◆ Maior multiplicador de renda</div>
+        <div class="appr-title">Trilha Internacional — Director of Product</div>
+        <div class="appr-desc">O maior salto de renda disponível para profissionais brasileiros de produto. Líderes de produto com experiência real valem $130–200k USD em empresas americanas remote-first. O gap é apenas inglês e posicionamento.</div>
+        <div class="appr-steps">
+          <div class="appr-step"><div class="step-arrow">→</div>Eleve inglês para C1 com foco em vocabulário executivo e de produto</div>
+          <div class="appr-step"><div class="step-arrow">→</div>Traduza todo seu portfólio e LinkedIn para inglês</div>
+          <div class="appr-step"><div class="step-arrow">→</div>Pratique entrevistas executivas PM no padrão americano (STAR, case)</div>
+          <div class="appr-step"><div class="step-arrow">→</div>Aplique em Arc.dev, Toptal, Remote OK, Deel Jobs</div>
+          <div class="appr-step"><div class="step-arrow">→</div>Negocie em USD mesmo morando no Brasil</div>
+          <div class="appr-step"><div class="step-arrow">→</div>Estruture operacional financeiro para receber em moeda estrangeira</div>
+        </div>
+        <div class="appr-timeline">⏱ Preparação: 6–12 meses · ROI: 3–5x salário atual</div>
+      </div>
+    </div>
+
+    <div class="appr-card">
+      <div class="appr-num">03</div>
+      <div class="appr-body">
+        <div class="appr-tag">Escalada para C-Level</div>
+        <div class="appr-title">De Head a CPO/VP — Expansão de Escopo</div>
+        <div class="appr-desc">Para maximizar remuneração no mercado nacional. O salto de Head para VP/CPO dobra o salário e traz equity relevante. O diferencial é expandir da gestão de produto para ownership de P&L e narrativa para investidores.</div>
+        <div class="appr-steps">
+          <div class="appr-step"><div class="step-arrow">→</div>Assuma P&L de uma linha de produto ou unidade de negócio</div>
+          <div class="appr-step"><div class="step-arrow">→</div>Aprenda a construir e apresentar narrativa de produto para board</div>
+          <div class="appr-step"><div class="step-arrow">→</div>Desenvolva visão de produto de 3 anos com impacto financeiro quantificado</div>
+          <div class="appr-step"><div class="step-arrow">→</div>Participe do processo de fundraising como apoio ao CEO/CFO</div>
+          <div class="appr-step"><div class="step-arrow">→</div>Construa seu substituto — demonstre que a empresa pode escalar com você</div>
+        </div>
+        <div class="appr-timeline">⏱ 12–24 meses de construção sistemática</div>
+      </div>
+    </div>
+
+    <div class="appr-card">
+      <div class="appr-num">04</div>
+      <div class="appr-body">
+        <div class="appr-tag">Autonomia &amp; Teto sem limite</div>
+        <div class="appr-title">Fractional CPO — Modelo de Autoridade</div>
+        <div class="appr-desc">Para quem quer autonomia, variedade e teto de renda sem limite. Atuar como CPO externo em 2–3 startups early-stage, cada uma pagando R$15–20k/mês. Requer marca pessoal forte e network ativo.</div>
+        <div class="appr-steps">
+          <div class="appr-step"><div class="step-arrow">→</div>Documente seus 5 maiores cases com métricas de impacto</div>
+          <div class="appr-step"><div class="step-arrow">→</div>Publique semanalmente no LinkedIn sobre estratégia de produto</div>
+          <div class="appr-step"><div class="step-arrow">→</div>Defina proposta de valor clara: "Ajudo startups série A a construir máquina de produto"</div>
+          <div class="appr-step"><div class="step-arrow">→</div>Primeiro cliente sempre vem de indicação — ative network agora</div>
+          <div class="appr-step"><div class="step-arrow">→</div>Formalize como PJ e precifique por valor entregue, não por hora</div>
+          <div class="appr-step"><div class="step-arrow">→</div>Construa comunidade ou newsletter como canal de inbound</div>
+        </div>
+        <div class="appr-timeline">⏱ 6–12 meses para escalar · Renda potencial: R$ 40–60k/mês</div>
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- /body -->
+
+<!-- ══════════ FOOTER ══════════ -->
+<div class="footer">
+  <div class="footer-brand">◆ Zona Dourada · Produto &amp; UX · Liderança · 2025–2026</div>
+  <div class="footer-note">Dados baseados em benchmarks de mercado · atualizado para o ciclo atual de IA</div>
+</div>
+
+</body>
+</html>
