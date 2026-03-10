@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flavio Guedes · Mapa Completo de Possibilidades com IA</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05060a;--surface:#090b10;--card:#0e1018;--border:#161c26;--border2:#1e2630;
+  --c1:#00e5ff;--c2:#bf5fff;--c3:#39ff85;--c4:#ffb800;--c5:#ff2d78;--c6:#ff6b35;--c7:#a8ff3e;
+  --text:#e8eef8;--text2:#b0bccc;--muted:#505a6a;--dim:#1a2030;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'Rajdhani',sans-serif;font-size:16px;line-height:1.65;
+  overflow-x:hidden;min-height:100vh;
+}
+
+/* SCAN LINES */
+body::after{
+  content:'';position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 4px);
+  pointer-events:none;z-index:9999;
+}
+
+/* AMBIENT */
+.ambient{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.amb-orb{position:absolute;border-radius:50%;filter:blur(120px);opacity:.07;}
+.amb-orb.a1{width:600px;height:600px;background:var(--c1);top:-200px;left:-200px;animation:orbFloat 18s ease-in-out infinite;}
+.amb-orb.a2{width:500px;height:500px;background:var(--c2);bottom:-200px;right:-100px;animation:orbFloat 22s ease-in-out infinite reverse;}
+.amb-orb.a3{width:400px;height:400px;background:var(--c3);top:40%;left:50%;animation:orbFloat 15s ease-in-out infinite 4s;}
+@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(30px,-40px) scale(1.08);}}
+
+/* GRID BG */
+.grid-bg{position:fixed;inset:0;pointer-events:none;z-index:1;
+  background-image:linear-gradient(rgba(0,229,255,.018) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(0,229,255,.018) 1px,transparent 1px);
+  background-size:40px 40px;
+  mask-image:radial-gradient(ellipse at center,rgba(0,0,0,.7) 0%,transparent 75%);
+}
+
+/* ─── HEADER ─── */
+.hdr{
+  position:relative;z-index:10;
+  padding:52px 60px 42px;
+  border-bottom:1px solid var(--border2);
+  display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center;
+}
+.hdr::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(0,229,255,.03) 0%,transparent 100%);
+  pointer-events:none;
+}
+.eyebrow{
+  font-family:'DM Mono',monospace;font-size:10px;letter-spacing:6px;
+  text-transform:uppercase;color:var(--c1);margin-bottom:16px;
+  display:flex;align-items:center;gap:12px;
+}
+.eyebrow::before{content:'';width:30px;height:1px;background:var(--c1);box-shadow:0 0 10px var(--c1);}
+.logo-name{font-family:'Orbitron',monospace;font-size:clamp(36px,6vw,80px);font-weight:900;line-height:.9;letter-spacing:-2px;}
+.logo-name .n1{display:block;background:linear-gradient(90deg,#fff,#c8d8e8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.logo-name .n2{
+  display:block;
+  background:linear-gradient(90deg,var(--c1) 0%,var(--c2) 40%,var(--c3) 80%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 24px rgba(0,229,255,.35));
+}
+.hdr-desc{margin-top:18px;font-size:17px;color:var(--muted);max-width:580px;line-height:1.6;}
+.hdr-desc strong{color:var(--text2);}
+
+/* IDENTITY CHIPS */
+.identity-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px;}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 14px;border-radius:100px;
+  font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;
+  border:1px solid;
+}
+.chip.c1{border-color:rgba(0,229,255,.35);background:rgba(0,229,255,.06);color:var(--c1);}
+.chip.c2{border-color:rgba(191,95,255,.35);background:rgba(191,95,255,.06);color:var(--c2);}
+.chip.c3{border-color:rgba(57,255,133,.35);background:rgba(57,255,133,.06);color:var(--c3);}
+.chip.c4{border-color:rgba(255,184,0,.35);background:rgba(255,184,0,.06);color:var(--c4);}
+.chip.c5{border-color:rgba(255,45,120,.35);background:rgba(255,45,120,.06);color:var(--c5);}
+.chip.c6{border-color:rgba(255,107,53,.35);background:rgba(255,107,53,.06);color:var(--c6);}
+.chip.c7{border-color:rgba(168,255,62,.35);background:rgba(168,255,62,.06);color:var(--c7);}
+
+/* SCORE BOX */
+.hdr-score{
+  background:var(--card);border:1px solid var(--border2);border-radius:20px;
+  padding:28px 32px;min-width:240px;position:relative;overflow:hidden;flex-shrink:0;
+}
+.hdr-score::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3));
+  box-shadow:0 0 16px rgba(0,229,255,.5);
+}
+.s-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.s-ttl{font-family:'Orbitron',monospace;font-size:11px;font-weight:700;color:var(--c1);margin-bottom:16px;text-shadow:0 0 10px rgba(0,229,255,.4);}
+.s-domains{display:flex;flex-direction:column;gap:8px;}
+.sd{display:flex;align-items:center;gap:10px;}
+.sd-icon{font-size:16px;width:24px;text-align:center;}
+.sd-lbl{font-size:13px;color:var(--text2);flex:1;}
+.sd-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+/* ─── NAV ─── */
+.nav{
+  position:sticky;top:0;z-index:100;
+  display:flex;overflow-x:auto;
+  padding:0 60px;
+  border-bottom:1px solid var(--border2);
+  background:rgba(5,6,10,.92);
+  backdrop-filter:blur(20px);
+}
+.nav::-webkit-scrollbar{display:none;}
+.nav-btn{
+  flex-shrink:0;display:flex;align-items:center;gap:10px;
+  padding:16px 20px;background:none;border:none;cursor:pointer;
+  border-bottom:2px solid transparent;margin-bottom:-1px;
+  font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:600;letter-spacing:1.5px;
+  color:var(--muted);white-space:nowrap;transition:all .25s;text-transform:uppercase;
+}
+.nav-btn:hover{color:var(--text);}
+.nav-btn.on{color:var(--ac);border-bottom-color:var(--ac);text-shadow:0 0 12px var(--ac);}
+.nav-btn .ni{
+  font-family:'Orbitron',monospace;font-size:10px;font-weight:700;
+  width:20px;height:20px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid currentColor;flex-shrink:0;
+}
+/* nav accent per tab */
+.nb1{--ac:var(--c1);} .nb2{--ac:var(--c2);} .nb3{--ac:var(--c3);}
+.nb4{--ac:var(--c4);} .nb5{--ac:var(--c5);} .nb6{--ac:var(--c6);}
+.nb7{--ac:var(--c7);}
+
+/* ─── MAIN ─── */
+.main{position:relative;z-index:10;padding:52px 60px 120px;}
+.panel{display:none;animation:fadeUp .4s ease;}
+.panel.on{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+
+/* PANEL HERO */
+.ph{
+  display:grid;grid-template-columns:1fr auto;gap:32px;
+  align-items:start;margin-bottom:52px;
+  padding-bottom:40px;border-bottom:1px solid var(--border2);
+}
+.ph-eye{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:5px;text-transform:uppercase;margin-bottom:12px;}
+.ph-title{font-family:'Orbitron',monospace;font-size:clamp(28px,4vw,58px);font-weight:900;line-height:.95;letter-spacing:-1px;margin-bottom:18px;}
+.ph-desc{font-size:17px;color:var(--text2);line-height:1.7;max-width:620px;}
+.ph-desc strong{color:var(--text);}
+.ph-stats{display:flex;flex-direction:column;gap:10px;align-items:flex-end;}
+.pstat{
+  display:flex;align-items:center;gap:10px;
+  background:var(--card);border:1px solid var(--border2);
+  border-radius:100px;padding:8px 20px;white-space:nowrap;
+}
+.pstat-icon{font-size:15px;}
+.pstat-lbl{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;}
+.pstat-val{font-family:'Orbitron',monospace;font-size:13px;font-weight:700;}
+
+/* theme color per panel */
+[data-t="c1"] .ph-eye,[data-t="c1"] .pstat-val{color:var(--c1);}
+[data-t="c1"] .ph-title{background:linear-gradient(90deg,var(--c1),#80f0ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 20px rgba(0,229,255,.3));}
+[data-t="c2"] .ph-eye,[data-t="c2"] .pstat-val{color:var(--c2);}
+[data-t="c2"] .ph-title{background:linear-gradient(90deg,var(--c2),#e0b0ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 20px rgba(191,95,255,.3));}
+[data-t="c3"] .ph-eye,[data-t="c3"] .pstat-val{color:var(--c3);}
+[data-t="c3"] .ph-title{background:linear-gradient(90deg,var(--c3),#b0ffd4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 20px rgba(57,255,133,.3));}
+[data-t="c4"] .ph-eye,[data-t="c4"] .pstat-val{color:var(--c4);}
+[data-t="c4"] .ph-title{background:linear-gradient(90deg,var(--c4),#ffe080);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 20px rgba(255,184,0,.3));}
+[data-t="c5"] .ph-eye,[data-t="c5"] .pstat-val{color:var(--c5);}
+[data-t="c5"] .ph-title{background:linear-gradient(90deg,var(--c5),#ff90b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 20px rgba(255,45,120,.3));}
+[data-t="c6"] .ph-eye,[data-t="c6"] .pstat-val{color:var(--c6);}
+[data-t="c6"] .ph-title{background:linear-gradient(90deg,var(--c6),#ffaa80);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 20px rgba(255,107,53,.3));}
+[data-t="c7"] .ph-eye,[data-t="c7"] .pstat-val{color:var(--c7);}
+[data-t="c7"] .ph-title{background:linear-gradient(90deg,var(--c7),#d4ff90);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 20px rgba(168,255,62,.3));}
+
+/* ─── SECTION CARDS ─── */
+.sec-title{
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:5px;
+  text-transform:uppercase;color:var(--muted);
+  margin-bottom:20px;display:flex;align-items:center;gap:12px;
+}
+.sec-title::after{content:'';flex:1;height:1px;background:var(--border2);}
+
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-bottom:40px;}
+
+.ai-card{
+  background:var(--card);border:1px solid var(--border2);border-radius:16px;
+  padding:24px;position:relative;overflow:hidden;
+  transition:border-color .3s,transform .3s,box-shadow .3s;
+  cursor:default;
+}
+.ai-card:hover{transform:translateY(-4px);}
+.ai-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--ac,var(--c1)),transparent);
+}
+.ai-card::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at top left,var(--ac,var(--c1)) 0%,transparent 60%);
+  opacity:0;transition:opacity .4s;
+}
+.ai-card:hover::after{opacity:.04;}
+.ai-card:hover{border-color:var(--ac,var(--c1));box-shadow:0 0 30px color-mix(in srgb,var(--ac,var(--c1)) 15%,transparent);}
+
+.card-icon{font-size:28px;margin-bottom:14px;display:block;}
+.card-tag{
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;
+  text-transform:uppercase;color:var(--ac,var(--c1));
+  margin-bottom:8px;display:block;
+}
+.card-title{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--text);margin-bottom:10px;letter-spacing:.5px;}
+.card-body{font-size:15px;color:var(--text2);line-height:1.65;}
+.card-body strong{color:var(--text);}
+.card-body em{color:var(--ac,var(--c1));font-style:normal;}
+
+/* EXAMPLE BOX */
+.example-box{
+  margin-top:14px;padding:14px 16px;
+  background:rgba(255,255,255,.025);
+  border:1px solid var(--border);border-radius:10px;
+  border-left:2px solid var(--ac,var(--c1));
+}
+.ex-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--ac,var(--c1));text-transform:uppercase;margin-bottom:6px;}
+.ex-txt{font-size:14px;color:var(--muted);line-height:1.55;}
+.ex-txt strong{color:var(--text2);}
+
+/* WIDE CARD */
+.wide-card{
+  background:var(--card);border:1px solid var(--border2);border-radius:16px;
+  padding:28px 32px;margin-bottom:16px;position:relative;overflow:hidden;
+  border-left:3px solid var(--ac,var(--c1));
+}
+.wc-head{display:flex;align-items:center;gap:16px;margin-bottom:16px;}
+.wc-icon{font-size:24px;}
+.wc-title{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--text);letter-spacing:.5px;}
+.wc-sub{font-size:14px;color:var(--muted);font-style:italic;}
+.wc-body{font-size:16px;color:var(--text2);line-height:1.7;}
+.wc-body strong{color:var(--text);}
+.wc-body em{color:var(--ac,var(--c1));font-style:normal;}
+
+/* LIST */
+.ai-list{display:flex;flex-direction:column;gap:10px;margin-top:14px;}
+.ali{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:12px 16px;background:rgba(255,255,255,.02);
+  border:1px solid var(--border);border-radius:10px;
+  transition:border-color .2s;
+}
+.ali:hover{border-color:var(--ac,var(--c1));}
+.ali-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--ac,var(--c1));box-shadow:0 0 6px var(--ac,var(--c1));
+  flex-shrink:0;margin-top:6px;
+}
+.ali-text{font-size:15px;color:var(--text2);line-height:1.55;}
+.ali-text strong{color:var(--text);}
+
+/* ALERT */
+.alert-box{
+  border-radius:12px;padding:18px 22px;margin:16px 0;
+  border-left:3px solid;
+}
+.alert-box.info{background:rgba(0,229,255,.04);border-color:var(--c1);}
+.alert-box.tip{background:rgba(57,255,133,.04);border-color:var(--c3);}
+.alert-box.warn{background:rgba(255,184,0,.04);border-color:var(--c4);}
+.alert-box.glow{background:rgba(191,95,255,.04);border-color:var(--c2);}
+.ab-title{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px;}
+.alert-box.info .ab-title{color:var(--c1);}
+.alert-box.tip .ab-title{color:var(--c3);}
+.alert-box.warn .ab-title{color:var(--c4);}
+.alert-box.glow .ab-title{color:var(--c2);}
+.ab-body{font-size:15px;color:var(--text2);line-height:1.65;}
+.ab-body strong{color:var(--text);}
+
+/* HORIZONTAL RULE */
+.hr{height:1px;background:var(--border2);margin:40px 0;}
+
+/* DOMAIN ROW */
+.domain-row{
+  display:flex;align-items:center;gap:20px;
+  padding:20px 24px;background:var(--card);
+  border:1px solid var(--border2);border-radius:14px;
+  margin-bottom:12px;
+  transition:border-color .3s,box-shadow .3s;
+}
+.domain-row:hover{border-color:var(--ac,var(--c1));box-shadow:0 0 20px color-mix(in srgb,var(--ac,var(--c1)) 10%,transparent);}
+.dr-icon{font-size:28px;flex-shrink:0;}
+.dr-content{flex:1;}
+.dr-title{font-family:'Rajdhani',sans-serif;font-size:19px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.dr-desc{font-size:14px;color:var(--muted);line-height:1.5;}
+.dr-desc strong{color:var(--text2);}
+.dr-badge{
+  font-family:'Orbitron',monospace;font-size:10px;font-weight:700;
+  color:var(--ac,var(--c1));padding:6px 14px;
+  border-radius:100px;border:1px solid color-mix(in srgb,var(--ac,var(--c1)) 40%,transparent);
+  background:color-mix(in srgb,var(--ac,var(--c1)) 07%,transparent);
+  white-space:nowrap;flex-shrink:0;
+}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:32px;right:32px;
+  background:var(--card);border:1px solid var(--c1);
+  border-radius:14px;padding:16px 22px;
+  display:flex;align-items:center;gap:14px;
+  z-index:1000;box-shadow:0 0 30px rgba(0,229,255,.15);
+  transform:translateY(80px);opacity:0;
+  transition:all .5s cubic-bezier(.4,0,.2,1);max-width:340px;
+}
+.toast.on{transform:none;opacity:1;}
+.t-ico{font-size:22px;}
+.t-title{font-family:'Orbitron',monospace;font-size:11px;font-weight:700;color:var(--c1);}
+.t-sub{font-size:13px;color:var(--muted);}
+
+/* LIMITATION CARD */
+.limit-card{
+  background:rgba(255,45,120,.04);
+  border:1px solid rgba(255,45,120,.25);
+  border-radius:14px;padding:22px 26px;margin-bottom:12px;
+}
+.lc-title{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--c5);margin-bottom:8px;}
+.lc-body{font-size:15px;color:var(--text2);line-height:1.6;}
+.lc-body strong{color:var(--text);}
+
+/* SCORE BARS */
+.score-bars{display:flex;flex-direction:column;gap:10px;margin-top:14px;}
+.sb-row{display:flex;align-items:center;gap:14px;}
+.sb-lbl{font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);min-width:160px;letter-spacing:.5px;}
+.sb-track{flex:1;height:6px;background:rgba(255,255,255,.06);border-radius:100px;overflow:hidden;}
+.sb-fill{height:100%;border-radius:100px;transition:width 1.5s cubic-bezier(.4,0,.2,1);}
+.sb-val{font-family:'Orbitron',monospace;font-size:11px;font-weight:700;min-width:32px;text-align:right;}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .hdr{grid-template-columns:1fr;padding:32px 24px;}
+  .main{padding:32px 24px 80px;}
+  .nav{padding:0 24px;}
+  .ph{grid-template-columns:1fr;}
+  .ph-stats{align-items:flex-start;flex-direction:row;flex-wrap:wrap;}
+  .cards-grid{grid-template-columns:1fr;}
+}
+
+/* Acent per card */
+.acc1{--ac:var(--c1);}
+.acc2{--ac:var(--c2);}
+.acc3{--ac:var(--c3);}
+.acc4{--ac:var(--c4);}
+.acc5{--ac:var(--c5);}
+.acc6{--ac:var(--c6);}
+.acc7{--ac:var(--c7);}
+</style>
+</head>
+<body>
+
+<div class="ambient">
+  <div class="amb-orb a1"></div>
+  <div class="amb-orb a2"></div>
+  <div class="amb-orb a3"></div>
+</div>
+<div class="grid-bg"></div>
+
+<!-- ─── HEADER ─── -->
+<header class="hdr">
+  <div>
+    <div class="eyebrow">// mapa de possibilidades · ia aplicada à vida real · 2025–2026</div>
+    <div class="logo-name">
+      <span class="n1">FLAVIO</span>
+      <span class="n2">× CLAUDE AI</span>
+    </div>
+    <p class="hdr-desc">Um mapa completo e profundo do que a IA pode fazer <strong>pela sua vida inteira</strong> — profissional, pessoal, espiritual, familiar e física. Personalizado para quem você é.</p>
+    <div class="identity-chips">
+      <span class="chip c1">🎨 Creative Director</span>
+      <span class="chip c2">🤖 AI Enthusiast</span>
+      <span class="chip c3">🎵 Músico / Louvor</span>
+      <span class="chip c4">👨‍👩‍👦 Pai · Filho 2,5 anos</span>
+      <span class="chip c5">✝️ Cristão / Estudo Bíblico</span>
+      <span class="chip c6">🏃 Runner em Retorno</span>
+      <span class="chip c7">🎂 Empreendedor Familiar</span>
+    </div>
+  </div>
+  <div class="hdr-score">
+    <div class="s-lbl">domínios mapeados</div>
+    <div class="s-ttl">FLAVIO_LIFE_MAP v1.0</div>
+    <div class="s-domains">
+      <div class="sd"><span class="sd-icon">💼</span><span class="sd-lbl">Carreira & Produto</span><span class="sd-dot" style="background:var(--c1);box-shadow:0 0 6px var(--c1)"></span></div>
+      <div class="sd"><span class="sd-icon">🎵</span><span class="sd-lbl">Música & Igreja</span><span class="sd-dot" style="background:var(--c3);box-shadow:0 0 6px var(--c3)"></span></div>
+      <div class="sd"><span class="sd-icon">👨‍👩‍👦</span><span class="sd-lbl">Família & Paternidade</span><span class="sd-dot" style="background:var(--c4);box-shadow:0 0 6px var(--c4)"></span></div>
+      <div class="sd"><span class="sd-icon">✝️</span><span class="sd-lbl">Fé & Estudo Bíblico</span><span class="sd-dot" style="background:var(--c5);box-shadow:0 0 6px var(--c5)"></span></div>
+      <div class="sd"><span class="sd-icon">🏃</span><span class="sd-lbl">Saúde Física & Mental</span><span class="sd-dot" style="background:var(--c2);box-shadow:0 0 6px var(--c2)"></span></div>
+      <div class="sd"><span class="sd-icon">🎂</span><span class="sd-lbl">Confeitaria da Esposa</span><span class="sd-dot" style="background:var(--c6);box-shadow:0 0 6px var(--c6)"></span></div>
+      <div class="sd"><span class="sd-icon">🤖</span><span class="sd-lbl">IA & Limitações</span><span class="sd-dot" style="background:var(--c7);box-shadow:0 0 6px var(--c7)"></span></div>
+    </div>
+  </div>
+</header>
+
+<!-- ─── NAV ─── -->
+<nav class="nav">
+  <button class="nav-btn nb1 on" onclick="go('p1',this)"><span class="ni">1</span>Carreira & IA</button>
+  <button class="nav-btn nb3" onclick="go('p2',this)"><span class="ni">2</span>Música & Igreja</button>
+  <button class="nav-btn nb4" onclick="go('p3',this)"><span class="ni">3</span>Família & Filho</button>
+  <button class="nav-btn nb5" onclick="go('p4',this)"><span class="ni">4</span>Fé & Bíblia</button>
+  <button class="nav-btn nb2" onclick="go('p5',this)"><span class="ni">5</span>Saúde Física</button>
+  <button class="nav-btn nb6" onclick="go('p6',this)"><span class="ni">6</span>Confeitaria</button>
+  <button class="nav-btn nb7" onclick="go('p7',this)"><span class="ni">7</span>Capacidades & Limites</button>
+</nav>
+
+<!-- ─── MAIN ─── -->
+<main class="main">
+
+<!-- ═══ P1 — CARREIRA & IA ═══ -->
+<div id="p1" class="panel on" data-t="c1">
+  <div class="ph">
+    <div>
+      <div class="ph-eye">// painel 01 · carreira · design · produto · ia aplicada</div>
+      <div class="ph-title">CARREIRA<br>& IA</div>
+      <div class="ph-desc">Como a IA potencializa seu trabalho como <strong>Creative Director</strong>, acelera a transição para Produto e amplifica o que você já faz bem — sem substituir.</div>
+    </div>
+    <div class="ph-stats">
+      <div class="pstat"><span class="pstat-icon">🎯</span><span class="pstat-lbl">fit IA+Carreira</span><span class="pstat-val">ALTO</span></div>
+      <div class="pstat"><span class="pstat-icon">⚡</span><span class="pstat-lbl">ganho potencial</span><span class="pstat-val">3–5x</span></div>
+    </div>
+  </div>
+
+  <div class="sec-title">criação de conteúdo e estratégia criativa</div>
+  <div class="cards-grid">
+    <div class="ai-card acc1">
+      <span class="card-icon">✍️</span>
+      <span class="card-tag">copywriting · branding</span>
+      <div class="card-title">Textos, Briefings & Estratégia de Marca</div>
+      <div class="card-body">Crio headlines, taglines, manifestos de marca, roteiros de vídeo, copy para campanhas. <strong>Você dá a direção criativa, eu entrego 10 variações em segundos.</strong> Inclui textos em inglês para clientes internacionais.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real para você</div>
+        <div class="ex-txt"><strong>"Me dê 5 headlines para o rebranding da Kincho Tech com tom tech-premium"</strong> → entrego com racionais estratégicos para apresentar ao cliente.</div>
+      </div>
+    </div>
+    <div class="ai-card acc1">
+      <span class="card-icon">📊</span>
+      <span class="card-tag">apresentações · decks</span>
+      <div class="card-title">Estrutura de Decks e Apresentações</div>
+      <div class="card-body">Crio estruturas narrativas completas para pitch decks, apresentações de campanha, case studies. <strong>Você dá a estratégia, eu monto o esqueleto verbal que você vai desenhar.</strong></div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real para você</div>
+        <div class="ex-txt"><strong>"Monte um deck de apresentação de resultado da campanha X para o cliente"</strong> → estrutura com métricas, narrativa e slides propostos.</div>
+      </div>
+    </div>
+    <div class="ai-card acc1">
+      <span class="card-icon">🌐</span>
+      <span class="card-tag">portfólio · inglês</span>
+      <div class="card-title">Portfólio Internacional em Inglês</div>
+      <div class="card-body">Traduzo e adapto seus cases para inglês com linguagem de mercado global. <strong>Cada case com storytelling certo para Arc.dev, Toptal ou LinkedIn EN.</strong> Revisão de bio, headline e about section.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real para você</div>
+        <div class="ex-txt"><strong>"Escreva o case study da campanha da Usabit em inglês para meu portfólio internacional"</strong> → entrego em formato Medium-ready.</div>
+      </div>
+    </div>
+    <div class="ai-card acc1">
+      <span class="card-icon">🤖</span>
+      <span class="card-tag">produto · ia · criatividade</span>
+      <div class="card-title">IA como Ferramenta Criativa Nativa</div>
+      <div class="card-body">Você já está nesse universo. Posso te ajudar a <strong>criar prompts para Midjourney/DALL-E, automatizar fluxos com Make/Zapier, integrar IA nos seus processos de agência.</strong> Diferencial raro no mercado brasileiro.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real para você</div>
+        <div class="ex-txt"><strong>"Crie um prompt detalhado para gerar uma identidade visual tech-minimalista para startup fintech"</strong></div>
+      </div>
+    </div>
+    <div class="ai-card acc1">
+      <span class="card-icon">📋</span>
+      <span class="card-tag">produto · transição</span>
+      <div class="card-title">Transição para Product Design</div>
+      <div class="card-body">Posso ser seu <em>tutor de produto</em>: explico métricas, OKRs, discovery, UX Research com exemplos práticos. <strong>Simulamos entrevistas, reviso seu CV adaptado para vaga de produto, crio plano de estudos.</strong></div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real para você</div>
+        <div class="ex-txt"><strong>"Simule uma entrevista de Product Designer Sênior para empresa de SaaS B2B"</strong> → te faço perguntas reais e dou feedback.</div>
+      </div>
+    </div>
+    <div class="ai-card acc1">
+      <span class="card-icon">💬</span>
+      <span class="card-tag">linkedin · networking</span>
+      <div class="card-title">LinkedIn e Presença Digital</div>
+      <div class="card-body">Escrevo posts de LinkedIn com seu tom de voz, reviso seu perfil, crio calendário editorial. <strong>Posts sobre criatividade, IA e design que posicionam você como referência.</strong></div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real para você</div>
+        <div class="ex-txt"><strong>"Escreva um post LinkedIn sobre como IA mudou meu processo criativo como CD"</strong> → tom autêntico, não genérico.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert-box info">
+    <div class="ab-title">💡 insight estratégico · flavio específico</div>
+    <div class="ab-body">Seu combo <strong>Design Sênior + Entendimento de IA + Inglês</strong> é escasso no Brasil. Eu posso te ajudar a articular isso como produto de mercado — e não apenas como currículo. Próximo passo: me peça para montar um "posicionamento de marca pessoal" baseado nesses três pilares.</div>
+  </div>
+</div>
+
+<!-- ═══ P2 — MÚSICA & IGREJA ═══ -->
+<div id="p2" class="panel" data-t="c3">
+  <div class="ph">
+    <div>
+      <div class="ph-eye">// painel 02 · música · louvor · ministério infantil</div>
+      <div class="ph-title">MÚSICA<br>& IGREJA</div>
+      <div class="ph-desc">Você ministra louvor para <strong>2 grupos de crianças</strong> e dá estudo bíblico mensal. A IA pode ser sua assistente de ministério — criando recursos, adaptando conteúdos e economizando horas de prep.</div>
+    </div>
+    <div class="ph-stats">
+      <div class="pstat"><span class="pstat-icon">🎵</span><span class="pstat-lbl">grupos de música</span><span class="pstat-val">02</span></div>
+      <div class="pstat"><span class="pstat-icon">📖</span><span class="pstat-lbl">estudo mensal</span><span class="pstat-val">1x/MÊS</span></div>
+    </div>
+  </div>
+
+  <div class="sec-title">ministério musical infantil</div>
+  <div class="cards-grid">
+    <div class="ai-card acc3">
+      <span class="card-icon">🎼</span>
+      <span class="card-tag">música · crianças</span>
+      <div class="card-title">Letras e Músicas Adaptadas para Crianças</div>
+      <div class="card-body">Crio versões simplificadas de músicas de louvor para a faixa etária que você atende, <strong>adapto letras para linguagem infantil</strong>, sugiro melodias mais fáceis de cantar. Posso criar músicas originais temáticas.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real para você</div>
+        <div class="ex-txt"><strong>"Adapte 'Sê o centro' para um grupo de crianças de 4 a 7 anos com linguagem mais simples"</strong></div>
+      </div>
+    </div>
+    <div class="ai-card acc3">
+      <span class="card-icon">📝</span>
+      <span class="card-tag">planejamento · setlist</span>
+      <div class="card-title">Planejamento de Setlists e Temas</div>
+      <div class="card-body">Me diga o tema do culto ou data comemorativa e eu <strong>monto um setlist completo</strong> com músicas que combinam, sequência lógica de energia e transições. Posso incluir músicas específicas que você já usa.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real para você</div>
+        <div class="ex-txt"><strong>"Monte um setlist para culto infantil de Páscoa com 6 músicas, do mais animado para o contemplativo"</strong></div>
+      </div>
+    </div>
+    <div class="ai-card acc3">
+      <span class="card-icon">🎭</span>
+      <span class="card-tag">dinamicas · engajamento</span>
+      <div class="card-title">Dinâmicas e Atividades Musicais</div>
+      <div class="card-body"><strong>Criadinâmicas interativas</strong> para engajar crianças no louvor: brincadeiras rítmicas, movimentos corporais, jogos musicais. Tudo voltado para tornar o louvor uma experiência, não apenas canto.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real para você</div>
+        <div class="ex-txt"><strong>"Crie 3 dinâmicas de aquecimento musical para crianças de 3 a 6 anos antes do louvor"</strong></div>
+      </div>
+    </div>
+    <div class="ai-card acc3">
+      <span class="card-icon">📅</span>
+      <span class="card-tag">calendário · planejamento</span>
+      <div class="card-title">Calendário Anual do Ministério</div>
+      <div class="card-body">Crio um calendário de ministério musical anual com <strong>temas por mês, datas comemorativas cristãs, sugestões de músicas por estação</strong> e momentos especiais (Natal, Páscoa, Dia das Crianças etc.).</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real para você</div>
+        <div class="ex-txt"><strong>"Crie um plano de ministério musical infantil para os próximos 6 meses"</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title">estudo bíblico mensal</div>
+  <div class="cards-grid">
+    <div class="ai-card acc3">
+      <span class="card-icon">📖</span>
+      <span class="card-tag">estudo bíblico · conteúdo</span>
+      <div class="card-title">Preparação de Estudos Bíblicos</div>
+      <div class="card-body">Monto estudos completos com introdução, contexto histórico, versículos-chave, aplicação prática e perguntas para reflexão. <strong>Você define o tema ou texto, eu estruturo o estudo para 1h.</strong></div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real para você</div>
+        <div class="ex-txt"><strong>"Prepare um estudo sobre Salmos 23 com contexto, aplicação para homens adultos e 5 perguntas de reflexão"</strong></div>
+      </div>
+    </div>
+    <div class="ai-card acc3">
+      <span class="card-icon">💡</span>
+      <span class="card-tag">ilustrações · analogias</span>
+      <div class="card-title">Ilustrações e Analogias Contemporâneas</div>
+      <div class="card-body">Um dos maiores desafios do ministério é <strong>conectar verdades eternas com a vida de hoje</strong>. Crio ilustrações usando contextos do cotidiano, tecnologia, esportes, família — sempre fiéis à teologia.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real para você</div>
+        <div class="ex-txt"><strong>"Me dê 3 ilustrações modernas para explicar o conceito de graça para homens entre 25 e 45 anos"</strong></div>
+      </div>
+    </div>
+    <div class="ai-card acc3">
+      <span class="card-icon">🗒️</span>
+      <span class="card-tag">material · apostila</span>
+      <div class="card-title">Materiais Impressos e Apoio Visual</div>
+      <div class="card-body">Crio textos para apostilas, folhetos de estudo, resumos do texto bíblico, <strong>infográficos de contexto histórico</strong> e checklists de aplicação prática para os participantes levarem para casa.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real para você</div>
+        <div class="ex-txt"><strong>"Crie um material de uma folha para os participantes acompanharem o estudo de Efésios 6:10-18"</strong></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ P3 — FAMÍLIA & FILHO ═══ -->
+<div id="p3" class="panel" data-t="c4">
+  <div class="ph">
+    <div>
+      <div class="ph-eye">// painel 03 · paternidade · família · filho 2,5 anos</div>
+      <div class="ph-title">FAMÍLIA<br>& FILHO</div>
+      <div class="ph-desc">Ser pai de um filho de <strong>2 anos e meio</strong>, ter uma esposa em RH e com negócio próprio — é muito pra administrar. A IA pode aliviar carga cognitiva e ser um parceiro real na jornada familiar.</div>
+    </div>
+    <div class="ph-stats">
+      <div class="pstat"><span class="pstat-icon">👶</span><span class="pstat-lbl">idade do filho</span><span class="pstat-val">2,5 ANOS</span></div>
+      <div class="pstat"><span class="pstat-icon">💍</span><span class="pstat-lbl">esposa</span><span class="pstat-val">RH + CONFEIT.</span></div>
+    </div>
+  </div>
+
+  <div class="sec-title">paternidade ativa · filho 2–3 anos</div>
+  <div class="cards-grid">
+    <div class="ai-card acc4">
+      <span class="card-icon">🎨</span>
+      <span class="card-tag">atividades · desenvolvimento</span>
+      <div class="card-title">Atividades para Desenvolvimento Infantil</div>
+      <div class="card-body">Sugiro <strong>atividades por faixa etária</strong> que estimulam linguagem, coordenação motora, criatividade e vínculo afetivo — adequadas para uma criança de 2,5 anos. Com ou sem materiais especiais, indoor e outdoor.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real para você</div>
+        <div class="ex-txt"><strong>"Sugira 10 atividades criativas para fazer com meu filho de 2,5 anos num sábado à tarde em casa"</strong></div>
+      </div>
+    </div>
+    <div class="ai-card acc4">
+      <span class="card-icon">📚</span>
+      <span class="card-tag">histórias · leitura</span>
+      <div class="card-title">Histórias Personalizadas para Dormir</div>
+      <div class="card-body">Crio histórias com o <strong>nome do seu filho como protagonista</strong>, com valores cristãos, com personagens favoritos dele, temas educativos ou só aventura e diversão. Curtas (5 min), médias ou longas.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real para você</div>
+        <div class="ex-txt"><strong>"Crie uma história de 5 minutos onde [nome do filho] é um herói que ajuda animais numa floresta mágica"</strong></div>
+      </div>
+    </div>
+    <div class="ai-card acc4">
+      <span class="card-icon">🍎</span>
+      <span class="card-tag">alimentação · nutrição</span>
+      <div class="card-title">Alimentação Saudável para Crianças</div>
+      <div class="card-body">Sugiro cardápios saudáveis e práticos para crianças de 2–3 anos, <strong>estratégias para crianças seletivas</strong>, receitas rápidas e nutritivas. Considero preferências e restrições que você informar.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real para você</div>
+        <div class="ex-txt"><strong>"Meu filho rejeita legumes. Crie 5 receitas onde vegetais ficam 'escondidos' mas nutritivos"</strong></div>
+      </div>
+    </div>
+    <div class="ai-card acc4">
+      <span class="card-icon">🎵</span>
+      <span class="card-tag">música · desenvolvimento</span>
+      <div class="card-title">Música como Ferramenta de Desenvolvimento</div>
+      <div class="card-body">Você já sabe o poder da música. Posso criar <strong>letrinhas personalizadas para rotinas</strong> (hora do banho, dormir, comer), sugerir músicas por fase de desenvolvimento, montar playlist temática.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real para você</div>
+        <div class="ex-txt"><strong>"Crie uma música simples e animada para a hora de escovar os dentes com meu filho de 2 anos"</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title">gestão familiar · casal · casa</div>
+  <div class="cards-grid">
+    <div class="ai-card acc4">
+      <span class="card-icon">🗓️</span>
+      <span class="card-tag">organização · rotina</span>
+      <div class="card-title">Rotinas e Organização Familiar</div>
+      <div class="card-body">Crio <strong>rotinas semanais que equilibram</strong> trabalho remoto, cuidado com filho, apoio ao negócio da sua esposa, treinos, ministério e descanso. Planilhas, checklists, sistemas simples.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real para você</div>
+        <div class="ex-txt"><strong>"Crie uma rotina semanal para mim considerando: trabalho home office, filho, treinos, ministério dominical e estudo bíblico mensal"</strong></div>
+      </div>
+    </div>
+    <div class="ai-card acc4">
+      <span class="card-icon">💑</span>
+      <span class="card-tag">casal · comunicação</span>
+      <div class="card-title">Suporte para Comunicação no Casal</div>
+      <div class="card-body">Ajudo a <strong>estruturar conversas difíceis</strong>, criar momentos de conexão para casais com filho pequeno e negócio em fase inicial, sugerir ideias de "date night" simples e significativas.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real para você</div>
+        <div class="ex-txt"><strong>"Minha esposa está sobrecarregada com o negócio. Ajude-me a planejar uma semana de apoio prático para ela"</strong></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ P4 — FÉ & BÍBLIA ═══ -->
+<div id="p4" class="panel" data-t="c5">
+  <div class="ph">
+    <div>
+      <div class="ph-eye">// painel 04 · fé cristã · bíblia · ministério · devocionais</div>
+      <div class="ph-title">FÉ &<br>BÍBLIA</div>
+      <div class="ph-desc">Sua fé não é separada da sua vida — é o centro dela. A IA pode ser uma ferramenta de apoio ministerial, <strong>nunca substituindo o Espírito Santo</strong>, mas ajudando na forma e estrutura.</div>
+    </div>
+    <div class="ph-stats">
+      <div class="pstat"><span class="pstat-icon">✝️</span><span class="pstat-lbl">compromisso</span><span class="pstat-val">TOTAL</span></div>
+    </div>
+  </div>
+
+  <div class="alert-box glow">
+    <div class="ab-title">🙏 princípio fundamental</div>
+    <div class="ab-body">A IA é uma ferramenta — como um livro de comentários bíblicos, um dicionário teológico ou um caderno de anotações. <strong>Toda revelação, discernimento e ministério vivo vêm do Espírito Santo.</strong> Uso com sabedoria e critério teológico.</div>
+  </div>
+
+  <div class="sec-title">recursos para ministério e estudo</div>
+  <div class="cards-grid">
+    <div class="ai-card acc5">
+      <span class="card-icon">🔍</span>
+      <span class="card-tag">exegese · contexto</span>
+      <div class="card-title">Contexto Histórico e Exegese</div>
+      <div class="card-body">Explico o contexto histórico, cultural e linguístico de qualquer texto bíblico. <strong>Quem escreveu, para quem, em que contexto, o que significava naquela época</strong> — antes de aplicar ao hoje.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real</div>
+        <div class="ex-txt"><strong>"Explique o contexto histórico de Filipenses 4:13 — quem era Paulo quando escreveu isso?"</strong></div>
+      </div>
+    </div>
+    <div class="ai-card acc5">
+      <span class="card-icon">📚</span>
+      <span class="card-tag">teologia · doutrinas</span>
+      <div class="card-title">Questões Teológicas e Doutrinárias</div>
+      <div class="card-body">Discuto doutrinas, apresento diferentes perspectivas teológicas (reformada, arminiana, pentecostal etc.), explico terminologia teológica. <strong>Sem impor posição, mas com profundidade.</strong></div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real</div>
+        <div class="ex-txt"><strong>"Qual a diferença teológica entre santificação progressiva e perfeccionismo wesleyano?"</strong></div>
+      </div>
+    </div>
+    <div class="ai-card acc5">
+      <span class="card-icon">🗺️</span>
+      <span class="card-tag">série · plano</span>
+      <div class="card-title">Séries de Estudos e Planos de Leitura</div>
+      <div class="card-body">Monto séries temáticas para seu grupo de estudo mensal, <strong>planos de leitura bíblica personalizados</strong> (6 meses, 1 ano, por tema), ou jornadas por livro específico.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real</div>
+        <div class="ex-txt"><strong>"Crie uma série de 6 estudos mensais sobre o Sermão do Monte para homens adultos"</strong></div>
+      </div>
+    </div>
+    <div class="ai-card acc5">
+      <span class="card-icon">✏️</span>
+      <span class="card-tag">devocionais · escrita</span>
+      <div class="card-title">Devocionais Escritos e Reflexões</div>
+      <div class="card-body">Escrevo devocionais curtos (3–5 min de leitura) baseados em textos que você escolher, <strong>com linguagem acessível, aplicação prática e oração sugerida.</strong> Para uso pessoal ou compartilhar no grupo.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real</div>
+        <div class="ex-txt"><strong>"Escreva um devocional sobre João 15:1-8 (a videira e os ramos) com aplicação para pais de família"</strong></div>
+      </div>
+    </div>
+    <div class="ai-card acc5">
+      <span class="card-icon">❓</span>
+      <span class="card-tag">apologética · dúvidas</span>
+      <div class="card-title">Apologética e Perguntas Difíceis</div>
+      <div class="card-body">Ajudo a preparar respostas para <strong>perguntas difíceis sobre a fé</strong>: sofrimento, evolução, contradições aparentes, outros credos. Preparo para conversas evangelísticas e debates respeitosos.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real</div>
+        <div class="ex-txt"><strong>"Como respondo quando alguém no estudo pergunta: 'Se Deus é bom, por que permite o sofrimento de inocentes?'"</strong></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ P5 — SAÚDE FÍSICA E MENTAL ═══ -->
+<div id="p5" class="panel" data-t="c2">
+  <div class="ph">
+    <div>
+      <div class="ph-eye">// painel 05 · saúde física · saúde mental · corrida · musculação · alimentação</div>
+      <div class="ph-title">SAÚDE<br>TOTAL</div>
+      <div class="ph-desc">Você quer <strong>retornar à corrida, à musculação e melhorar a alimentação em 2025</strong>. Essa é a área onde a IA pode ser seu parceiro mais prático — planejamento, motivação, conhecimento e acompanhamento.</div>
+    </div>
+    <div class="ph-stats">
+      <div class="pstat"><span class="pstat-icon">🏃</span><span class="pstat-lbl">meta</span><span class="pstat-val">RETORNO 2025</span></div>
+      <div class="pstat"><span class="pstat-icon">🧠</span><span class="pstat-lbl">saúde mental</span><span class="pstat-val">INCLUÍDA</span></div>
+    </div>
+  </div>
+
+  <div class="alert-box warn">
+    <div class="ab-title">⚠️ nota importante</div>
+    <div class="ab-body">Tudo que eu forneço em saúde é informativo e educativo. <strong>Sempre consulte médico, nutricionista e personal trainer</strong> antes de iniciar protocolos intensos. Sou um parceiro de conhecimento, não um profissional de saúde.</div>
+  </div>
+
+  <div class="sec-title">saúde física · corrida e musculação</div>
+  <div class="cards-grid">
+    <div class="ai-card acc2">
+      <span class="card-icon">🏃</span>
+      <span class="card-tag">corrida · retorno</span>
+      <div class="card-title">Plano de Retorno à Corrida</div>
+      <div class="card-body">Crio um <strong>plano progressivo de retorno</strong> para quem ficou parado — começando com 20 min de caminhada/corrida até 5k em 8 semanas. Com frequência, ritmo, tempo de recuperação e progressão segura.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real para você</div>
+        <div class="ex-txt"><strong>"Crie um plano de retorno à corrida para alguém que parou há 1 ano. Meta: 5k em 8 semanas, 3x por semana"</strong></div>
+      </div>
+    </div>
+    <div class="ai-card acc2">
+      <span class="card-icon">💪</span>
+      <span class="card-tag">musculação · treino</span>
+      <div class="card-title">Programas de Treino de Musculação</div>
+      <div class="card-body">Monto programas de <strong>hipertrofia, força ou condicionamento geral</strong> com base em frequência disponível, equipamentos e objetivos. Explico a lógica de cada exercício, séries, repetições e progressão de carga.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real para você</div>
+        <div class="ex-txt"><strong>"Crie um treino ABC para 3x semana na academia, foco em hipertrofia com 1h por sessão — iniciante/intermediário"</strong></div>
+      </div>
+    </div>
+    <div class="ai-card acc2">
+      <span class="card-icon">🥗</span>
+      <span class="card-tag">nutrição · alimentação</span>
+      <div class="card-title">Reeducação Alimentar Prática</div>
+      <div class="card-body">Explico princípios nutricionais, ajudo a <strong>montar cardápios equilibrados e realistas</strong> (sem dietas radicais), ofereço substituições saudáveis, estratégias para controle de açúcar e processados.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real para você</div>
+        <div class="ex-txt"><strong>"Meu objetivo é emagrecer 5kg e ganhar músculo. Monte um exemplo de cardápio semanal realista sem radicalismo"</strong></div>
+      </div>
+    </div>
+    <div class="ai-card acc2">
+      <span class="card-icon">😴</span>
+      <span class="card-tag">sono · recuperação</span>
+      <div class="card-title">Qualidade do Sono e Recuperação</div>
+      <div class="card-body">Sono é a base de tudo — treino, humor, produtividade e fé. Explico <strong>higiene do sono, rotinas de desaceleração noturna</strong>, impacto do sono na composição corporal e como otimizar a recuperação muscular.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real para você</div>
+        <div class="ex-txt"><strong>"Como melhorar minha qualidade de sono com filho pequeno que ainda acorda à noite?"</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title">saúde mental · bem-estar emocional</div>
+  <div class="cards-grid">
+    <div class="ai-card acc2">
+      <span class="card-icon">🧠</span>
+      <span class="card-tag">saúde mental · apoio</span>
+      <div class="card-title">Gestão do Estresse e Ansiedade</div>
+      <div class="card-body">Explico técnicas baseadas em evidências: <strong>respiração diafragmática, mindfulness, reestruturação cognitiva</strong>. Posso ser um espaço seguro para você pensar em voz alta sobre o que está sentindo — sem julgamento.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real para você</div>
+        <div class="ex-txt"><strong>"Estou me sentindo sobrecarregado com trabalho, filho pequeno e ministério. Me ajude a estruturar meus pensamentos"</strong></div>
+      </div>
+    </div>
+    <div class="ai-card acc2">
+      <span class="card-icon">🎯</span>
+      <span class="card-tag">produtividade · foco</span>
+      <div class="card-title">Produtividade e Gestão Mental</div>
+      <div class="card-body">Sistemas de organização mental: <strong>GTD, Método Pomodoro, journaling estruturado, revisão semanal</strong>. Para pais ativos com muitas responsabilidades, a clareza mental é tão importante quanto o físico.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real para você</div>
+        <div class="ex-txt"><strong>"Crie um template de revisão semanal de 15 minutos para eu fazer todo domingo à noite"</strong></div>
+      </div>
+    </div>
+    <div class="ai-card acc2">
+      <span class="card-icon">🌱</span>
+      <span class="card-tag">hábitos · consistência</span>
+      <div class="card-title">Construção de Hábitos Duradouros</div>
+      <div class="card-body">Baseado em neurociência de hábitos (James Clear, BJ Fogg): ajudo a <strong>desenhar o sistema de hábitos</strong> — não só as metas. Stack de hábitos, gatilhos, recompensas e como manter com filho pequeno.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real para você</div>
+        <div class="ex-txt"><strong>"Quero criar hábitos de treino, leitura bíblica e 1 momento de qualidade com meu filho todo dia. Ajude a montar um sistema"</strong></div>
+      </div>
+    </div>
+    <div class="ai-card acc2">
+      <span class="card-icon">💬</span>
+      <span class="card-tag">escuta · reflexão</span>
+      <div class="card-title">Espaço para Pensar e Processar</div>
+      <div class="card-body">Às vezes você não precisa de respostas — precisa de um espaço para <strong>organizar pensamentos, processar decisões difíceis ou simplesmente ser ouvido</strong>. Estou aqui para isso também, com cuidado e sem julgamento.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real para você</div>
+        <div class="ex-txt"><strong>"Preciso pensar sobre uma decisão de carreira que está me pesando. Pode me fazer perguntas para me ajudar a clarear?"</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wide-card acc2">
+    <div class="wc-head">
+      <span class="wc-icon">⚡</span>
+      <div>
+        <div class="wc-title">Integração Saúde + Fé + Paternidade</div>
+        <div class="wc-sub">O ponto de alavancagem mais importante para você em 2025</div>
+      </div>
+    </div>
+    <div class="wc-body">
+      Você tem uma vantagem única: sua fé <em>alimenta sua disciplina</em>. O corpo é templo (1 Co 6:19-20), o descanso é mandamento bíblico (Sabbath), a alegria é força (Ne 8:10). Posso te ajudar a criar uma visão de saúde integrada com sua cosmovisão cristã — não como obrigação, mas como mordomia. <strong>Isso é muito mais motivante do que estética ou vaidade.</strong>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ P6 — CONFEITARIA ═══ -->
+<div id="p6" class="panel" data-t="c6">
+  <div class="ph">
+    <div>
+      <div class="ph-eye">// painel 06 · confeitaria da esposa · rh · negócio em início</div>
+      <div class="ph-title">CONFEITARIA<br>& NEGÓCIO</div>
+      <div class="ph-desc">Sua esposa tem formação em RH e um <strong>negócio de confeitaria em início</strong>. Dois mundos com demandas diferentes — e a IA pode ajudar nos dois, de formas muito práticas.</div>
+    </div>
+    <div class="ph-stats">
+      <div class="pstat"><span class="pstat-icon">🎂</span><span class="pstat-lbl">fase</span><span class="pstat-val">INÍCIO</span></div>
+      <div class="pstat"><span class="pstat-icon">💼</span><span class="pstat-lbl">background</span><span class="pstat-val">RH</span></div>
+    </div>
+  </div>
+
+  <div class="sec-title">confeitaria · negócio e marketing</div>
+  <div class="cards-grid">
+    <div class="ai-card acc6">
+      <span class="card-icon">📱</span>
+      <span class="card-tag">redes sociais · conteúdo</span>
+      <div class="card-title">Conteúdo para Instagram e Redes</div>
+      <div class="card-body">Crio <strong>legendas, hashtags, ideias de posts, reels e stories</strong> para o perfil da confeitaria. Calendário editorial mensal com temas sazonais, datas especiais e conteúdo de bastidores que gera engajamento.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real</div>
+        <div class="ex-txt"><strong>"Crie 15 ideias de posts para o Instagram da confeitaria para o mês de junho (Festa Junina)"</strong></div>
+      </div>
+    </div>
+    <div class="ai-card acc6">
+      <span class="card-icon">💰</span>
+      <span class="card-tag">precificação · financeiro</span>
+      <div class="card-title">Precificação e Formação de Preço</div>
+      <div class="card-body">Explico métodos de precificação para confeitaria artesanal: <strong>custo de matéria-prima, MOD, overhead, margem de lucro</strong>. Ajudo a criar planilha de precificação e analisar viabilidade de produtos.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real</div>
+        <div class="ex-txt"><strong>"Como precificar um bolo decorado de 2kg considerando ingredientes, tempo e mercado local?"</strong></div>
+      </div>
+    </div>
+    <div class="ai-card acc6">
+      <span class="card-icon">📄</span>
+      <span class="card-tag">textos · comunicação</span>
+      <div class="card-title">Textos Profissionais e Comunicação</div>
+      <div class="card-body">Escrevo <strong>descrições de produtos, cardápios digitais, mensagens para clientes</strong> (confirmação de pedido, follow-up, pós-venda), FAQ do negócio e textos para WhatsApp Business.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real</div>
+        <div class="ex-txt"><strong>"Escreva uma mensagem automática profissional e acolhedora para confirmar pedidos pelo WhatsApp"</strong></div>
+      </div>
+    </div>
+    <div class="ai-card acc6">
+      <span class="card-icon">🎯</span>
+      <span class="card-tag">estratégia · crescimento</span>
+      <div class="card-title">Estratégia de Crescimento do Negócio</div>
+      <div class="card-body">Discuto <strong>estratégias de nicho, diferenciação, canais de venda, parcerias locais</strong> (eventos, igrejas, empresas), precificação por valor e como escalar sem perder qualidade artesanal.</div>
+      <div class="example-box">
+        <div class="ex-lbl">exemplo real</div>
+        <div class="ex-txt"><strong>"Que nichos dentro de confeitaria têm mais margem e menos concorrência em cidades médias?"</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title">rh · carreira da sua esposa</div>
+  <div class="cards-grid">
+    <div class="ai-card acc6">
+      <span class="card-icon">👥</span>
+      <span class="card-tag">rh · gestão de pessoas</span>
+      <div class="card-title">Suporte em Temas de RH</div>
+      <div class="card-body">Para quando ela precisar de ideias: <strong>dinâmicas de equipe, frameworks de feedback, onboarding, cultura organizacional</strong> — tanto para usar na carreira quanto ao contratar colaboradores no negócio.</div>
+    </div>
+    <div class="ai-card acc6">
+      <span class="card-icon">📊</span>
+      <span class="card-tag">documentos · processos</span>
+      <div class="card-title">Documentos e Processos do Negócio</div>
+      <div class="card-body">Crio <strong>contratos simples de encomenda, política de cancelamento, ficha de pedido, formulário de personalização</strong> — tudo que formaliza e profissionaliza o negócio desde o início.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ P7 — CAPACIDADES & LIMITES ═══ -->
+<div id="p7" class="panel" data-t="c7">
+  <div class="ph">
+    <div>
+      <div class="ph-eye">// painel 07 · mapa completo de capacidades e limitações</div>
+      <div class="ph-title">CAPACIDADES<br>& LIMITES</div>
+      <div class="ph-desc">O que eu consigo fazer de verdade, o que faço bem com parceria sua, e o que <strong>definitivamente não está no meu alcance</strong> — sem romantismo e sem subestimar.</div>
+    </div>
+    <div class="ph-stats">
+      <div class="pstat"><span class="pstat-icon">✅</span><span class="pstat-lbl">pontos fortes</span><span class="pstat-val">MUITOS</span></div>
+      <div class="pstat"><span class="pstat-icon">🚫</span><span class="pstat-lbl">limites reais</span><span class="pstat-val">EXISTEM</span></div>
+    </div>
+  </div>
+
+  <div class="sec-title">o que eu faço muito bem</div>
+  <div class="cards-grid">
+    <div class="ai-card acc7">
+      <span class="card-icon">✍️</span>
+      <span class="card-tag">texto · conteúdo</span>
+      <div class="card-title">Geração de Texto e Conteúdo</div>
+      <div class="card-body">Artigos, roteiros, copy, estudos, histórias, emails, posts, resumos, traduções. <strong>Em qualquer tom, formato e tamanho.</strong> Português e inglês em nível profissional.</div>
+    </div>
+    <div class="ai-card acc7">
+      <span class="card-icon">💻</span>
+      <span class="card-tag">código · arquivos</span>
+      <div class="card-title">Criação de Arquivos e Código</div>
+      <div class="card-body">Crio arquivos <strong>Word, Excel, PowerPoint, PDF, HTML, React, Python</strong> para download. Escrevo código em dezenas de linguagens. Crio páginas web completas como esta.</div>
+    </div>
+    <div class="ai-card acc7">
+      <span class="card-icon">🔍</span>
+      <span class="card-tag">pesquisa · análise</span>
+      <div class="card-title">Análise, Pesquisa e Raciocínio</div>
+      <div class="card-body">Analiso documentos, dados, textos, imagens. <strong>Faço pesquisa na web em tempo real.</strong> Razoo sobre problemas complexos, identifico padrões e ofereço perspectivas múltiplas.</div>
+    </div>
+    <div class="ai-card acc7">
+      <span class="card-icon">📊</span>
+      <span class="card-tag">dados · visualização</span>
+      <div class="card-title">Dados e Visualizações</div>
+      <div class="card-body">Processo planilhas, crio gráficos, analiso dados, construo dashboards interativos. <strong>Transformo números em insights visuais claros.</strong></div>
+    </div>
+    <div class="ai-card acc7">
+      <span class="card-icon">🗺️</span>
+      <span class="card-tag">planejamento · estratégia</span>
+      <div class="card-title">Planejamento e Estratégia</div>
+      <div class="card-body">Planos de negócio, roteiros de estudo, cronogramas, estratégias de carreira, planos de treino, calendários ministeriais. <strong>Estruturo o caos em passos claros.</strong></div>
+    </div>
+    <div class="ai-card acc7">
+      <span class="card-icon">💬</span>
+      <span class="card-tag">conversa · parceria</span>
+      <div class="card-title">Conversa e Parceria de Pensamento</div>
+      <div class="card-body">Debato ideias, faço perguntas que aprofundam seu pensamento, ajudo a processar decisões. <strong>Sou um parceiro intelectual disponível 24h.</strong></div>
+    </div>
+  </div>
+
+  <div class="sec-title">limitações reais · transparência total</div>
+  
+  <div class="limit-card">
+    <div class="lc-title">🚫 Sem memória entre conversas</div>
+    <div class="lc-body">Cada nova conversa começa do zero. <strong>Não lembro do que conversamos ontem.</strong> Solução: comece conversas futuras com um breve contexto ("Sou o Flavio, CD, tenho filho de 2,5 anos, sou cristão...") ou salve nossos outputs importantes.</div>
+  </div>
+  <div class="limit-card">
+    <div class="lc-title">🚫 Não sou profissional de saúde, jurídico ou financeiro</div>
+    <div class="lc-body">Forneço informação educativa e de apoio. <strong>Para diagnósticos, tratamentos, questões jurídicas ou financeiras sérias, profissionais habilitados são insubstituíveis.</strong> Use meus outputs como ponto de partida, não como veredicto.</div>
+  </div>
+  <div class="limit-card">
+    <div class="lc-title">🚫 Posso errar — e erre confidentemente</div>
+    <div class="lc-body">Às vezes apresento informações desatualizadas ou incorretas com confiança aparente. <strong>Verifique sempre afirmações factuais importantes.</strong> Diga "você tem certeza?" e eu revisito. Sou mais confiável em raciocínio do que em fatos específicos.</div>
+  </div>
+  <div class="limit-card">
+    <div class="lc-title">🚫 Não substituo relações humanas e espirituais reais</div>
+    <div class="lc-body">Não sou pastor, terapeuta, amigo ou pai. <strong>Em momentos de crise espiritual, mental ou relacional, o suporte humano real é essencial.</strong> Posso ajudar a preparar e estruturar, mas a presença humana e o Espírito Santo são insubstituíveis.</div>
+  </div>
+  <div class="limit-card">
+    <div class="lc-title">🚫 Não gero imagens, áudio ou vídeo nativamente</div>
+    <div class="lc-body"><strong>Texto, código e análise são meus domínios.</strong> Para criação visual, use Midjourney, DALL-E, Suno (música) ou CapCut. Posso criar prompts detalhados para essas ferramentas gerarem o resultado que você quer.</div>
+  </div>
+
+  <div class="hr"></div>
+
+  <div class="sec-title">como tirar o máximo de mim · guia flavio</div>
+  <div class="cards-grid">
+    <div class="ai-card acc7">
+      <span class="card-icon">🎯</span>
+      <span class="card-tag">prompt · qualidade</span>
+      <div class="card-title">Seja Específico no Pedido</div>
+      <div class="card-body"><strong>Quanto mais contexto você der, melhor o resultado.</strong> "Escreva um post" gera mediocridade. "Escreva um post LinkedIn de 200 palavras sobre como a IA mudou minha criatividade, tom reflexivo, para minha audiência de designers" gera ouro.</div>
+    </div>
+    <div class="ai-card acc7">
+      <span class="card-icon">🔄</span>
+      <span class="card-tag">iteração · refinamento</span>
+      <div class="card-title">Itere e Refine</div>
+      <div class="card-body">O primeiro output raramente é o final. <strong>Peça revisões, ajustes de tom, variações, "mais curto", "mais técnico", "adicione exemplos".</strong> Somos parceiros no processo, não entrega única.</div>
+    </div>
+    <div class="ai-card acc7">
+      <span class="card-icon">🧩</span>
+      <span class="card-tag">contexto · identidade</span>
+      <div class="card-title">Me Dê Seu Contexto</div>
+      <div class="card-body">Como você viu neste mapa: <strong>saber quem você é muda tudo.</strong> Comece conversas importantes com contexto: quem você é, o que quer, para quem é, qual o objetivo final.</div>
+    </div>
+  </div>
+
+  <div class="alert-box tip">
+    <div class="ab-title">🚀 seu superpoder como usuário de ia</div>
+    <div class="ab-body">Você já entende IA, já usa como ferramenta criativa e pensa estrategicamente. <strong>Isso te coloca no 1% dos usuários.</strong> A maioria usa IA para "me explique X". Você pode usar para "seja meu parceiro estratégico em Y" — e essa diferença de abordagem muda completamente a qualidade do que recebe.</div>
+  </div>
+</div>
+
+</main>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="t-ico">🗺️</div>
+  <div>
+    <div class="t-title">MAPA CARREGADO</div>
+    <div class="t-sub">Bem-vindo, Flavio Guedes!</div>
+  </div>
+</div>
+
+<script>
+function go(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('on'));
+  const p = document.getElementById(id);
+  if (p) p.classList.add('on');
+  if (btn) btn.classList.add('on');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// Toast
+setTimeout(() => {
+  const t = document.getElementById('toast');
+  t.classList.add('on');
+  setTimeout(() => t.classList.remove('on'), 4000);
+}, 800);
+
+// Animate score bars on load
+function animateBars() {
+  document.querySelectorAll('.sb-fill').forEach(bar => {
+    const w = bar.getAttribute('data-w') || bar.style.width;
+    bar.style.width = '0';
+    setTimeout(() => { bar.style.width = w; }, 300);
+  });
+}
+animateBars();
+</script>
+</body>
+</html>
