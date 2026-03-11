@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Study — Creative Coding Lab · Product Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Editorial+New:ital@0;1&family=Owners+Narrow:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080808;
+  --ink:#f2efe8;
+  --ink2:#c8c4bc;
+  --muted:#5c5850;
+  --border:#1e1c18;
+  --border2:#2e2c28;
+  --surface:#0f0e0c;
+  --surface2:#161410;
+  --manim:#e8501a;
+  --remotion:#2a9fd6;
+  --p5:#6ab04c;
+  --gold:#c9963a;
+  --accent:#f2efe8;
+}
+html{scroll-behavior:smooth;overflow-x:hidden}
+
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Geist',sans-serif;
+  font-weight:300;
+  overflow-x:hidden;
+  cursor:none;
+}
+
+/* ── GRAIN ── */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:9990;
+  opacity:.55;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)' opacity='.045'/%3E%3C/svg%3E");
+}
+
+/* ── CUSTOM CURSOR ── */
+#cur{position:fixed;width:8px;height:8px;background:var(--ink);border-radius:50%;
+  pointer-events:none;z-index:9999;transform:translate(-50%,-50%);
+  mix-blend-mode:difference;transition:width .25s,height .25s}
+#cur-ring{position:fixed;width:32px;height:32px;border:1px solid rgba(242,239,232,.2);
+  border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%)}
+
+/* ── PROGRESS ── */
+#prog{position:fixed;top:0;left:0;right:0;height:1px;z-index:500;
+  background:linear-gradient(90deg,var(--manim),var(--gold),var(--remotion),var(--p5));
+  transform-origin:left;transform:scaleX(0)}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:0 32px;height:52px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(8,8,8,.88);backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{font-family:'Geist Mono',monospace;font-size:11px;
+  letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
+.nav-logo b{color:var(--ink);font-weight:500}
+.nav-right{display:flex;align-items:center;gap:24px}
+.nav-item{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--muted);text-decoration:none;
+  cursor:none;transition:color .2s}
+.nav-item:hover{color:var(--ink)}
+.read-badge{font-family:'Geist Mono',monospace;font-size:10px;padding:3px 10px;
+  border:1px solid var(--border2);color:var(--muted);letter-spacing:.1em}
+
+/* ── LAYOUT ── */
+.w{max-width:780px;margin:0 auto;padding:0 32px;position:relative;z-index:1}
+.w-full{max-width:1140px;margin:0 auto;padding:0 32px;position:relative;z-index:1}
+
+/* ════════════════════════════════
+   HERO
+════════════════════════════════ */
+.hero{
+  min-height:100svh;
+  display:grid;
+  grid-template-rows:1fr auto;
+  padding-top:52px;
+  border-bottom:1px solid var(--border);
+  position:relative;overflow:hidden;
+}
+
+/* animated grid bg */
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(242,239,232,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(242,239,232,.03) 1px,transparent 1px);
+  background-size:60px 60px;
+  animation:gridDrift 30s linear infinite;
+}
+@keyframes gridDrift{from{transform:translateY(0)}to{transform:translateY(60px)}}
+
+.hero-body{
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:0 32px 56px;max-width:1140px;margin:0 auto;width:100%;
+}
+
+.case-kicker{
+  font-family:'Geist Mono',monospace;font-size:10px;
+  letter-spacing:.28em;text-transform:uppercase;color:var(--muted);
+  margin-bottom:36px;display:flex;align-items:center;gap:12px;
+}
+.case-kicker::before{content:'';width:24px;height:1px;background:var(--muted)}
+
+.hero-h1{
+  font-family:'Libre Baskerville',serif;
+  font-size:clamp(52px,8.5vw,124px);
+  line-height:.88;letter-spacing:-.03em;font-weight:400;
+  margin-bottom:48px;
+}
+.hero-h1 .line1{display:block;color:var(--ink)}
+.hero-h1 .line2{
+  display:block;font-style:italic;
+  background:linear-gradient(100deg,var(--manim) 0%,var(--gold) 35%,var(--remotion) 65%,var(--p5) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  background-size:200%;
+  animation:gradShift 6s ease-in-out infinite alternate;
+}
+@keyframes gradShift{from{background-position:0%}to{background-position:100%}}
+.hero-h1 .line3{display:block;color:var(--muted)}
+
+.hero-footer{
+  border-top:1px solid var(--border);
+  padding:24px 32px;
+  max-width:1140px;margin:0 auto;width:100%;
+  display:grid;grid-template-columns:1fr 1fr 1fr auto;
+  gap:1px;background:var(--border);
+}
+@media(max-width:700px){.hero-footer{grid-template-columns:1fr 1fr}}
+.hf-cell{background:var(--bg);padding:20px 24px}
+.hf-label{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.hf-val{font-size:14px;font-weight:400;color:var(--ink2)}
+
+/* ════════════════════════════════
+   SECTIONS
+════════════════════════════════ */
+section{padding:96px 0;border-bottom:1px solid var(--border)}
+section:last-of-type{border-bottom:none}
+
+.s-label{
+  font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.28em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:20px;
+  display:flex;align-items:center;gap:14px;
+}
+.s-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.s-title{
+  font-family:'Libre Baskerville',serif;
+  font-size:clamp(30px,4.5vw,60px);
+  line-height:.95;letter-spacing:-.025em;font-weight:400;
+  margin-bottom:40px;
+}
+.s-title em{font-style:italic;color:var(--muted)}
+.s-title strong{font-weight:700}
+.s-title .gt{
+  background:linear-gradient(90deg,var(--gold),var(--remotion));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+
+/* ── PROSE ── */
+.prose{font-size:16px;line-height:1.88;color:var(--ink2);max-width:660px}
+.prose p+p{margin-top:22px}
+.prose strong{font-weight:500;color:var(--ink)}
+.prose em{color:var(--muted);font-style:italic}
+.prose mark{
+  background:transparent;
+  border-bottom:1px solid var(--gold);
+  color:var(--ink);padding-bottom:1px;
+}
+
+/* ── PULL QUOTE ── */
+.pq{
+  font-family:'Libre Baskerville',serif;
+  font-size:clamp(20px,2.8vw,30px);
+  font-style:italic;font-weight:400;
+  line-height:1.4;
+  padding:36px 0 36px 32px;
+  border-left:2px solid var(--gold);
+  margin:48px 0;color:var(--ink);
+  max-width:680px;
+}
+.pq cite{
+  display:block;font-family:'Geist Mono',monospace;
+  font-size:10px;font-style:normal;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--muted);margin-top:16px;
+}
+
+/* ── CALLOUT ── */
+.callout{
+  background:var(--surface);border:1px solid var(--border2);
+  padding:28px 32px;margin:36px 0;
+  border-left:2px solid var(--gold);
+}
+.callout-tag{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.callout-body{font-size:14.5px;line-height:1.78;color:var(--ink2)}
+.callout-body strong{font-weight:500;color:var(--ink)}
+
+/* ── PHASE TIMELINE ── */
+.timeline{margin:40px 0}
+.tl-item{
+  display:grid;grid-template-columns:120px 1fr;
+  gap:32px;padding:32px 0;
+  border-top:1px solid var(--border);
+  position:relative;
+}
+.tl-item:last-child{border-bottom:1px solid var(--border)}
+@media(max-width:600px){.tl-item{grid-template-columns:1fr;gap:12px}}
+.tl-left{}
+.tl-phase{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.tl-n{
+  font-family:'Libre Baskerville',serif;
+  font-size:56px;font-weight:400;color:var(--border2);line-height:1;
+}
+.tl-right{}
+.tl-title{font-size:16px;font-weight:500;color:var(--ink);margin-bottom:10px}
+.tl-desc{font-size:14px;line-height:1.78;color:var(--muted)}
+.tl-desc strong{font-weight:400;color:var(--ink2)}
+.tl-tag{
+  display:inline-block;margin-top:14px;
+  font-family:'Geist Mono',monospace;font-size:9px;
+  letter-spacing:.15em;text-transform:uppercase;
+  padding:4px 12px;border-radius:100px;border:1px solid var(--border2);
+  color:var(--muted);
+}
+
+/* ── ARTEFACT CARDS ── */
+.art-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:1px;background:var(--border2);
+  border:1px solid var(--border2);margin:40px 0;
+}
+@media(max-width:640px){.art-grid{grid-template-columns:1fr}}
+.art-card{
+  background:var(--surface);padding:32px 28px;
+  position:relative;overflow:hidden;
+  transition:background .25s;
+}
+.art-card:hover{background:var(--surface2)}
+.art-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+}
+.ac-m::before{background:var(--manim)}
+.ac-r::before{background:var(--remotion)}
+.ac-p::before{background:var(--p5)}
+.ac-g::before{background:var(--gold)}
+.ac-num{
+  font-family:'Libre Baskerville',serif;font-size:48px;
+  font-weight:400;color:var(--border2);line-height:1;
+  margin-bottom:20px;display:block;
+}
+.ac-title{
+  font-family:'Libre Baskerville',serif;
+  font-size:20px;font-weight:400;letter-spacing:-.01em;
+  margin-bottom:10px;color:var(--ink);line-height:1.2;
+}
+.ac-desc{font-size:13px;color:var(--muted);line-height:1.7}
+.ac-desc strong{font-weight:400;color:var(--ink2)}
+
+/* ── COMPETENCY ROWS ── */
+.comp-list{margin:36px 0}
+.comp-item{
+  display:grid;grid-template-columns:180px 1fr;gap:32px;
+  padding:28px 0;border-top:1px solid var(--border);
+  align-items:start;
+}
+.comp-item:last-child{border-bottom:1px solid var(--border)}
+@media(max-width:640px){.comp-item{grid-template-columns:1fr;gap:10px}}
+.comp-label{
+  font-family:'Geist Mono',monospace;font-size:10px;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:var(--muted);padding-top:3px;
+}
+.comp-body{font-size:14.5px;line-height:1.78;color:var(--ink2)}
+.comp-body strong{font-weight:500;color:var(--ink)}
+.comp-body em{font-style:italic;color:var(--muted)}
+
+/* ── SKILLS TAGS ── */
+.skills-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.sk{
+  font-family:'Geist Mono',monospace;font-size:10px;
+  padding:5px 12px;border-radius:100px;
+  border:1px solid var(--border2);color:var(--muted);
+  letter-spacing:.06em;
+}
+.sk:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── METRICS ── */
+.metrics-band{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1px;background:var(--border2);
+  border:1px solid var(--border2);margin:40px 0;
+}
+@media(max-width:640px){.metrics-band{grid-template-columns:repeat(2,1fr)}}
+.mc{background:var(--surface);padding:28px 24px;text-align:center}
+.mc-n{
+  font-family:'Libre Baskerville',serif;
+  font-size:clamp(40px,5vw,56px);
+  line-height:1;letter-spacing:-.03em;
+  color:var(--ink);display:block;margin-bottom:8px;
+}
+.mc-l{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* ── LEARNINGS ── */
+.learnings{margin:36px 0}
+.ln{
+  padding:28px 0;border-top:1px solid var(--border);
+  display:grid;grid-template-columns:56px 1fr;gap:20px;
+}
+.ln:last-child{border-bottom:1px solid var(--border)}
+.ln-n{
+  font-family:'Libre Baskerville',serif;font-size:32px;
+  color:var(--border2);font-weight:400;line-height:1;padding-top:4px;
+}
+.ln-body{}
+.ln-title{font-size:15px;font-weight:500;color:var(--ink);margin-bottom:8px}
+.ln-text{font-size:13.5px;color:var(--muted);line-height:1.75}
+.ln-text strong{font-weight:400;color:var(--ink2)}
+
+/* ── INTERVIEW SCRIPTS ── */
+.scripts-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:1px;background:var(--border2);
+  border:1px solid var(--border2);margin:36px 0;
+}
+@media(max-width:640px){.scripts-grid{grid-template-columns:1fr}}
+.sc{background:var(--surface);padding:28px 24px;transition:background .2s}
+.sc:hover{background:var(--surface2)}
+.sc-role{
+  font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.22em;
+  text-transform:uppercase;margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;
+}
+.sc-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sc-angle{font-size:12px;font-weight:500;color:var(--gold);
+  letter-spacing:.02em;margin-bottom:12px}
+.sc-text{font-size:13px;line-height:1.75;color:var(--muted)}
+.sc-text strong{font-weight:400;color:var(--ink2)}
+.sc-text em{font-style:italic}
+
+/* ── V2 ROADMAP ── */
+.v2-items{margin:36px 0}
+.v2i{
+  display:grid;grid-template-columns:40px 1fr;gap:16px;
+  padding:24px 0;border-top:1px solid var(--border);
+  align-items:start;
+}
+.v2i:last-child{border-bottom:1px solid var(--border)}
+.v2-num{
+  font-family:'Geist Mono',monospace;font-size:11px;
+  color:var(--muted);padding-top:3px;
+}
+.v2-title{font-size:14.5px;font-weight:500;color:var(--ink);margin-bottom:6px}
+.v2-desc{font-size:13px;color:var(--muted);line-height:1.7}
+.v2-desc strong{font-weight:400;color:var(--ink2)}
+
+/* ── AI HONESTY BLOCK ── */
+.ai-block{
+  background:var(--surface2);
+  border:1px solid var(--border2);
+  padding:40px;margin:48px 0;
+  position:relative;overflow:hidden;
+}
+.ai-block::before{
+  content:'';position:absolute;top:-60px;right:-60px;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(201,150,58,.07),transparent 70%);
+}
+.ai-q{
+  font-family:'Libre Baskerville',serif;font-size:clamp(18px,2.5vw,24px);
+  font-style:italic;color:var(--ink);margin-bottom:20px;
+  line-height:1.35;
+}
+.ai-a{font-size:14.5px;line-height:1.82;color:var(--ink2)}
+.ai-a strong{font-weight:500;color:var(--ink)}
+.ai-a em{font-style:italic;color:var(--muted)}
+
+/* ── FINAL CTA ── */
+.cta-section{
+  padding:100px 0;
+  text-align:center;
+  position:relative;overflow:hidden;
+}
+.cta-bg{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 100%,
+    rgba(201,150,58,.06) 0%,transparent 70%);
+}
+.cta-title{
+  font-family:'Libre Baskerville',serif;
+  font-size:clamp(36px,5vw,68px);
+  font-weight:400;line-height:.95;letter-spacing:-.03em;
+  margin-bottom:12px;
+}
+.cta-title em{font-style:italic;color:var(--muted)}
+.cta-sub{font-size:14px;color:var(--muted);margin-bottom:40px;line-height:1.7;max-width:480px;margin-left:auto;margin-right:auto}
+.cta-links{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{
+  font-family:'Geist Mono',monospace;font-size:11px;
+  padding:12px 24px;border-radius:100px;border:1px solid;
+  cursor:none;transition:all .2s;letter-spacing:.1em;text-transform:uppercase;
+  text-decoration:none;display:inline-block;
+}
+.btn-primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn-primary:hover{background:var(--ink2);border-color:var(--ink2)}
+.btn-ghost{background:transparent;color:var(--muted);border-color:var(--border2)}
+.btn-ghost:hover{color:var(--ink);border-color:var(--ink2)}
+
+/* ── REVEAL ── */
+.r{opacity:0;transform:translateY(24px);
+  transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
+.r.on{opacity:1;transform:none}
+.r2{opacity:0;transition:opacity .6s ease .15s}
+.r2.on{opacity:1}
+
+@media(max-width:768px){
+  .w,.w-full{padding:0 20px}
+  .hero-body,.hero-footer{padding-left:20px;padding-right:20px}
+  nav{padding:0 20px}
+  .ai-block{padding:24px}
+  .tl-item{gap:16px}
+}
+footer{
+  padding:40px 0;font-family:'Geist Mono',monospace;font-size:10px;
+  color:var(--muted);text-align:center;letter-spacing:.12em;
+  border-top:1px solid var(--border);position:relative;z-index:1;
+}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-ring"></div>
+<div id="prog"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo"><b>Portfolio</b> Case Study</div>
+  <div class="nav-right">
+    <a class="nav-item" href="#problema">Problema</a>
+    <a class="nav-item" href="#processo">Processo</a>
+    <a class="nav-item" href="#competencias">Skills</a>
+    <a class="nav-item" href="#entrevistas">Entrevistas</a>
+    <div class="read-badge" id="rt">· · ·</div>
+  </div>
+</nav>
+
+<!-- ══════════════ HERO ══════════════ -->
+<div class="hero">
+  <div class="hero-grid"></div>
+
+  <div class="hero-body">
+    <div class="case-kicker">Portfólio · Product Design &amp; PM · 2025</div>
+    <h1 class="hero-h1">
+      <span class="line1">Como construí um</span>
+      <span class="line2">sistema de conhecimento</span>
+      <span class="line3">sobre Creative Coding para produto</span>
+    </h1>
+  </div>
+
+  <div class="hero-footer">
+    <div class="hf-cell">
+      <div class="hf-label">Tipo</div>
+      <div class="hf-val">Projeto pessoal → Portfólio</div>
+    </div>
+    <div class="hf-cell">
+      <div class="hf-label">Oportunidades alvo</div>
+      <div class="hf-val">Product Designer · PM</div>
+    </div>
+    <div class="hf-cell">
+      <div class="hf-label">Ferramentas documentadas</div>
+      <div class="hf-val">Manim · Remotion · p5.js</div>
+    </div>
+    <div class="hf-cell">
+      <div class="hf-label">Artefatos produzidos</div>
+      <div class="hf-val">4 entregáveis interativos</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ 01 PROBLEMA ══════════════ -->
+<section id="problema">
+<div class="w">
+  <div class="s-label r">01 — O Problema que eu quis resolver</div>
+
+  <h2 class="s-title r">
+    PMs e designers<br>
+    <em>subutilizam</em> a camada<br>
+    <strong>visual do argumento</strong>
+  </h2>
+
+  <div class="prose r">
+    <p>Existe uma contradição silenciosa no trabalho de produto: as pessoas mais responsáveis por <strong>traduzir complexidade em clareza</strong> usam ferramentas que trabalham contra elas.</p>
+
+    <p>O ciclo padrão é manual e quebrável: coleta dados → cola no Excel → formata no PowerPoint → exporta → apresenta. Quando os dados mudam — e sempre mudam — o ciclo recomeça do zero.</p>
+
+    <p>O resultado é previsível: <mark>apresentações que não fazem jus ao raciocínio por trás delas.</mark> Um PM que pensa em sistemas apresenta um slide estático. Um funil de conversão que se constrói frame a frame conta uma história radicalmente diferente da mesma tabela com os mesmos números.</p>
+  </div>
+
+  <blockquote class="pq r">
+    "A forma como você apresenta uma ideia
+    <em>é parte da ideia.</em> Uma métrica animada
+    não é cosmética — é argumentativa."
+    <cite>— Premissa que guiou o projeto</cite>
+  </blockquote>
+
+  <div class="prose r">
+    <p>Mas quando fui buscar recursos para resolver isso — no contexto de produto, em português, para quem não é dev — não encontrei nada. Existem documentações técnicas. Existem tutoriais de animação. <strong>Não existia um sistema de conhecimento para PMs e designers que quisessem usar código como ferramenta de comunicação.</strong></p>
+
+    <p>Esse foi o problema que decidi documentar e resolver — não como projeto fictício, mas como prática real de aprendizado.</p>
+  </div>
+
+  <div class="callout r">
+    <div class="callout-tag">Oportunidade identificada</div>
+    <div class="callout-body">
+      Ferramentas como <strong>Manim, Remotion e p5.js</strong> são poderosas demais para ficarem restritas a devs e motion designers. Um PM ou Product Designer que entende esses sistemas — mesmo sem programar do zero — toma decisões diferentes, comunica diferente, e produz artefatos que ninguém esquece.
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════ 02 PROCESSO ══════════════ -->
+<section id="processo">
+<div class="w">
+  <div class="s-label r">02 — Como o projeto se construiu</div>
+
+  <h2 class="s-title r">
+    Cinco fases.<br>
+    <em>Cada uma revelando</em><br>
+    <strong>a necessidade da próxima.</strong>
+  </h2>
+
+  <div class="prose r">
+    <p>Este projeto não foi planejado de cima para baixo. Ele emergiu da prática iterativa — e isso não é uma fraqueza, é o ponto central da narrativa. Um PM que aprende enquanto faz e documenta o que descobriu está demonstrando exatamente o que o mercado mais valoriza e menos encontra.</p>
+  </div>
+
+  <div class="timeline r">
+
+    <div class="tl-item">
+      <div class="tl-left">
+        <div class="tl-phase">Fase 01</div>
+        <div class="tl-n">01</div>
+      </div>
+      <div class="tl-right">
+        <div class="tl-title">Mapeamento técnico — o painel comparativo</div>
+        <div class="tl-desc">A pergunta inicial era simples: <strong>qual ferramenta de animação faz sentido para apresentações de produto?</strong> A resposta exigiu critérios explícitos. Criei um painel comparativo em 4 dimensões — eficiência de renderização, velocidade de desenvolvimento, profundidade de complexidade e workflow. Cada ferramenta recebeu scores com barras animadas, e o painel inteiro foi construído com efeitos visuais deliberados: luz ambiente, degradês tipográficos, scroll parallax.</div>
+        <span class="tl-tag">Entregável: painel-comparativo.html</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left">
+        <div class="tl-phase">Fase 02</div>
+        <div class="tl-n">02</div>
+      </div>
+      <div class="tl-right">
+        <div class="tl-title">Crítica e redesign — do técnico para o humano</div>
+        <div class="tl-desc">O primeiro painel era funcional, mas errado. <strong>Tinha código demais e contexto de menos.</strong> A iteração foi em dois eixos simultâneos: (1) substituir snippets de código por casos de uso reais — "você tem 100 produtos e quer um vídeo personalizado para cada" em vez de "veja este componente React"; (2) redesenhar a interface para ser, ela mesma, uma demonstração do que o projeto defende — luz ambiente que muda de cor conforme o scroll, tipografia com degradê, cursor personalizado com física.</div>
+        <span class="tl-tag">Decisão: remover código, adicionar cenário</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left">
+        <div class="tl-phase">Fase 03</div>
+        <div class="tl-n">03</div>
+      </div>
+      <div class="tl-right">
+        <div class="tl-title">Product Motion Lab — 6 demos ao vivo</div>
+        <div class="tl-desc">Com o contexto definido como <strong>criadores de conteúdo, PMs e designers em nível iniciante</strong>, o projeto evoluiu para exemplos práticos rodando no browser: funil de conversão animado com contadores, roadmap Q1–Q4 construindo-se em timeline, dashboard de métricas com spring physics, resultado de A/B test com animação de vitória, user flow de partículas interativas e tipografia cinética magnética. Cada exemplo ancorado em um cenário real de apresentação de produto.</div>
+        <span class="tl-tag">Entregável: product-motion-lab.html</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left">
+        <div class="tl-phase">Fase 04</div>
+        <div class="tl-n">04</div>
+      </div>
+      <div class="tl-right">
+        <div class="tl-title">Parameter Lab — aprender vendo, não lendo</div>
+        <div class="tl-desc">A última camada técnica partiu de uma premissa de aprendizado: <strong>pessoas entendem parâmetros quando os manipulam, não quando os leem.</strong> Construí um laboratório com 15 parâmetros ajustáveis via slider — damping, stiffness, mass, run_time, lag_ratio, rate_func, lerp factor, trail alpha, noise scale e mais. Cada um com preview ao vivo em canvas, explicação do impacto prático e código contextualizado. A ordem é intencional: você toca antes de ler.</div>
+        <span class="tl-tag">Entregável: parameter-lab.html</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left">
+        <div class="tl-phase">Fase 05</div>
+        <div class="tl-n">05</div>
+      </div>
+      <div class="tl-right">
+        <div class="tl-title">Este document — o processo como artefato</div>
+        <div class="tl-desc">A última fase é esta: transformar o processo em narrativa de portfólio. <strong>Um case de portfólio que documenta como você pensa é mais revelador do que qualquer projeto de UX fabricado.</strong> Esse documento não descreve o que foi feito — explica por quê cada decisão foi tomada, o que não funcionou, o que teria feito diferente, e como apresentar o projeto em voz alta para diferentes audiências.</div>
+        <span class="tl-tag">Entregável: este documento</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- ══════════════ 03 ARTEFATOS ══════════════ -->
+<section>
+<div class="w">
+  <div class="s-label r">03 — Os artefatos produzidos</div>
+  <h2 class="s-title r">Quatro entregas.<br><em>Uma progressão</em><br>de <strong class="gt">valor.</strong></h2>
+</div>
+<div class="w-full">
+  <div class="art-grid r">
+    <div class="art-card ac-g">
+      <span class="ac-num">01</span>
+      <div class="ac-title">Painel Comparativo Técnico</div>
+      <div class="ac-desc">Tabela comparativa Manim vs Remotion vs p5.js em 4 dimensões. Interface com efeitos de scroll, luz ambiente dinâmica, tipografia em degradê animado e barras de score com Intersection Observer. <strong>Primeiro recurso desse tipo em PT-BR para contexto de produto.</strong></div>
+    </div>
+    <div class="art-card ac-r">
+      <span class="ac-num">02</span>
+      <div class="ac-title">Product Motion Lab</div>
+      <div class="ac-desc">6 demos interativas em canvas HTML — funil de conversão, roadmap trimestral, dashboard com spring animation, A/B test com confetti, user flow com partículas e tipografia cinética magnética. <strong>Cada exemplo ancorado num cenário PM real.</strong> Passo a passo + prompt para IA.</div>
+    </div>
+    <div class="art-card ac-p">
+      <span class="ac-num">03</span>
+      <div class="ac-title">Parameter Lab</div>
+      <div class="ac-desc">15 parâmetros ajustáveis em tempo real com sliders — 5 por ferramenta, organizados por categoria. Preview ao vivo, explicação do impacto, código em destaque. <strong>Construído ao contrário: você toca no slider antes de ler a explicação.</strong> Princípio de aprendizado por descoberta.</div>
+    </div>
+    <div class="art-card ac-m">
+      <span class="ac-num">04</span>
+      <div class="ac-title">Case Study (este documento)</div>
+      <div class="ac-desc">A narrativa que transforma artefatos em argumento. Documenta raciocínio, decisões, limitações honestas e scripts para entrevistas. <strong>O case em si é uma demonstração da habilidade que descreve:</strong> comunicar complexidade com clareza e intenção visual.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════ 04 COMPETÊNCIAS ══════════════ -->
+<section id="competencias">
+<div class="w">
+  <div class="s-label r">04 — O que este projeto demonstra</div>
+
+  <h2 class="s-title r">
+    Habilidades que<br>
+    <em>não cabem</em> num<br>
+    <strong>LinkedIn.</strong>
+  </h2>
+
+  <div class="prose r">
+    <p>Um portfólio de produto não prova que você sabe fazer produto. Ele prova que você <strong>pensa sobre produto de uma forma que vale a pena ser vista.</strong> Aqui estão as competências que este projeto evidencia — com a argumentação honesta de por que cada uma importa para vagas de PD e PM.</p>
+  </div>
+
+  <div class="comp-list r">
+
+    <div class="comp-item">
+      <div class="comp-label">Pensamento<br>sistêmico</div>
+      <div class="comp-body">
+        O projeto não escolheu uma ferramenta. <strong>Mapeou um espaço de soluções, definiu critérios de decisão e concluiu que a ferramenta certa depende do contexto.</strong> É o mesmo raciocínio que um PM usa ao avaliar build vs. buy, ou que um PD usa ao decidir entre frameworks de design. A forma de pensar é transferível — o domínio específico é detalhe.
+      </div>
+    </div>
+
+    <div class="comp-item">
+      <div class="comp-label">Design de<br>informação</div>
+      <div class="comp-body">
+        Cada artefato foi projetado com hierarquia de atenção deliberada. <strong>O que o usuário vê primeiro, o que aprofunda, o que converte.</strong> A decisão de remover snippets de código na fase 02 é um exemplo concreto: o objetivo não era ensinar sintaxe, era criar compreensão de uso. Isso é design de produto aplicado à comunicação de conhecimento.
+      </div>
+    </div>
+
+    <div class="comp-item">
+      <div class="comp-label">Alfabetização<br>técnica</div>
+      <div class="comp-body">
+        Um PM ou PD que entende spring physics — o que damping, stiffness e mass significam como decisões de produto — <strong>não precisa de um dev para validar se uma animação é possível ou se faz sentido para o contexto.</strong> Damping baixo é jovial, consumer, Nubank. Damping alto é corporativo, enterprise, SAP. Isso encurta ciclos de feedback. E encurtar ciclos de feedback é o trabalho.
+      </div>
+    </div>
+
+    <div class="comp-item">
+      <div class="comp-label">Iteração<br>documentada</div>
+      <div class="comp-body">
+        O projeto evoluiu em 5 fases, cada uma respondendo a uma crítica da anterior. <strong>Iterar é esperado. Documentar a iteração com clareza sobre o que não funcionou e por quê — isso é raro.</strong> Qualquer recrutador ou hiring manager que leia este case consegue ver como você pensa quando a primeira versão de algo está errada.
+      </div>
+    </div>
+
+    <div class="comp-item">
+      <div class="comp-label">Aprendizado<br>em público</div>
+      <div class="comp-body">
+        Este projeto começou sem uma resposta pronta. <strong>O processo de chegar à resposta é o portfólio.</strong> Isso demonstra conforto com ambiguidade, capacidade de estruturar conhecimento novo e disposição de mostrar o trabalho antes de ser "perfeito" — todas competências que distinguem PMs e PDs seniores dos demais.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="metrics-band r">
+    <div class="mc">
+      <span class="mc-n">5</span>
+      <div class="mc-l">fases de iteração documentadas publicamente</div>
+    </div>
+    <div class="mc">
+      <span class="mc-n">15</span>
+      <div class="mc-l">parâmetros com preview interativo ao vivo</div>
+    </div>
+    <div class="mc">
+      <span class="mc-n">6</span>
+      <div class="mc-l">demos com cenários reais de produto</div>
+    </div>
+    <div class="mc">
+      <span class="mc-n">3</span>
+      <div class="mc-l">ferramentas comparadas com critérios explícitos</div>
+    </div>
+  </div>
+
+  <div class="s-label r" style="margin-top:48px">Stack de competências</div>
+  <div class="skills-wrap r">
+    <span class="sk">Pensamento sistêmico</span>
+    <span class="sk">Design de informação</span>
+    <span class="sk">Motion design</span>
+    <span class="sk">Spring physics</span>
+    <span class="sk">Canvas API</span>
+    <span class="sk">HTML / CSS / JS</span>
+    <span class="sk">Prompt engineering</span>
+    <span class="sk">IA como co-designer</span>
+    <span class="sk">Storytelling de dados</span>
+    <span class="sk">A/B testing narrativo</span>
+    <span class="sk">Hierarquia visual</span>
+    <span class="sk">Responsividade</span>
+    <span class="sk">Aprendizado em público</span>
+    <span class="sk">Documentação de processo</span>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════ 05 APRENDIZADOS ══════════════ -->
+<section>
+<div class="w">
+  <div class="s-label r">05 — Aprendizados honestos</div>
+
+  <h2 class="s-title r">
+    O que <strong>funcionou.</strong><br>
+    O que <em>não funcionou.</em><br>
+    O que eu faria diferente.
+  </h2>
+
+  <div class="learnings r">
+
+    <div class="ln">
+      <div class="ln-n">L1</div>
+      <div class="ln-body">
+        <div class="ln-title">Começar pelo código foi o erro certo</div>
+        <div class="ln-text">A primeira versão tinha snippets de código que ninguém leria. Mas foi <strong>necessário errar assim para descobrir que o valor estava nos casos de uso, não na sintaxe.</strong> Sem aquele excesso inicial, a iteração certa não teria sido óbvia. Erros que ensinam são parte do processo — não são o oposto do processo.</div>
+      </div>
+    </div>
+
+    <div class="ln">
+      <div class="ln-n">L2</div>
+      <div class="ln-body">
+        <div class="ln-title">IA como co-designer muda a velocidade, não o pensamento</div>
+        <div class="ln-text">Usar Claude para implementar os painéis acelerou dramaticamente a execução. <strong>Mas as decisões de problema, contexto, hierarquia, o que remover e o que enfatizar — foram todas minhas.</strong> A IA executa com precisão quando a direção é clara. Aprender a dar direção clara é a habilidade. Este projeto é evidência disso.</div>
+      </div>
+    </div>
+
+    <div class="ln">
+      <div class="ln-n">L3</div>
+      <div class="ln-body">
+        <div class="ln-title">A interatividade não é cosmética — é pedagógica</div>
+        <div class="ln-text">O Parameter Lab só funciona porque a ordem é: <strong>toque no slider → veja o efeito → leia a explicação.</strong> Inverter a ordem destruiria o ponto. Isso é um princípio de design de aprendizado que estou aplicando conscientemente — e que qualquer entrevistador de PD deveria reconhecer como decisão intencional de UX.</div>
+      </div>
+    </div>
+
+    <div class="ln">
+      <div class="ln-n">L4</div>
+      <div class="ln-body">
+        <div class="ln-title">O que não foi feito — e por que importa dizer isso</div>
+        <div class="ln-text">Nenhum vídeo foi exportado de verdade com Manim ou Remotion. As demos são simulações em canvas, não outputs reais das ferramentas. <strong>Isso é uma limitação honesta, e nomeá-la aqui é mais profissional do que omiti-la.</strong> A V2 deveria incluir MP4s reais ao lado do código que os gerou. Um bom case de portfólio documenta o que ainda não existe.</div>
+      </div>
+    </div>
+
+    <div class="ln">
+      <div class="ln-n">L5</div>
+      <div class="ln-body">
+        <div class="ln-title">Portfólio é argumento, não arquivo</div>
+        <div class="ln-text">Um portfólio que mostra "o que fiz" é um arquivo. <strong>Um portfólio que mostra como penso, o que aprendi e o que faria diferente — é um argumento.</strong> Este documento existe para ser o segundo tipo. Se você está lendo isso e consegue visualizar como eu trabalho num sprint review, numa decisão de priorização ou numa apresentação para o board — então funcionou.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- ══════════════ 06 ENTREVISTAS ══════════════ -->
+<section id="entrevistas">
+<div class="w">
+  <div class="s-label r">06 — Como apresentar em entrevistas</div>
+
+  <h2 class="s-title r">
+    O mesmo projeto.<br>
+    <em>Quatro leituras</em><br>
+    <strong>diferentes.</strong>
+  </h2>
+
+  <div class="prose r">
+    <p>Um case só existe de verdade quando você consegue narrar em voz alta sem ler. Abaixo estão os ângulos para cada tipo de conversa — o que enfatizar, o que não dizer, e qual pergunta você vai ouvir em cada contexto.</p>
+  </div>
+
+  <div class="scripts-grid r">
+
+    <div class="sc">
+      <div class="sc-role">
+        <span class="sc-dot" style="background:var(--remotion)"></span>
+        Entrevista de Product Manager
+      </div>
+      <div class="sc-angle">Ângulo: priorização e sistemas de decisão</div>
+      <div class="sc-text">
+        "Mapeei três ferramentas usando critérios explícitos — não escolhi a minha favorita, defini um framework de decisão. A conclusão foi que a ferramenta certa depende do contexto: <em>Remotion para escala e volume, Manim para precisão matemática, p5.js para interatividade ao vivo.</em> <strong>É o mesmo raciocínio que aplico para priorizar features num backlog.</strong> Ferramentas diferentes, mesma estrutura de pensamento."
+      </div>
+    </div>
+
+    <div class="sc">
+      <div class="sc-role">
+        <span class="sc-dot" style="background:var(--p5)"></span>
+        Entrevista de Product Designer
+      </div>
+      <div class="sc-angle">Ângulo: decisões de design e processo iterativo</div>
+      <div class="sc-text">
+        "A primeira versão tinha código demais. Eu sabia que estava errado antes de terminar de fazer. <strong>A iteração foi remover o que não servia ao usuário</strong> — substituir sintaxe por cenário de uso. Cada decisão visual foi intencional: a luz ambiente segue o scroll porque o usuário precisa sentir que está navegando em algo vivo. <em>Isso é design de produto aplicado a um sistema de conhecimento.</em>"
+      </div>
+    </div>
+
+    <div class="sc">
+      <div class="sc-role">
+        <span class="sc-dot" style="background:var(--manim)"></span>
+        Conversa técnica / com devs
+      </div>
+      <div class="sc-angle">Ângulo: alfabetização técnica como vantagem</div>
+      <div class="sc-text">
+        "Implementei simulação de spring physics do zero — equação de força, amortecimento, integração por frame. Entendo damping, stiffness e mass não como parâmetros abstratos, mas como <strong>decisões de produto: damping baixo é consumer, jovial. Damping alto é enterprise, sério.</strong> Isso me permite conversar com engenharia sobre animação sem depender de protótipos. Encurta o ciclo de feedback em pelo menos uma rodada."
+      </div>
+    </div>
+
+    <div class="sc">
+      <div class="sc-role">
+        <span class="sc-dot" style="background:var(--gold)"></span>
+        Conversa de cultura / fit
+      </div>
+      <div class="sc-angle">Ângulo: aprendizado em público como prática</div>
+      <div class="sc-text">
+        "Comecei sem saber qual ferramenta recomendar. O projeto inteiro é o registro de como eu chego em conclusões — errando, iterando, documentando o que não funcionou. <strong>Acredito que aprender em público é uma forma de liderança.</strong> Pessoas que mostram o processo imperfeito criam mais confiança do que pessoas que só mostram o resultado polido. <em>Este case é um exemplo disso.</em>"
+      </div>
+    </div>
+
+  </div>
+
+  <div class="ai-block r">
+    <div class="ai-q">"Você usou IA para construir isso?"</div>
+    <div class="ai-a">
+      <strong>Sim — de forma intencional e transparente.</strong> Claude foi meu par de desenvolvimento: implementou interfaces que eu direcionei, propôs estruturas que eu aceitei ou rejeitei, e acelerou a execução em ordens de grandeza. As decisões de problema, prioridade, narrativa, o que mostrar e o que remover — foram minhas.<br><br>
+      <strong>Usar IA bem é uma competência de produto em 2025.</strong> Esconder que usou é desonesto. Não saber o que delegar e o que não delegar — isso sim seria uma fraqueza. Este projeto demonstra exatamente essa distinção: a IA executou. Eu dirigi.
+    </div>
+  </div>
+
+</div>
+</section>
+
+<!-- ══════════════ 07 PRÓXIMOS PASSOS ══════════════ -->
+<section>
+<div class="w">
+  <div class="s-label r">07 — O que viria na V2</div>
+
+  <h2 class="s-title r">
+    Todo bom portfólio<br>
+    <em>documenta</em> o que<br>
+    <strong>ainda não existe.</strong>
+  </h2>
+
+  <div class="prose r">
+    <p>Definir próximos passos que você não implementou ainda não é fraqueza — é prova de que você pensa em produto como sistema contínuo, não como projeto finalizado. Um PM que não consegue articular a V2 provavelmente não tinha clareza suficiente sobre a V1.</p>
+  </div>
+
+  <div class="v2-items r">
+
+    <div class="v2i">
+      <div class="v2-num">01</div>
+      <div>
+        <div class="v2-title">Outputs reais exportados com as ferramentas</div>
+        <div class="v2-desc">Produzir MP4s reais com Manim e Remotion — não simulações em canvas. <strong>Mostrar o arquivo exportado ao lado do código que o gerou.</strong> Fechar o loop entre "explico como funciona" e "aqui está o resultado real".</div>
+      </div>
+    </div>
+
+    <div class="v2i">
+      <div class="v2-num">02</div>
+      <div>
+        <div class="v2-title">Templates de Remotion para PMs — repositório aberto</div>
+        <div class="v2-desc">Um repositório GitHub com componentes prontos para funil, roadmap, dashboard e A/B test. <strong>Dados substituíveis por CSV, zero configuração manual.</strong> Transforma o sistema de conhecimento em ferramenta de trabalho real.</div>
+      </div>
+    </div>
+
+    <div class="v2i">
+      <div class="v2-num">03</div>
+      <div>
+        <div class="v2-title">Validação com usuários — métricas de aprendizado</div>
+        <div class="v2-desc">Testar com PMs e designers reais: o Parameter Lab realmente reduz a curva de aprendizado? Quanto tempo leva para alguém entender damping depois de usar o slider? <strong>Métricas de compreensão, não apenas engajamento.</strong></div>
+      </div>
+    </div>
+
+    <div class="v2i">
+      <div class="v2-num">04</div>
+      <div>
+        <div class="v2-title">Ensinar com as ferramentas que documenta</div>
+        <div class="v2-desc">Ironicamente, um projeto sobre ferramentas de vídeo ainda não é um vídeo. <strong>A V2 deveria ser uma mini-série ensinada com Remotion — onde o próprio vídeo de ensino é o exemplo.</strong> A mensagem e o meio colapsados em um só artefato.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- ══════════════ CTA ══════════════ -->
+<div class="cta-section">
+  <div class="cta-bg"></div>
+  <div class="w r" style="position:relative;z-index:1">
+    <div style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);margin-bottom:20px">Explore os artefatos do projeto</div>
+    <h2 class="cta-title">
+      Veja o sistema<br>
+      <em>funcionando.</em>
+    </h2>
+    <p class="cta-sub">Cada artefato é independente e pode ser aberto diretamente no browser — sem instalação, sem dependências.</p>
+    <div class="cta-links">
+      <a class="btn btn-primary" href="painel-comparativo.html">→ Painel Comparativo</a>
+      <a class="btn btn-ghost" href="product-motion-lab.html">Product Motion Lab</a>
+      <a class="btn btn-ghost" href="parameter-lab.html">Parameter Lab</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="w">
+    Creative Coding Lab · Case Study · Portfólio Product Design &amp; PM · Construído com Claude · 2025
+  </div>
+</footer>
+
+<!-- ══════════════ SCRIPTS ══════════════ -->
+<script>
+// CURSOR
+const cur=document.getElementById('cur'),ring=document.getElementById('cur-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  cur.style.left=mx+'px';cur.style.top=my+'px';
+});
+(function rloop(){
+  rx+=(mx-rx)*.1;ry+=(my-ry)*.1;
+  ring.style.left=rx+'px';ring.style.top=ry+'px';
+  requestAnimationFrame(rloop);
+})();
+['a','button','.btn','h1','h2','.art-card','.sc','.comp-item'].forEach(sel=>{
+  document.querySelectorAll(sel).forEach(el=>{
+    el.addEventListener('mouseenter',()=>{
+      cur.style.width='18px';cur.style.height='18px';
+      ring.style.width='50px';ring.style.height='50px';
+      ring.style.borderColor='rgba(242,239,232,.4)';
+    });
+    el.addEventListener('mouseleave',()=>{
+      cur.style.width='8px';cur.style.height='8px';
+      ring.style.width='32px';ring.style.height='32px';
+      ring.style.borderColor='rgba(242,239,232,.2)';
+    });
+  });
+});
+if('ontouchstart' in window){
+  cur.style.display='none';ring.style.display='none';
+  document.body.style.cursor='auto';
+}
+
+// PROGRESS
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement.scrollHeight-window.innerHeight;
+  document.getElementById('prog').style.transform=`scaleX(${Math.min(1,window.scrollY/h)})`;
+});
+
+// READ TIME
+(()=>{
+  const w=document.body.innerText.replace(/\s+/g,' ').split(' ').length;
+  const m=Math.ceil(w/220);
+  document.getElementById('rt').textContent=`${m} min`;
+})();
+
+// REVEAL
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('on');
+      // stagger children of grids
+      const children=[...e.target.querySelectorAll('.art-card,.sc,.mc,.comp-item,.ln,.tl-item,.v2i')];
+      children.forEach((c,i)=>{
+        setTimeout(()=>c.classList.add('on'),i*80);
+      });
+    }
+  });
+},{threshold:.06});
+document.querySelectorAll('.r,.r2').forEach(el=>io.observe(el));
+
+// Add .r to grid children too
+document.querySelectorAll('.art-card,.sc,.mc,.ln,.v2i').forEach(el=>{
+  el.classList.add('r');
+  io.observe(el);
+});
+
+// NAV smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t)t.scrollIntoView({behavior:'smooth'});
+  });
+});
+
+// Active nav highlight
+const sections=document.querySelectorAll('section[id]');
+const navItems=document.querySelectorAll('.nav-item[href^="#"]');
+window.addEventListener('scroll',()=>{
+  let cur='';
+  sections.forEach(s=>{
+    if(window.scrollY>=s.offsetTop-120)cur=s.id;
+  });
+  navItems.forEach(a=>{
+    a.style.color=a.getAttribute('href')==='#'+cur?'var(--ink)':'';
+  });
+},{passive:true});
+</script>
+</body>
+</html>
