@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parameter Lab — Creative Coding</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,400&family=Geist:wght@300;400;500&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07080d;--s1:#0c0d17;--s2:#12131f;--s3:#181928;
+  --border:#1c1e30;--border2:#252840;
+  --manim:#ff6b35;--remotion:#38bdf8;--p5:#84cc16;
+  --text:#e0e2f0;--muted:#4a4e6a;--mid:#8890b8;
+  --code-bg:#050610;
+}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{background:var(--bg);color:var(--text);font-family:'Geist',sans-serif;font-weight:300;min-height:100vh}
+
+/* NOISE LAYER */
+body::before{content:'';position:fixed;inset:0;opacity:.5;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)' opacity='.04'/%3E%3C/svg%3E")}
+
+#prog{position:fixed;top:0;left:0;right:0;height:2px;z-index:500;
+  background:linear-gradient(90deg,var(--manim),var(--remotion),var(--p5));
+  transform-origin:left;transform:scaleX(0);transition:transform .1s}
+
+/* ─── NAV ─── */
+nav{position:sticky;top:0;z-index:100;background:rgba(7,8,13,.9);
+  backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;
+  display:flex;align-items:center;gap:0;height:56px}
+.nav-brand{font-family:'Geist Mono',monospace;font-size:11px;
+  letter-spacing:.15em;color:var(--muted);padding-right:28px;
+  border-right:1px solid var(--border);margin-right:20px}
+.nav-brand strong{color:var(--text);font-weight:500}
+.tool-tabs{display:flex;gap:2px}
+.ttab{font-family:'Geist Mono',monospace;font-size:11px;padding:6px 16px;
+  border-radius:4px;cursor:pointer;letter-spacing:.08em;border:none;
+  background:transparent;color:var(--muted);transition:all .2s}
+.ttab:hover{color:var(--text);background:var(--s2)}
+.ttab.active{color:#000;font-weight:500}
+.ttab.tm.active{background:var(--manim)}
+.ttab.tr.active{background:var(--remotion)}
+.ttab.tp.active{background:var(--p5)}
+
+/* ─── LAYOUT ─── */
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+
+/* ─── HERO ─── */
+.hero{padding:64px 0 48px;border-bottom:1px solid var(--border)}
+.hero-eyebrow{font-family:'Geist Mono',monospace;font-size:10px;
+  letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-bottom:20px}
+.hero-title{font-family:'Fraunces',serif;font-size:clamp(40px,6vw,76px);
+  line-height:.92;letter-spacing:-.03em;margin-bottom:16px}
+.hero-title em{font-style:italic;
+  background:linear-gradient(135deg,var(--manim),var(--remotion) 50%,var(--p5));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:14px;color:var(--muted);max-width:560px;line-height:1.8}
+.hero-sub strong{color:var(--mid);font-weight:400}
+
+/* ─── TOOL PANEL ─── */
+.tool-panel{display:none;padding:48px 0}
+.tool-panel.active{display:block}
+
+.tool-header{display:flex;align-items:baseline;gap:16px;margin-bottom:40px;
+  padding-bottom:24px;border-bottom:1px solid var(--border)}
+.tool-title{font-family:'Fraunces',serif;font-size:clamp(36px,5vw,60px);
+  line-height:.92;letter-spacing:-.02em}
+.nm{background:linear-gradient(120deg,#ff6b35,#ff9a6c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nr{background:linear-gradient(120deg,#38bdf8,#7dd3fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.np{background:linear-gradient(120deg,#84cc16,#a3e635);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.tool-lang{font-family:'Geist Mono',monospace;font-size:12px;color:var(--muted)}
+
+/* PARAM CATEGORY TITLE */
+.cat-title{font-family:'Geist Mono',monospace;font-size:10px;
+  letter-spacing:.25em;text-transform:uppercase;color:var(--muted);
+  margin:40px 0 20px;display:flex;align-items:center;gap:12px}
+.cat-title::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ─── PARAM BLOCK ─── */
+.param-block{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:2px}
+@media(max-width:860px){.param-block{grid-template-columns:1fr}}
+
+.param-controls{background:var(--s1);padding:28px;display:flex;flex-direction:column;gap:20px}
+.param-preview{background:var(--s2);display:flex;flex-direction:column}
+.preview-bar{background:var(--bg);padding:10px 16px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between}
+.preview-label{font-family:'Geist Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.12em}
+.replay-btn{font-family:'Geist Mono',monospace;font-size:10px;padding:3px 10px;
+  border-radius:100px;border:1px solid var(--border);background:transparent;
+  color:var(--muted);cursor:pointer;transition:all .2s;letter-spacing:.06em}
+.replay-btn:hover{color:var(--text);border-color:var(--border2)}
+.canvas-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:16px}
+canvas{display:block;border-radius:2px}
+
+/* PARAM NAME */
+.param-name{font-size:15px;font-weight:500;letter-spacing:.01em;margin-bottom:2px}
+.param-what{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:12px}
+.param-what strong{color:var(--mid);font-weight:400}
+
+/* SLIDER */
+.slider-row{display:flex;align-items:center;gap:12px}
+.slider-label-l,.slider-label-r{font-family:'Geist Mono',monospace;font-size:10px;
+  color:var(--muted);min-width:28px;letter-spacing:.05em}
+.slider-label-r{text-align:right}
+input[type=range]{flex:1;-webkit-appearance:none;appearance:none;
+  height:2px;border-radius:2px;outline:none;cursor:pointer;background:var(--border)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;
+  width:14px;height:14px;border-radius:50%;cursor:pointer;
+  border:2px solid var(--bg);transition:transform .15s}
+input[type=range].sm::-webkit-slider-thumb{background:var(--manim)}
+input[type=range].sr::-webkit-slider-thumb{background:var(--remotion)}
+input[type=range].sp::-webkit-slider-thumb{background:var(--p5)}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.3)}
+input[type=range].sm{accent-color:var(--manim)}
+input[type=range].sr{accent-color:var(--remotion)}
+input[type=range].sp{accent-color:var(--p5)}
+
+.val-display{font-family:'Geist Mono',monospace;font-size:13px;
+  font-weight:500;min-width:52px;text-align:right}
+.vm{color:var(--manim)}.vr{color:var(--remotion)}.vp{color:var(--p5)}
+
+/* SELECT */
+select.param-select{width:100%;background:var(--code-bg);border:1px solid var(--border2);
+  color:var(--text);font-family:'Geist Mono',monospace;font-size:12px;
+  padding:8px 12px;border-radius:4px;cursor:pointer;outline:none}
+select.param-select:focus{border-color:var(--border2)}
+
+/* EFFECT TAG */
+.effect-tag{display:inline-flex;align-items:center;gap:6px;
+  font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.08em;
+  padding:4px 10px;border-radius:100px;border:1px solid;margin-top:8px}
+.etm{color:var(--manim);border-color:rgba(255,107,53,.25);background:rgba(255,107,53,.06)}
+.etr{color:var(--remotion);border-color:rgba(56,189,248,.25);background:rgba(56,189,248,.06)}
+.etp{color:var(--p5);border-color:rgba(132,204,22,.25);background:rgba(132,204,22,.06)}
+
+/* CODE SNIPPET */
+.code-block{background:var(--code-bg);border:1px solid var(--border);
+  padding:14px 16px;font-family:'Geist Mono',monospace;font-size:11.5px;
+  line-height:1.9;color:#7880a2;overflow-x:auto;border-radius:2px;margin-top:4px}
+.ck{color:#c792ea}.cf{color:#82aaff}.cs{color:#c3e88d}.cn{color:#f78c6c}
+.cc{color:#546e7a}.cx{color:var(--text)}
+.code-highlight{color:#fff;font-weight:500;
+  background:rgba(255,255,255,.08);padding:1px 4px;border-radius:2px}
+
+/* IMPACT NOTE */
+.impact{background:var(--s3);border-left:2px solid var(--border2);
+  padding:12px 16px;font-size:12.5px;line-height:1.7;color:var(--muted);margin-top:12px}
+.impact strong{color:var(--mid);font-weight:500}
+
+/* FULL WIDTH BLOCK */
+.full-block{background:var(--s1);padding:28px;margin-bottom:2px}
+
+/* ─── FOOTER ─── */
+footer{padding:40px 0;font-family:'Geist Mono',monospace;font-size:11px;
+  color:var(--muted);text-align:center;letter-spacing:.1em;
+  border-top:1px solid var(--border);position:relative;z-index:1}
+.footer-links{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.footer-link{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;
+  padding:6px 16px;border-radius:4px;border:1px solid var(--border);color:var(--mid);
+  text-decoration:none;transition:all .2s}
+.footer-link:hover{color:var(--text);border-color:var(--border2);background:var(--s2)}
+.footer-link.primary{border-color:rgba(255,107,53,.3);color:var(--manim);background:rgba(255,107,53,.05)}
+.footer-link.primary:hover{background:rgba(255,107,53,.12);border-color:var(--manim)}
+</style>
+</head>
+<body>
+
+<div id="prog"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-brand"><strong>Parameter</strong> Lab</div>
+    <div class="tool-tabs">
+      <button class="ttab tm active" onclick="showTool('manim',this)">Manim</button>
+      <button class="ttab tr" onclick="showTool('remotion',this)">Remotion</button>
+      <button class="ttab tp" onclick="showTool('p5',this)">p5.js</button>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-eyebrow">Laboratório de Parâmetros · Creative Coding · Interativo</div>
+  <h1 class="hero-title">Mexa no slider.<br><em>Veja o que muda.</em></h1>
+  <p class="hero-sub">
+    Cada parâmetro tem um <strong>preview ao vivo</strong>, explicação do que faz e o código correspondente em destaque.
+    Para iniciantes que querem entender de verdade — sem memorizar, experimentando.
+  </p>
+</header>
+
+<!-- ════════════════════════════════════════
+     MANIM PANEL
+════════════════════════════════════════ -->
+<div class="tool-panel active" id="panel-manim">
+  <div class="tool-header">
+    <div class="tool-title nm">Manim</div>
+    <div class="tool-lang">Python · Animação Matemática</div>
+  </div>
+
+  <!-- CATEGORIA: TEMPO -->
+  <div class="cat-title">⏱ Tempo & Ritmo</div>
+
+  <!-- run_time -->
+  <div class="param-block">
+    <div class="param-controls">
+      <div>
+        <div class="param-name">run_time</div>
+        <div class="param-what">Controla <strong>quanto tempo dura</strong> a animação em segundos. O valor padrão é 1. Valores menores = mais rápido, valores maiores = mais lento e dramático.</div>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label-l">0.3s</span>
+        <input type="range" class="sm" id="m-runtime" min="0.3" max="4" step="0.1" value="1.5" oninput="updateManim()">
+        <span class="slider-label-r">4s</span>
+        <span class="val-display vm" id="m-runtime-val">1.5s</span>
+      </div>
+      <div class="code-block"><span class="ck">self</span>.<span class="cf">play</span>(
+  <span class="cf">Create</span>(square),
+  <span class="cx">run_time=</span><span class="code-highlight" id="m-rt-code">1.5</span>
+)</div>
+      <div class="impact"><strong>Impacto visual:</strong> run_time baixo (&lt;0.5) cria um aparecimento instantâneo, bom para highlights rápidos. run_time alto (&gt;2) dá peso e drama — ideal para revelar uma métrica importante.</div>
+      <span class="effect-tag etm">⏱ Controla velocidade total</span>
+    </div>
+    <div class="param-preview">
+      <div class="preview-bar">
+        <span class="preview-label">PREVIEW · run_time</span>
+        <button class="replay-btn" onclick="replayManim('runtime')">↺ Replay</button>
+      </div>
+      <div class="canvas-wrap">
+        <canvas id="mc-runtime" width="320" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- lag_ratio -->
+  <div class="param-block">
+    <div class="param-controls">
+      <div>
+        <div class="param-name">lag_ratio</div>
+        <div class="param-what">Quando você anima <strong>múltiplos elementos juntos</strong>, lag_ratio define o quanto cada elemento atrasa em relação ao anterior. <strong>0 = todos juntos</strong>, <strong>1 = um de cada vez</strong>, valores intermediários criam cascatas elegantes.</div>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label-l">0</span>
+        <input type="range" class="sm" id="m-lag" min="0" max="1" step="0.05" value="0.3" oninput="updateManim()">
+        <span class="slider-label-r">1</span>
+        <span class="val-display vm" id="m-lag-val">0.3</span>
+      </div>
+      <div class="code-block"><span class="ck">self</span>.<span class="cf">play</span>(
+  <span class="cf">LaggedStart</span>(
+    *[<span class="cf">FadeIn</span>(dot) <span class="ck">for</span> dot <span class="ck">in</span> dots],
+    <span class="cx">lag_ratio=</span><span class="code-highlight" id="m-lag-code">0.3</span>
+  )
+)</div>
+      <div class="impact"><strong>Impacto visual:</strong> lag_ratio = 0 é impactante mas pode parecer estático. lag_ratio = 0.2–0.4 cria o efeito "cascata" mais elegante. lag_ratio = 1 é mais didático, bom para ensinar passos.</div>
+      <span class="effect-tag etm">🌊 Controla cascata entre elementos</span>
+    </div>
+    <div class="param-preview">
+      <div class="preview-bar">
+        <span class="preview-label">PREVIEW · lag_ratio</span>
+        <button class="replay-btn" onclick="replayManim('lag')">↺ Replay</button>
+      </div>
+      <div class="canvas-wrap">
+        <canvas id="mc-lag" width="320" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORIA: CURVA DE ANIMAÇÃO -->
+  <div class="cat-title">〜 Curva de Animação (rate_func)</div>
+
+  <!-- rate_func -->
+  <div class="param-block">
+    <div class="param-controls">
+      <div>
+        <div class="param-name">rate_func</div>
+        <div class="param-what"><strong>A forma como o movimento acelera e desacelera.</strong> É a diferença entre uma animação robótica e uma animação com personalidade. Cada opção muda completamente a sensação.</div>
+      </div>
+      <select class="param-select" id="m-ratefunc" onchange="updateManim()">
+        <option value="linear">linear — velocidade constante (robótico)</option>
+        <option value="ease_in_out" selected>smooth — acelera e desacelera (natural)</option>
+        <option value="ease_in">ease_in — começa devagar, termina rápido</option>
+        <option value="ease_out">ease_out — começa rápido, termina devagar</option>
+        <option value="bounce">bounce — quica no final (lúdico)</option>
+        <option value="elastic">elastic — estica como borracha</option>
+        <option value="rush_from">rush_from — arranca da posição inicial</option>
+      </select>
+      <div class="code-block"><span class="ck">from</span> manim <span class="ck">import</span> *
+
+<span class="ck">self</span>.<span class="cf">play</span>(
+  square.<span class="cf">animate</span>.<span class="cf">shift</span>(<span class="cx">RIGHT*3</span>),
+  rate_func=<span class="code-highlight" id="m-rf-code">smooth</span>
+)</div>
+      <div class="impact"><strong>Para PMs:</strong> Use <em>smooth</em> para métricas (profissional). Use <em>ease_out</em> para revelar resultados (impactante no início). Evite <em>linear</em> — parece programado demais.</div>
+      <span class="effect-tag etm">〜 Define a personalidade do movimento</span>
+    </div>
+    <div class="param-preview">
+      <div class="preview-bar">
+        <span class="preview-label">PREVIEW · rate_func</span>
+        <button class="replay-btn" onclick="replayManim('ratefunc')">↺ Replay</button>
+      </div>
+      <div class="canvas-wrap">
+        <canvas id="mc-ratefunc" width="320" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORIA: VISUAL -->
+  <div class="cat-title">🎨 Visual & Cor</div>
+
+  <!-- scale -->
+  <div class="param-block">
+    <div class="param-controls">
+      <div>
+        <div class="param-name">scale(factor)</div>
+        <div class="param-what">Multiplica o tamanho do objeto. <strong>1 = tamanho original</strong>, 2 = dobro, 0.5 = metade. Pode ser animado com <code style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--manim)">animate.scale()</code> para criar zoom in/out dramáticos.</div>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label-l">0.2×</span>
+        <input type="range" class="sm" id="m-scale" min="0.2" max="3" step="0.1" value="1.5" oninput="updateManim()">
+        <span class="slider-label-r">3×</span>
+        <span class="val-display vm" id="m-scale-val">1.5×</span>
+      </div>
+      <div class="code-block"><span class="ck">self</span>.<span class="cf">play</span>(
+  metric_text.<span class="cf">animate</span>
+    .<span class="cf">scale</span>(<span class="code-highlight" id="m-scale-code">1.5</span>)
+    .<span class="cf">set_color</span>(<span class="cx">GREEN</span>)
+)</div>
+      <div class="impact"><strong>Uso em produto:</strong> Scale de 1 → 2 em uma métrica de NPS cria "wow moment". Scale de 1 → 0.5 pode simbolizar redução de churn. Evite valores extremos (&gt;3) pois saem da tela.</div>
+      <span class="effect-tag etm">⊞ Controla tamanho relativo</span>
+    </div>
+    <div class="param-preview">
+      <div class="preview-bar">
+        <span class="preview-label">PREVIEW · scale()</span>
+        <button class="replay-btn" onclick="replayManim('scale')">↺ Replay</button>
+      </div>
+      <div class="canvas-wrap">
+        <canvas id="mc-scale" width="320" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- color gradient -->
+  <div class="param-block">
+    <div class="param-controls">
+      <div>
+        <div class="param-name">set_color_by_gradient()</div>
+        <div class="param-what">Aplica um <strong>degradê de cor</strong> ao longo do texto ou forma. Você passa duas ou mais cores e o Manim interpola automaticamente. Muito usado em tipografia cinética.</div>
+      </div>
+      <select class="param-select" id="m-gradient" onchange="updateManim()">
+        <option value="blue-cyan">Azul → Ciano (dados, tech)</option>
+        <option value="orange-pink" selected>Laranja → Pink (energia, growth)</option>
+        <option value="green-lime">Verde → Lima (positivo, ganho)</option>
+        <option value="purple-blue">Roxo → Azul (premium, produto)</option>
+        <option value="red-orange">Vermelho → Laranja (urgência, alerta)</option>
+        <option value="white-gray">Branco → Cinza (minimalista)</option>
+      </select>
+      <div class="code-block"><span class="cx">title</span> = <span class="cf">Text</span>(<span class="cs">"GROWTH"</span>)
+<span class="cx">title</span>.<span class="cf">set_color_by_gradient</span>(
+  <span class="code-highlight" id="m-grad-code">ORANGE, PINK</span>
+)</div>
+      <div class="impact"><strong>Para apresentações:</strong> Azul/ciano = confiança técnica. Laranja/pink = energia e crescimento. Verde/lima = resultado positivo. Evite degradê vermelho em métricas boas — associação negativa.</div>
+      <span class="effect-tag etm">🌈 Define paleta da tipografia</span>
+    </div>
+    <div class="param-preview">
+      <div class="preview-bar">
+        <span class="preview-label">PREVIEW · gradient</span>
+        <button class="replay-btn" onclick="replayManim('gradient')">↺ Replay</button>
+      </div>
+      <div class="canvas-wrap">
+        <canvas id="mc-gradient" width="320" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     REMOTION PANEL
+════════════════════════════════════════ -->
+<div class="tool-panel" id="panel-remotion">
+  <div class="tool-header">
+    <div class="tool-title nr">Remotion</div>
+    <div class="tool-lang">React · TypeScript · Vídeo Programático</div>
+  </div>
+
+  <!-- SPRING PHYSICS -->
+  <div class="cat-title">🌀 Spring Physics</div>
+
+  <!-- damping -->
+  <div class="param-block">
+    <div class="param-controls">
+      <div>
+        <div class="param-name">damping</div>
+        <div class="param-what"><strong>Amortecimento da mola.</strong> Controla o quanto o elemento "quica" antes de parar. <strong>Baixo = quica muito</strong> (elástico). <strong>Alto = para direto</strong> (comportamento rígido). Valor padrão da maioria dos casos: 12–20.</div>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label-l">1</span>
+        <input type="range" class="sr" id="r-damping" min="1" max="50" step="1" value="12" oninput="updateRemotion()">
+        <span class="slider-label-r">50</span>
+        <span class="val-display vr" id="r-damping-val">12</span>
+      </div>
+      <div class="code-block"><span class="ck">const</span> y = <span class="cf">spring</span>({
+  frame, fps,
+  from: <span class="cn">60</span>, to: <span class="cn">0</span>,
+  config: {
+    damping: <span class="code-highlight" id="r-damp-code">12</span>,
+    stiffness: <span class="cn">100</span>,
+    mass: <span class="cn">1</span>,
+  }
+});</div>
+      <div class="impact"><strong>Damping 5–8:</strong> Muito elástico, jovial — bom para apps e produtos consumer. <strong>Damping 12–20:</strong> Natural, polido — ideal para cases de produto. <strong>Damping 30+:</strong> Sem bounce, direto — adequado para apresentações corporativas sérias.</div>
+      <span class="effect-tag etr">🌀 Controla elasticidade</span>
+    </div>
+    <div class="param-preview">
+      <div class="preview-bar">
+        <span class="preview-label">PREVIEW · damping</span>
+        <button class="replay-btn" onclick="replayRemotion('damping')">↺ Replay</button>
+      </div>
+      <div class="canvas-wrap">
+        <canvas id="rc-damping" width="320" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- stiffness -->
+  <div class="param-block">
+    <div class="param-controls">
+      <div>
+        <div class="param-name">stiffness</div>
+        <div class="param-what"><strong>Rigidez da mola.</strong> Controla o quão rápido o elemento chega ao destino. <strong>Baixo = mola frouxa</strong> (lento, fluido). <strong>Alto = mola rígida</strong> (rápido, snappy). Combinado com damping, define a personalidade completa.</div>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label-l">10</span>
+        <input type="range" class="sr" id="r-stiffness" min="10" max="300" step="10" value="100" oninput="updateRemotion()">
+        <span class="slider-label-r">300</span>
+        <span class="val-display vr" id="r-stiffness-val">100</span>
+      </div>
+      <div class="code-block"><span class="ck">const</span> y = <span class="cf">spring</span>({
+  frame, fps,
+  config: {
+    damping: <span class="cn">12</span>,
+    stiffness: <span class="code-highlight" id="r-stiff-code">100</span>,
+    mass: <span class="cn">1</span>,
+  }
+});</div>
+      <div class="impact"><strong>Stiffness 30–60:</strong> Animação suave e "fluida" — bom para transições de tela. <strong>Stiffness 100–150:</strong> Equilíbrio perfeito — padrão para elementos de UI. <strong>Stiffness 200+:</strong> Muito snappy — pop-ups e notificações.</div>
+      <span class="effect-tag etr">⚡ Controla velocidade de chegada</span>
+    </div>
+    <div class="param-preview">
+      <div class="preview-bar">
+        <span class="preview-label">PREVIEW · stiffness</span>
+        <button class="replay-btn" onclick="replayRemotion('stiffness')">↺ Replay</button>
+      </div>
+      <div class="canvas-wrap">
+        <canvas id="rc-stiffness" width="320" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- mass -->
+  <div class="param-block">
+    <div class="param-controls">
+      <div>
+        <div class="param-name">mass</div>
+        <div class="param-what"><strong>Massa do objeto.</strong> Quanto mais pesado, mais inércia. <strong>Mass baixo = leve</strong>, reage rápido à mola. <strong>Mass alto = pesado</strong>, começa devagar mas vai longe. Pense num objeto de papel vs. de metal.</div>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label-l">0.1</span>
+        <input type="range" class="sr" id="r-mass" min="0.1" max="5" step="0.1" value="1" oninput="updateRemotion()">
+        <span class="slider-label-r">5</span>
+        <span class="val-display vr" id="r-mass-val">1.0</span>
+      </div>
+      <div class="code-block"><span class="ck">const</span> scale = <span class="cf">spring</span>({
+  frame, fps,
+  from: <span class="cn">0</span>, to: <span class="cn">1</span>,
+  config: {
+    damping: <span class="cn">12</span>,
+    stiffness: <span class="cn">100</span>,
+    mass: <span class="code-highlight" id="r-mass-code">1.0</span>,
+  }
+});</div>
+      <div class="impact"><strong>Mass 0.1–0.5:</strong> Elementos leves — ícones, badges, labels. <strong>Mass 1:</strong> Padrão universal. <strong>Mass 2–5:</strong> Elementos "pesados" — modais grandes, hero cards. Aumenta dramatismo de elementos importantes.</div>
+      <span class="effect-tag etr">⚖️ Controla inércia</span>
+    </div>
+    <div class="param-preview">
+      <div class="preview-bar">
+        <span class="preview-label">PREVIEW · mass</span>
+        <button class="replay-btn" onclick="replayRemotion('mass')">↺ Replay</button>
+      </div>
+      <div class="canvas-wrap">
+        <canvas id="rc-mass" width="320" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTERPOLATE -->
+  <div class="cat-title">📐 interpolate()</div>
+
+  <!-- interpolate range -->
+  <div class="param-block">
+    <div class="param-controls">
+      <div>
+        <div class="param-name">inputRange (frame range)</div>
+        <div class="param-what"><strong>Define em quais frames a animação acontece.</strong> <code style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--remotion)">[0, 30]</code> significa "anime do frame 0 ao 30". Frames antes = valor inicial, frames depois = valor final. Isso controla o <em>timing preciso</em> dentro do vídeo.</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div>
+          <div style="font-family:'Geist Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:6px">INÍCIO (frame)</div>
+          <div class="slider-row">
+            <span class="slider-label-l">0</span>
+            <input type="range" class="sr" id="r-istart" min="0" max="60" step="5" value="0" oninput="updateRemotion()">
+            <span class="slider-label-r">60</span>
+            <span class="val-display vr" id="r-istart-val">0</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:'Geist Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:6px">FIM (frame)</div>
+          <div class="slider-row">
+            <span class="slider-label-l">10</span>
+            <input type="range" class="sr" id="r-iend" min="10" max="120" step="5" value="45" oninput="updateRemotion()">
+            <span class="slider-label-r">120</span>
+            <span class="val-display vr" id="r-iend-val">45</span>
+          </div>
+        </div>
+      </div>
+      <div class="code-block"><span class="ck">const</span> opacity = <span class="cf">interpolate</span>(
+  frame,
+  [<span class="code-highlight" id="r-ir-code">0, 45</span>],
+  [<span class="cn">0</span>, <span class="cn">1</span>],
+  { extrapolateRight: <span class="cs">'clamp'</span> }
+);</div>
+      <div class="impact"><strong>Range curto (10–20 frames):</strong> Animação rápida, snappy. <strong>Range longo (60–90 frames):</strong> Fade suave e elegante. Use <em>Sequence delay</em> para escalonar o inputRange de cada elemento sem calcular na mão.</div>
+      <span class="effect-tag etr">📐 Define janela de tempo da animação</span>
+    </div>
+    <div class="param-preview">
+      <div class="preview-bar">
+        <span class="preview-label">PREVIEW · inputRange</span>
+        <button class="replay-btn" onclick="replayRemotion('interp')">↺ Replay</button>
+      </div>
+      <div class="canvas-wrap">
+        <canvas id="rc-interp" width="320" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- easing -->
+  <div class="param-block">
+    <div class="param-controls">
+      <div>
+        <div class="param-name">Easing (extrapolate + curve)</div>
+        <div class="param-what"><strong>Como o valor muda dentro do range.</strong> O Remotion usa funções de easing do pacote <code style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--remotion)">@remotion/easing</code>. Cada curva muda completamente a sensação da transição.</div>
+      </div>
+      <select class="param-select" id="r-easing" onchange="updateRemotion()">
+        <option value="linear">linear — velocidade constante</option>
+        <option value="easeInOut" selected>easeInOut — natural (padrão)</option>
+        <option value="easeIn">easeIn — arranca devagar</option>
+        <option value="easeOut">easeOut — para devagar</option>
+        <option value="easeInOutCubic">easeInOutCubic — mais pronunciado</option>
+        <option value="easeInBack">easeInBack — recua antes de avançar</option>
+        <option value="easeOutBounce">easeOutBounce — quica ao chegar</option>
+      </select>
+      <div class="code-block"><span class="ck">import</span> { <span class="cf">Easing</span> } <span class="ck">from</span> <span class="cs">'@remotion/easing'</span>;
+
+<span class="ck">const</span> x = <span class="cf">interpolate</span>(frame, [<span class="cn">0</span>, <span class="cn">60</span>], [<span class="cn">0</span>, <span class="cn">400</span>], {
+  easing: Easing.<span class="code-highlight" id="r-ease-code">inOut(Easing.ease)</span>,
+  extrapolateRight: <span class="cs">'clamp'</span>,
+});</div>
+      <div class="impact"><strong>Para PMs:</strong> easeInOut para qualquer transição profissional. easeOut para revelar resultados positivos (chega forte, para suave). easeInBack para elementos que "saem" do slide de forma teatral.</div>
+      <span class="effect-tag etr">〜 Curva de aceleração do interpolate</span>
+    </div>
+    <div class="param-preview">
+      <div class="preview-bar">
+        <span class="preview-label">PREVIEW · easing</span>
+        <button class="replay-btn" onclick="replayRemotion('easing')">↺ Replay</button>
+      </div>
+      <div class="canvas-wrap">
+        <canvas id="rc-easing" width="320" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     P5.JS PANEL
+════════════════════════════════════════ -->
+<div class="tool-panel" id="panel-p5">
+  <div class="tool-header">
+    <div class="tool-title np">p5.js</div>
+    <div class="tool-lang">JavaScript · Canvas em Tempo Real</div>
+  </div>
+
+  <!-- LERP -->
+  <div class="cat-title">〜 Suavização de Movimento</div>
+
+  <!-- lerp factor -->
+  <div class="param-block">
+    <div class="param-controls">
+      <div>
+        <div class="param-name">lerp() — fator de suavização</div>
+        <div class="param-what"><strong>Linear interpolation</strong> — a função mais importante do p5.js. Cada frame, o objeto se move <em>X%</em> do caminho até o destino. <strong>Fator baixo = movimento lento e suave</strong>. <strong>Fator alto = chegada rápida</strong>. Nunca chega exatamente ao destino com valores &lt;1.</div>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label-l">0.01</span>
+        <input type="range" class="sp" id="p-lerp" min="0.01" max="0.5" step="0.01" value="0.08" oninput="updateP5()">
+        <span class="slider-label-r">0.5</span>
+        <span class="val-display vp" id="p-lerp-val">0.08</span>
+      </div>
+      <div class="code-block"><span class="cm">// Chamado 60x por segundo no draw()</span>
+x = <span class="cf">lerp</span>(x, targetX, <span class="code-highlight" id="p-lerp-code">0.08</span>);
+y = <span class="cf">lerp</span>(y, targetY, <span class="code-highlight">0.08</span>);
+
+<span class="cm">// quanto menor o valor,</span>
+<span class="cm">// mais "borracha" o movimento</span></div>
+      <div class="impact"><strong>0.01–0.04:</strong> Movimento fluido como líquido — bom para partículas e fundo. <strong>0.06–0.12:</strong> Responsivo mas suave — padrão para cursores e elementos interativos. <strong>0.2–0.5:</strong> Snappy — boa para hover states e highlight imediato.</div>
+      <span class="effect-tag etp">〜 Define suavidade do seguimento</span>
+    </div>
+    <div class="param-preview">
+      <div class="preview-bar">
+        <span class="preview-label">PREVIEW · lerp factor</span>
+        <button class="replay-btn" onclick="resetP5Lerp()">↺ Reset</button>
+      </div>
+      <div class="canvas-wrap" style="cursor:crosshair">
+        <canvas id="pc-lerp" width="320" height="200" style="cursor:crosshair"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- trail alpha -->
+  <div class="param-block">
+    <div class="param-controls">
+      <div>
+        <div class="param-name">Trail Alpha (rastro)</div>
+        <div class="param-what">Em vez de limpar o canvas com <code style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--p5)">background()</code> completamente, você pinta um fundo semi-transparente. Isso cria um <strong>rastro</strong>. Quanto menor o alpha, maior o rastro — parece que o objeto "deixa uma trilha".</div>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label-l">5</span>
+        <input type="range" class="sp" id="p-trail" min="5" max="255" step="5" value="40" oninput="updateP5()">
+        <span class="slider-label-r">255</span>
+        <span class="val-display vp" id="p-trail-val">40</span>
+      </div>
+      <div class="code-block"><span class="cf">function</span> <span class="cf">draw</span>() {
+  <span class="cm">// alpha baixo = rastro longo</span>
+  <span class="cf">background</span>(<span class="cn">0</span>, <span class="code-highlight" id="p-trail-code">40</span>);
+
+  <span class="cm">// alpha = 255 = sem rastro</span>
+  <span class="cf">ellipse</span>(x, y, <span class="cn">20</span>);
+}</div>
+      <div class="impact"><strong>Alpha 5–20:</strong> Rastro longo, estético — bom para arte generativa e fundos. <strong>Alpha 40–80:</strong> Rastro médio — ótimo para partículas de usuário em demos de UX. <strong>Alpha 150+:</strong> Rastro curto ou sem rastro — para visualizações de dados onde clareza é prioridade.</div>
+      <span class="effect-tag etp">👁 Controla persistência visual</span>
+    </div>
+    <div class="param-preview">
+      <div class="preview-bar">
+        <span class="preview-label">PREVIEW · trail (mova o mouse)</span>
+        <button class="replay-btn" onclick="">—</button>
+      </div>
+      <div class="canvas-wrap" style="cursor:crosshair">
+        <canvas id="pc-trail" width="320" height="200" style="cursor:crosshair"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORÇA -->
+  <div class="cat-title">⚡ Física de Partículas</div>
+
+  <!-- força de atração/repulsão -->
+  <div class="param-block">
+    <div class="param-controls">
+      <div>
+        <div class="param-name">Força (attraction / repulsion)</div>
+        <div class="param-what"><strong>Quanto o mouse puxa ou empurra as partículas.</strong> Um vetor de força é calculado com base na distância. <strong>Força positiva = atração</strong>. <strong>Força negativa = repulsão</strong>. Controla o quanto sua "feature" influencia o comportamento dos usuários.</div>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label-l">← Repele</span>
+        <input type="range" class="sp" id="p-force" min="-2" max="2" step="0.1" value="0.8" oninput="updateP5()">
+        <span class="slider-label-r">Atrai →</span>
+        <span class="val-display vp" id="p-force-val">+0.8</span>
+      </div>
+      <div class="code-block"><span class="ck">let</span> dx = mouseX - p.x;
+<span class="ck">let</span> dy = mouseY - p.y;
+<span class="ck">let</span> dist = <span class="cf">sqrt</span>(dx*dx + dy*dy);
+
+<span class="ck">if</span> (dist < radius) {
+  <span class="ck">let</span> force = <span class="code-highlight" id="p-force-code">0.8</span>;
+  p.vx += (dx/dist) * force;
+  p.vy += (dy/dist) * force;
+}</div>
+      <div class="impact"><strong>Atração (+0.5 a +2):</strong> Simula usuários "atraídos" por uma feature. Ótimo para demos de onboarding. <strong>Repulsão (-0.5 a -2):</strong> Simula atrito ou friction point. Use para mostrar onde usuários fogem no user journey.</div>
+      <span class="effect-tag etp">⚡ Atração vs Repulsão do mouse</span>
+    </div>
+    <div class="param-preview">
+      <div class="preview-bar">
+        <span class="preview-label">PREVIEW · force (mova o mouse)</span>
+        <button class="replay-btn" onclick="resetP5Force()">↺ Reset</button>
+      </div>
+      <div class="canvas-wrap" style="cursor:crosshair">
+        <canvas id="pc-force" width="320" height="200" style="cursor:crosshair"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- noiseScale -->
+  <div class="param-block">
+    <div class="param-controls">
+      <div>
+        <div class="param-name">noiseScale — Perlin Noise</div>
+        <div class="param-what"><strong>Ruído de Perlin cria movimento orgânico</strong> — como folhas no vento, não robótico. O <em>scale</em> controla o "zoom" no campo de ruído. <strong>Scale baixo = movimento amplo e suave</strong>. <strong>Scale alto = movimento rápido e caótico</strong>.</div>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label-l">0.001</span>
+        <input type="range" class="sp" id="p-noise" min="0.001" max="0.05" step="0.001" value="0.008" oninput="updateP5()">
+        <span class="slider-label-r">0.05</span>
+        <span class="val-display vp" id="p-noise-val">0.008</span>
+      </div>
+      <div class="code-block"><span class="ck">let</span> angle = <span class="cf">noise</span>(
+  x * <span class="code-highlight" id="p-noise-code">0.008</span>,
+  y * <span class="code-highlight">0.008</span>,
+  t * <span class="cn">0.003</span>
+) * <span class="cn">TWO_PI</span> * <span class="cn">4</span>;
+
+p.vx += <span class="cf">cos</span>(angle) * <span class="cn">0.3</span>;
+p.vy += <span class="cf">sin</span>(angle) * <span class="cn">0.3</span>;</div>
+      <div class="impact"><strong>0.002–0.005:</strong> Partículas se movem em grandes curvas suaves — bom para fundos e ambientes. <strong>0.01–0.02:</strong> Movimento orgânico médio — ideal para user flows e demos. <strong>0.03+:</strong> Turbulência caótica — representa fricção ou caos no sistema.</div>
+      <span class="effect-tag etp">🌊 Movimento orgânico não-repetitivo</span>
+    </div>
+    <div class="param-preview">
+      <div class="preview-bar">
+        <span class="preview-label">PREVIEW · noise field</span>
+        <button class="replay-btn" onclick="resetP5Noise()">↺ Reset</button>
+      </div>
+      <div class="canvas-wrap">
+        <canvas id="pc-noise" width="320" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- COLOR MODE -->
+  <div class="cat-title">🎨 Cor & Visual</div>
+
+  <div class="param-block">
+    <div class="param-controls">
+      <div>
+        <div class="param-name">colorMode + HSB</div>
+        <div class="param-what">O p5.js tem dois modos de cor: <strong>RGB</strong> (vermelho, verde, azul) e <strong>HSB</strong> (matiz, saturação, brilho). HSB é infinitamente mais útil para animação porque permite <em>girar o hue</em> para criar arco-íris, e controlar saturação para fade natural.</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div>
+          <div style="font-family:'Geist Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:6px">HUE BASE (0–360°)</div>
+          <div class="slider-row">
+            <span class="slider-label-l">0°</span>
+            <input type="range" class="sp" id="p-hue" min="0" max="360" step="5" value="200" oninput="updateP5()">
+            <span class="slider-label-r">360°</span>
+            <span class="val-display vp" id="p-hue-val">200°</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:'Geist Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:6px">SATURAÇÃO (0–100%)</div>
+          <div class="slider-row">
+            <span class="slider-label-l">0%</span>
+            <input type="range" class="sp" id="p-sat" min="0" max="100" step="5" value="80" oninput="updateP5()">
+            <span class="slider-label-r">100%</span>
+            <span class="val-display vp" id="p-sat-val">80%</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:'Geist Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:6px">HUE RANGE (arco de cores)</div>
+          <div class="slider-row">
+            <span class="slider-label-l">0°</span>
+            <input type="range" class="sp" id="p-hrange" min="0" max="180" step="10" value="60" oninput="updateP5()">
+            <span class="slider-label-r">180°</span>
+            <span class="val-display vp" id="p-hrange-val">60°</span>
+          </div>
+        </div>
+      </div>
+      <div class="code-block"><span class="cf">colorMode</span>(<span class="cx">HSB</span>, <span class="cn">360</span>, <span class="cn">100</span>, <span class="cn">100</span>);
+
+<span class="ck">let</span> hue = <span class="code-highlight" id="p-color-code">200</span> + (i/<span class="cx">total</span>) * <span class="code-highlight">60</span>;
+<span class="cf">fill</span>(hue, <span class="code-highlight">80</span>, <span class="cn">90</span>);
+<span class="cf">ellipse</span>(x, y, r);</div>
+      <div class="impact"><strong>Saturação 0:</strong> Tons de cinza — elegante para fundo. <strong>Saturação 60–80:</strong> Cores vibrantes mas não agressivas — padrão para produto. <strong>Hue range 0:</strong> Cor única sólida. <strong>Hue range 120+:</strong> Paleta ampla e diversa.</div>
+      <span class="effect-tag etp">🎨 Paleta de cor em HSB</span>
+    </div>
+    <div class="param-preview">
+      <div class="preview-bar">
+        <span class="preview-label">PREVIEW · colorMode HSB</span>
+        <button class="replay-btn" onclick="">—</button>
+      </div>
+      <div class="canvas-wrap">
+        <canvas id="pc-color" width="320" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end p5 panel -->
+
+</div><!-- end wrap -->
+<footer>
+  <div class="wrap">
+    <div class="footer-links">
+      <a class="footer-link" href="https://flavio-guedes.github.io/portfolio/links.html" target="_blank">Portfólio Geral</a>
+    </div>
+    Parameter Lab · Claude · Anthropic · 2025
+  </div>
+</footer>
+
+<!-- ════════════════════════════════════════
+     ALL SCRIPTS
+════════════════════════════════════════ -->
+<script>
+// ─── PROGRESS BAR ───
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement.scrollHeight-window.innerHeight;
+  document.getElementById('prog').style.transform=`scaleX(${window.scrollY/h})`;
+});
+
+// ─── TAB SWITCHING ───
+function showTool(tool, btn) {
+  document.querySelectorAll('.tool-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ttab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+tool).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(()=>initAllCanvases(),100);
+}
+
+// ─── CANVAS HELPERS ───
+function getCtx(id){
+  const c=document.getElementById(id);
+  if(!c)return null;
+  return{c,ctx:c.getContext('2d'),w:c.width,h:c.height};
+}
+function clear(ctx,w,h){ctx.clearRect(0,0,w,h);ctx.fillStyle='#07080d';ctx.fillRect(0,0,w,h);}
+
+// ════════════════════════════
+// MANIM PREVIEWS
+// ════════════════════════════
+let mAnimFrames = {};
+
+function getManim() {
+  return {
+    runtime: parseFloat(document.getElementById('m-runtime').value),
+    lag: parseFloat(document.getElementById('m-lag').value),
+    ratefunc: document.getElementById('m-ratefunc').value,
+    scale: parseFloat(document.getElementById('m-scale').value),
+    gradient: document.getElementById('m-gradient').value,
+  };
+}
+
+function updateManim() {
+  const v = getManim();
+  document.getElementById('m-runtime-val').textContent = v.runtime+'s';
+  document.getElementById('m-rt-code').textContent = v.runtime;
+  document.getElementById('m-lag-val').textContent = v.lag;
+  document.getElementById('m-lag-code').textContent = v.lag;
+  document.getElementById('m-scale-val').textContent = v.scale+'×';
+  document.getElementById('m-scale-code').textContent = v.scale;
+
+  const rfMap = {linear:'linear',ease_in_out:'smooth',ease_in:'ease_in',ease_out:'ease_out',bounce:'there_and_back',elastic:'ease_in_out_elastic',rush_from:'rush_from_start'};
+  document.getElementById('m-rf-code').textContent = rfMap[v.ratefunc]||v.ratefunc;
+
+  const gradMap = {'blue-cyan':'BLUE, TEAL','orange-pink':'ORANGE, PINK','green-lime':'GREEN, YELLOW_GREEN','purple-blue':'PURPLE, BLUE','red-orange':'RED, ORANGE','white-gray':'WHITE, GRAY'};
+  document.getElementById('m-grad-code').textContent = gradMap[v.gradient]||v.gradient;
+
+  replayAll_manim();
+}
+
+function applyRateFunc(t, fn) {
+  switch(fn) {
+    case 'linear': return t;
+    case 'ease_in_out': return t<.5 ? 2*t*t : -1+(4-2*t)*t;
+    case 'ease_in': return t*t*t;
+    case 'ease_out': return 1-(1-t)**3;
+    case 'bounce': {
+      const bt=1-t;
+      if(bt<1/2.75) return 1-(7.5625*bt*bt);
+      if(bt<2/2.75) return 1-(7.5625*(bt-1.5/2.75)**2+.75);
+      if(bt<2.5/2.75) return 1-(7.5625*(bt-2.25/2.75)**2+.9375);
+      return 1-(7.5625*(bt-2.625/2.75)**2+.984375);
+    }
+    case 'elastic': {
+      if(t===0||t===1)return t;
+      return Math.pow(2,-10*t)*Math.sin((t*10-.75)*(2*Math.PI)/3)+1;
+    }
+    case 'rush_from': return t<.3?t/.3*.5:0.5+(t-.3)/.7*.5;
+    default: return t<.5?2*t*t:-1+(4-2*t)*t;
+  }
+}
+
+// ─ runtime preview ─
+let rtFrame=0,rtRAF;
+function drawRuntime(restart=false) {
+  const d=getCtx('mc-runtime'); if(!d)return;
+  if(restart){cancelAnimationFrame(rtRAF);rtFrame=0;}
+  const {ctx,w,h}=d; const v=getManim();
+  const totalFrames=Math.round(v.runtime*60);
+  (function loop(){
+    clear(ctx,w,h);
+    const t=Math.min(1,rtFrame/totalFrames);
+    const et=applyRateFunc(t,'ease_in_out');
+    // Bar growing
+    const bw=(w-60)*et;
+    const grad=ctx.createLinearGradient(30,0,30+bw,0);
+    grad.addColorStop(0,'#ff6b35cc');grad.addColorStop(1,'#ff6b35');
+    ctx.fillStyle=grad;
+    ctx.beginPath();ctx.roundRect(30,h/2-16,bw,32,4);ctx.fill();
+    // Time indicator
+    ctx.fillStyle='#52566e';ctx.font=`400 10px 'Geist Mono'`;ctx.textAlign='left';
+    ctx.fillText(`${(t*v.runtime).toFixed(1)}s / ${v.runtime}s`,30,h-16);
+    // Label
+    ctx.fillStyle='#ff6b35';ctx.font=`500 12px 'Geist'`;ctx.textAlign='center';
+    if(bw>60)ctx.fillText('run_time = '+v.runtime+'s',30+bw/2,h/2+6);
+    // Timeline line
+    ctx.strokeStyle='#1c1e30';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(30,h-28);ctx.lineTo(w-30,h-28);ctx.stroke();
+    ctx.fillStyle='#ff6b35';
+    ctx.beginPath();ctx.arc(30+(w-60)*t,h-28,4,0,Math.PI*2);ctx.fill();
+    if(rtFrame<totalFrames+30)rtRAF=requestAnimationFrame(loop);
+    rtFrame++;
+  })();
+}
+
+// ─ lag_ratio preview ─
+let lagFrame=0,lagRAF;
+function drawLag(restart=false) {
+  const d=getCtx('mc-lag'); if(!d)return;
+  if(restart){cancelAnimationFrame(lagRAF);lagFrame=0;}
+  const {ctx,w,h}=d; const v=getManim();
+  const dots=6; const spacing=(w-60)/dots;
+  (function loop(){
+    clear(ctx,w,h);
+    for(let i=0;i<dots;i++){
+      const delay=i*v.lag*40;
+      const t=Math.max(0,Math.min(1,(lagFrame-delay)/40));
+      const et=applyRateFunc(t,'ease_in_out');
+      const x=30+i*spacing+spacing/2;
+      const y=h/2-20+40*(1-et);
+      const alpha=et;
+      ctx.globalAlpha=alpha;
+      ctx.fillStyle='#ff6b35';
+      ctx.shadowColor='#ff6b35';ctx.shadowBlur=et*12;
+      ctx.beginPath();ctx.arc(x,y,12*et,0,Math.PI*2);ctx.fill();
+      ctx.shadowBlur=0;
+      ctx.globalAlpha=1;
+      // index label
+      ctx.fillStyle='#52566e';ctx.font=`400 9px 'Geist Mono'`;ctx.textAlign='center';
+      ctx.fillText(i,x,h-14);
+    }
+    ctx.fillStyle='#52566e';ctx.font=`400 10px 'Geist Mono'`;ctx.textAlign='left';
+    ctx.fillText(`lag_ratio = ${v.lag}`,10,16);
+    if(lagFrame<Math.round(dots*v.lag*40)+60)lagRAF=requestAnimationFrame(loop);
+    lagFrame++;
+  })();
+}
+
+// ─ ratefunc preview ─
+let rfFrame=0,rfRAF;
+function drawRatefunc(restart=false) {
+  const d=getCtx('mc-ratefunc'); if(!d)return;
+  if(restart){cancelAnimationFrame(rfRAF);rfFrame=0;}
+  const {ctx,w,h}=d; const v=getManim();
+  const totalF=80;
+  // Draw easing curve
+  ctx.strokeStyle='#1c1e30';ctx.lineWidth=1;
+  (function loop(){
+    clear(ctx,w,h);
+    // Grid
+    ctx.strokeStyle='#12131f';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(30,h-30);ctx.lineTo(w-20,h-30);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(30,20);ctx.lineTo(30,h-30);ctx.stroke();
+    // Curve
+    ctx.beginPath();ctx.strokeStyle='#ff6b35';ctx.lineWidth=2;
+    for(let i=0;i<=100;i++){
+      const tx=i/100;
+      const ty=applyRateFunc(tx,v.ratefunc);
+      const px=30+(w-50)*tx;
+      const py=(h-30)-(h-50)*ty;
+      i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    // Moving dot on curve
+    const t=Math.min(1,rfFrame/totalF);
+    const et=applyRateFunc(t,v.ratefunc);
+    const px=30+(w-50)*t;
+    const py=(h-30)-(h-50)*et;
+    ctx.beginPath();ctx.arc(px,py,6,0,Math.PI*2);
+    ctx.fillStyle='#fff';ctx.fill();
+    // Ball moving
+    const ballX=30+(w-90)*et;
+    ctx.beginPath();ctx.arc(ballX+15,h/2+20,10,0,Math.PI*2);
+    ctx.fillStyle='#ff6b35';ctx.shadowColor='#ff6b35';ctx.shadowBlur=10;ctx.fill();ctx.shadowBlur=0;
+    ctx.fillStyle='#52566e';ctx.font=`400 9px 'Geist Mono'`;ctx.textAlign='left';
+    ctx.fillText(v.ratefunc.replace('ease_in_out','smooth'),10,14);
+    if(rfFrame<totalF+20)rfRAF=requestAnimationFrame(loop);
+    rfFrame++;
+  })();
+}
+
+// ─ scale preview ─
+let scFrame=0,scRAF;
+function drawScale(restart=false) {
+  const d=getCtx('mc-scale'); if(!d)return;
+  if(restart){cancelAnimationFrame(scRAF);scFrame=0;}
+  const {ctx,w,h}=d; const v=getManim();
+  const totalF=60;
+  (function loop(){
+    clear(ctx,w,h);
+    const t=Math.min(1,scFrame/totalF);
+    const et=applyRateFunc(t,'ease_in_out');
+    const currentScale=1+(v.scale-1)*et;
+    const baseSize=40;
+    const s=baseSize*currentScale;
+    ctx.save();ctx.translate(w/2,h/2);
+    ctx.fillStyle='#ff6b35';ctx.shadowColor='#ff6b35';ctx.shadowBlur=currentScale*8;
+    ctx.beginPath();ctx.roundRect(-s/2,-s/2,s,s,4*currentScale);ctx.fill();ctx.shadowBlur=0;
+    ctx.restore();
+    // Scale indicator
+    ctx.fillStyle='#ff6b35';ctx.font=`500 13px 'Geist Mono'`;ctx.textAlign='center';
+    ctx.fillText(`${currentScale.toFixed(2)}×`,w/2,h-14);
+    ctx.fillStyle='#52566e';ctx.font=`400 9px 'Geist Mono'`;
+    ctx.fillText('scale('+v.scale+')',w/2,h-28);
+    if(scFrame<totalF+30)scRAF=requestAnimationFrame(loop);
+    scFrame++;
+  })();
+}
+
+// ─ gradient preview ─
+let grFrame=0,grRAF;
+const gradColors={
+  'blue-cyan':['#3b82f6','#22d3ee'],
+  'orange-pink':['#f97316','#ec4899'],
+  'green-lime':['#22c55e','#a3e635'],
+  'purple-blue':['#a855f7','#3b82f6'],
+  'red-orange':['#ef4444','#f97316'],
+  'white-gray':['#ffffff','#6b7280'],
+};
+function drawGradient(restart=false) {
+  const d=getCtx('mc-gradient'); if(!d)return;
+  if(restart){cancelAnimationFrame(grRAF);grFrame=0;}
+  const {ctx,w,h}=d; const v=getManim();
+  const cols=gradColors[v.gradient]||['#ff6b35','#ec4899'];
+  const totalF=60;
+  (function loop(){
+    clear(ctx,w,h);
+    const t=Math.min(1,grFrame/totalF);
+    const et=applyRateFunc(t,'ease_in_out');
+    const word='GROWTH';
+    const fontSize=Math.min(w*.12,52);
+    ctx.font=`700 ${fontSize}px 'Geist'`;
+    const tw=ctx.measureText(word).width;
+    const x=(w-tw*et)/2; const y=h/2+fontSize*.35;
+    // gradient
+    const grad=ctx.createLinearGradient(x,0,x+tw,0);
+    grad.addColorStop(0,cols[0]);grad.addColorStop(1,cols[1]);
+    ctx.fillStyle=grad;
+    ctx.globalAlpha=et;
+    ctx.save();
+    ctx.scale(et+(1-et)*.8,1);
+    ctx.fillText(word,x/( et+(1-et)*.8),y);
+    ctx.restore();
+    ctx.globalAlpha=1;
+    if(grFrame<totalF+20)grRAF=requestAnimationFrame(loop);
+    grFrame++;
+  })();
+}
+
+function replayAll_manim(){drawRuntime(true);drawLag(true);drawRatefunc(true);drawScale(true);drawGradient(true);}
+function replayManim(which){
+  if(which==='runtime')drawRuntime(true);
+  if(which==='lag')drawLag(true);
+  if(which==='ratefunc')drawRatefunc(true);
+  if(which==='scale')drawScale(true);
+  if(which==='gradient')drawGradient(true);
+}
+
+// ════════════════════════════
+// REMOTION PREVIEWS
+// ════════════════════════════
+function getRemotion() {
+  return {
+    damping: parseFloat(document.getElementById('r-damping').value),
+    stiffness: parseFloat(document.getElementById('r-stiffness').value),
+    mass: parseFloat(document.getElementById('r-mass').value),
+    istart: parseFloat(document.getElementById('r-istart').value),
+    iend: parseFloat(document.getElementById('r-iend').value),
+    easing: document.getElementById('r-easing').value,
+  };
+}
+
+function updateRemotion() {
+  const v = getRemotion();
+  document.getElementById('r-damping-val').textContent = v.damping;
+  document.getElementById('r-damp-code').textContent = v.damping;
+  document.getElementById('r-stiffness-val').textContent = v.stiffness;
+  document.getElementById('r-stiff-code').textContent = v.stiffness;
+  document.getElementById('r-mass-val').textContent = v.mass.toFixed(1);
+  document.getElementById('r-mass-code').textContent = v.mass.toFixed(1);
+  document.getElementById('r-istart-val').textContent = v.istart;
+  document.getElementById('r-iend-val').textContent = v.iend;
+  document.getElementById('r-ir-code').textContent = `${v.istart}, ${v.iend}`;
+  const eMap={linear:'linear',easeInOut:'inOut(Easing.ease)',easeIn:'in(Easing.ease)',easeOut:'out(Easing.ease)',easeInOutCubic:'inOut(Easing.cubic)',easeInBack:'inBack',easeOutBounce:'out(Easing.bounce)'};
+  document.getElementById('r-ease-code').textContent = eMap[v.easing]||v.easing;
+  replayAll_remotion();
+}
+
+// Spring simulation
+function springSimulate(frames,from,to,config){
+  const {damping=12,stiffness=100,mass=1}=config;
+  let pos=from,vel=0;
+  const results=[pos];
+  for(let i=0;i<frames;i++){
+    const f=-(stiffness*(pos-to))-(damping*vel);
+    const a=f/mass;
+    vel+=a/60;pos+=vel;
+    results.push(pos);
+  }
+  return results;
+}
+
+let rdRAF,rsRAF,rmRAF,riRAF,reRAF;
+
+function drawRDamping(restart=false) {
+  const d=getCtx('rc-damping'); if(!d)return;
+  if(restart)cancelAnimationFrame(rdRAF);
+  const {ctx,w,h}=d; const v=getRemotion();
+  const traj=springSimulate(120,0,1,{damping:v.damping,stiffness:100,mass:1});
+  let frame=0;
+  (function loop(){
+    clear(ctx,w,h);
+    // Trajectory curve
+    ctx.beginPath();ctx.strokeStyle='#1c1e30';ctx.lineWidth=1;
+    traj.forEach((val,i)=>{
+      const x=30+(w-60)*i/120;
+      const y=(h*.7)-(h*.5)*Math.min(1.5,Math.max(-0.5,val));
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    });ctx.stroke();
+    // Current position line
+    if(frame<=120){
+      ctx.beginPath();ctx.strokeStyle='#38bdf8';ctx.lineWidth=2;
+      traj.slice(0,frame+1).forEach((val,i)=>{
+        const x=30+(w-60)*i/120;
+        const y=(h*.7)-(h*.5)*Math.min(1.5,Math.max(-0.5,val));
+        i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+      });ctx.stroke();
+    }
+    // Ball
+    const fi=Math.min(frame,120);
+    const val=traj[fi]||traj[traj.length-1];
+    const bx=30+(w-60)*fi/120;
+    const by=(h*.7)-(h*.5)*Math.min(1.5,Math.max(-0.5,val));
+    ctx.beginPath();ctx.arc(bx,by,8,0,Math.PI*2);
+    ctx.fillStyle='#38bdf8';ctx.shadowColor='#38bdf8';ctx.shadowBlur=12;ctx.fill();ctx.shadowBlur=0;
+    // Target line
+    ctx.strokeStyle='#38bdf833';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+    ctx.beginPath();ctx.moveTo(30,h*.2);ctx.lineTo(w-30,h*.2);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#52566e';ctx.font=`400 9px 'Geist Mono'`;ctx.textAlign='left';
+    ctx.fillText(`damping: ${v.damping}  |  ${v.damping<10?'muito elástico':v.damping<20?'natural':v.damping<35?'amortecido':'rígido'}`,10,14);
+    if(frame<150)rdRAF=requestAnimationFrame(loop);
+    frame++;
+  })();
+}
+
+function drawRStiffness(restart=false) {
+  const d=getCtx('rc-stiffness'); if(!d)return;
+  if(restart)cancelAnimationFrame(rsRAF);
+  const {ctx,w,h}=d; const v=getRemotion();
+  const traj=springSimulate(120,0,1,{damping:12,stiffness:v.stiffness,mass:1});
+  let frame=0;
+  (function loop(){
+    clear(ctx,w,h);
+    ctx.beginPath();ctx.strokeStyle='#1c1e30';ctx.lineWidth=1;
+    traj.forEach((val,i)=>{
+      const x=30+(w-60)*i/120;const y=(h*.7)-(h*.5)*Math.min(1.5,Math.max(-0.5,val));
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    });ctx.stroke();
+    const fi=Math.min(frame,120);
+    ctx.beginPath();ctx.strokeStyle='#38bdf8';ctx.lineWidth=2;
+    traj.slice(0,fi+1).forEach((val,i)=>{
+      const x=30+(w-60)*i/120;const y=(h*.7)-(h*.5)*Math.min(1.5,Math.max(-0.5,val));
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    });ctx.stroke();
+    const val=traj[fi]||1;
+    const bx=30+(w-60)*fi/120;const by=(h*.7)-(h*.5)*Math.min(1.5,Math.max(-0.5,val));
+    ctx.beginPath();ctx.arc(bx,by,8,0,Math.PI*2);
+    ctx.fillStyle='#38bdf8';ctx.shadowColor='#38bdf8';ctx.shadowBlur=12;ctx.fill();ctx.shadowBlur=0;
+    ctx.strokeStyle='#38bdf833';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+    ctx.beginPath();ctx.moveTo(30,h*.2);ctx.lineTo(w-30,h*.2);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#52566e';ctx.font=`400 9px 'Geist Mono'`;ctx.textAlign='left';
+    ctx.fillText(`stiffness: ${v.stiffness}  |  ${v.stiffness<60?'fluido lento':v.stiffness<150?'equilibrado':'snappy rápido'}`,10,14);
+    if(frame<150)rsRAF=requestAnimationFrame(loop);frame++;
+  })();
+}
+
+function drawRMass(restart=false) {
+  const d=getCtx('rc-mass'); if(!d)return;
+  if(restart)cancelAnimationFrame(rmRAF);
+  const {ctx,w,h}=d; const v=getRemotion();
+  const traj=springSimulate(150,0,1,{damping:12,stiffness:100,mass:v.mass});
+  let frame=0;
+  (function loop(){
+    clear(ctx,w,h);
+    ctx.beginPath();ctx.strokeStyle='#1c1e30';ctx.lineWidth=1;
+    traj.forEach((val,i)=>{
+      const x=20+(w-40)*i/150;const y=(h*.7)-(h*.5)*Math.min(1.5,Math.max(-0.5,val));
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    });ctx.stroke();
+    const fi=Math.min(frame,150);
+    ctx.beginPath();ctx.strokeStyle='#38bdf8';ctx.lineWidth=2;
+    traj.slice(0,fi+1).forEach((val,i)=>{
+      const x=20+(w-40)*i/150;const y=(h*.7)-(h*.5)*Math.min(1.5,Math.max(-0.5,val));
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    });ctx.stroke();
+    const val=traj[fi]||1;
+    const bx=20+(w-40)*fi/150;const by=(h*.7)-(h*.5)*Math.min(1.5,Math.max(-0.5,val));
+    const r=5+v.mass*3;
+    ctx.beginPath();ctx.arc(bx,by,r,0,Math.PI*2);
+    ctx.fillStyle='#38bdf8';ctx.shadowColor='#38bdf8';ctx.shadowBlur=r;ctx.fill();ctx.shadowBlur=0;
+    ctx.strokeStyle='#38bdf833';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+    ctx.beginPath();ctx.moveTo(20,h*.2);ctx.lineTo(w-20,h*.2);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#52566e';ctx.font=`400 9px 'Geist Mono'`;ctx.textAlign='left';
+    ctx.fillText(`mass: ${v.mass.toFixed(1)}  |  ${v.mass<1?'leve e ágil':v.mass<2?'normal':v.mass<4?'pesado':'muito pesado'}`,10,14);
+    if(frame<180)rmRAF=requestAnimationFrame(loop);frame++;
+  })();
+}
+
+function applyEasing(t, name) {
+  switch(name) {
+    case 'linear': return t;
+    case 'easeInOut': return t<.5?2*t*t:-1+(4-2*t)*t;
+    case 'easeIn': return t*t;
+    case 'easeOut': return t*(2-t);
+    case 'easeInOutCubic': return t<.5?4*t*t*t:(t-1)*(2*t-2)*(2*t-2)+1;
+    case 'easeInBack': {const c1=1.70158,c3=c1+1;return c3*t*t*t-c1*t*t;}
+    case 'easeOutBounce': {
+      const n1=7.5625,d1=2.75;
+      if(t<1/d1)return n1*t*t;
+      if(t<2/d1)return n1*(t-=1.5/d1)*t+.75;
+      if(t<2.5/d1)return n1*(t-=2.25/d1)*t+.9375;
+      return n1*(t-=2.625/d1)*t+.984375;
+    }
+    default: return t<.5?2*t*t:-1+(4-2*t)*t;
+  }
+}
+
+function drawRInterp(restart=false) {
+  const d=getCtx('rc-interp'); if(!d)return;
+  if(restart)cancelAnimationFrame(riRAF);
+  const {ctx,w,h}=d; const v=getRemotion();
+  let frame=0;const total=v.iend+30;
+  (function loop(){
+    clear(ctx,w,h);
+    const rawT=(frame-v.istart)/(v.iend-v.istart);
+    const t=Math.max(0,Math.min(1,rawT));
+    const val=t; // opacity 0→1
+    const bx=30+(w-70)*val;
+    // Track
+    ctx.strokeStyle='#1c1e30';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(30,h/2);ctx.lineTo(w-40,h/2);ctx.stroke();
+    // Start/end markers
+    ctx.fillStyle='#52566e';ctx.font=`400 9px 'Geist Mono'`;ctx.textAlign='center';
+    ctx.fillText(`f:${v.istart}`,30,h/2-14);
+    ctx.fillText(`f:${v.iend}`,w-40,h/2-14);
+    ctx.strokeStyle='#1c1e3088';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+    ctx.beginPath();ctx.moveTo(30,h/2-10);ctx.lineTo(30,h/2+10);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(w-40,h/2-10);ctx.lineTo(w-40,h/2+10);ctx.stroke();
+    ctx.setLineDash([]);
+    // Ball
+    ctx.globalAlpha=Math.max(0.1,val);
+    ctx.beginPath();ctx.arc(bx,h/2,12,0,Math.PI*2);
+    ctx.fillStyle='#38bdf8';ctx.shadowColor='#38bdf8';ctx.shadowBlur=14;ctx.fill();ctx.shadowBlur=0;
+    ctx.globalAlpha=1;
+    // Frame counter
+    ctx.fillStyle='#38bdf8';ctx.font=`500 11px 'Geist Mono'`;ctx.textAlign='right';
+    ctx.fillText(`frame: ${frame}`,w-10,h-12);
+    ctx.fillStyle='#52566e';ctx.font=`400 9px 'Geist Mono'`;ctx.textAlign='left';
+    ctx.fillText(`opacity: ${val.toFixed(2)}`,10,h-12);
+    if(frame<total)riRAF=requestAnimationFrame(loop);
+    if(frame>=total)setTimeout(()=>{frame=0;loop()},1200);
+    frame++;
+  })();
+}
+
+function drawREasing(restart=false) {
+  const d=getCtx('rc-easing'); if(!d)return;
+  if(restart)cancelAnimationFrame(reRAF);
+  const {ctx,w,h}=d; const v=getRemotion();
+  let frame=0;const total=90;
+  (function loop(){
+    clear(ctx,w,h);
+    // Graph area
+    const gx=30,gy=20,gw=w-50,gh=h-60;
+    ctx.strokeStyle='#12131f';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(gx,gy+gh);ctx.lineTo(gx+gw,gy+gh);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(gx,gy);ctx.lineTo(gx,gy+gh);ctx.stroke();
+    // Easing curve
+    ctx.beginPath();ctx.strokeStyle='#38bdf8';ctx.lineWidth=2;
+    for(let i=0;i<=100;i++){
+      const tx=i/100;const ty=applyEasing(tx,v.easing);
+      const px=gx+gw*tx;const py=(gy+gh)-gh*Math.max(-.2,Math.min(1.2,ty));
+      i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+    }ctx.stroke();
+    // Moving point on curve
+    const t=Math.min(1,frame/total);
+    const et=applyEasing(t,v.easing);
+    const px=gx+gw*t;const py=(gy+gh)-gh*Math.max(-.2,Math.min(1.2,et));
+    ctx.beginPath();ctx.arc(px,py,6,0,Math.PI*2);
+    ctx.fillStyle='#fff';ctx.shadowColor='#38bdf8';ctx.shadowBlur=10;ctx.fill();ctx.shadowBlur=0;
+    // Labels
+    ctx.fillStyle='#52566e';ctx.font=`400 9px 'Geist Mono'`;ctx.textAlign='left';
+    ctx.fillText(v.easing,10,14);
+    ctx.fillText('tempo →',gx,gy+gh+16);
+    if(frame<total+10)reRAF=requestAnimationFrame(loop);
+    if(frame>=total+10)setTimeout(()=>{frame=0;loop()},800);
+    frame++;
+  })();
+}
+
+function replayAll_remotion(){drawRDamping(true);drawRStiffness(true);drawRMass(true);drawRInterp(true);drawREasing(true);}
+function replayRemotion(w){
+  if(w==='damping')drawRDamping(true);
+  if(w==='stiffness')drawRStiffness(true);
+  if(w==='mass')drawRMass(true);
+  if(w==='interp')drawRInterp(true);
+  if(w==='easing')drawREasing(true);
+}
+
+// ════════════════════════════
+// P5.JS PREVIEWS
+// ════════════════════════════
+function getP5(){
+  return{
+    lerp:parseFloat(document.getElementById('p-lerp').value),
+    trail:parseFloat(document.getElementById('p-trail').value),
+    force:parseFloat(document.getElementById('p-force').value),
+    noise:parseFloat(document.getElementById('p-noise').value),
+    hue:parseFloat(document.getElementById('p-hue').value),
+    sat:parseFloat(document.getElementById('p-sat').value),
+    hrange:parseFloat(document.getElementById('p-hrange').value),
+  };
+}
+
+function updateP5(){
+  const v=getP5();
+  document.getElementById('p-lerp-val').textContent=v.lerp.toFixed(2);
+  document.getElementById('p-lerp-code').textContent=v.lerp.toFixed(2);
+  document.getElementById('p-trail-val').textContent=v.trail;
+  document.getElementById('p-trail-code').textContent=v.trail;
+  document.getElementById('p-force-val').textContent=(v.force>=0?'+':'')+v.force.toFixed(1);
+  document.getElementById('p-force-code').textContent=v.force.toFixed(1);
+  document.getElementById('p-noise-val').textContent=v.noise.toFixed(3);
+  document.getElementById('p-noise-code').textContent=v.noise.toFixed(3);
+  document.getElementById('p-hue-val').textContent=v.hue+'°';
+  document.getElementById('p-sat-val').textContent=v.sat+'%';
+  document.getElementById('p-hrange-val').textContent=v.hrange+'°';
+  document.getElementById('p-color-code').textContent=v.hue;
+  document.getElementById('p-color-code').nextSibling&&(document.getElementById('p-color-code').nextSibling.textContent=v.hrange);
+}
+
+// LERP DEMO
+let lerpX=160,lerpY=100,lerpTX=160,lerpTY=100,lerpRAF2;
+let lerpCanvas=null,lerpCtx2=null;
+function initLerpCanvas(){
+  const d=getCtx('pc-lerp');if(!d)return;
+  lerpCanvas=d.c;lerpCtx2=d.ctx;
+  lerpX=d.w/2;lerpY=d.h/2;lerpTX=d.w*.75;lerpTY=d.h/2;
+}
+function resetP5Lerp(){lerpX=lerpCanvas?lerpCanvas.width/4:80;lerpY=lerpCanvas?lerpCanvas.height/2:100;}
+function drawLerpLoop(){
+  if(!lerpCtx2){requestAnimationFrame(drawLerpLoop);return;}
+  const ctx=lerpCtx2,w=lerpCanvas.width,h=lerpCanvas.height;
+  const v=getP5();
+  ctx.fillStyle='rgba(7,8,13,0.4)';ctx.fillRect(0,0,w,h);
+  lerpX=lerpX+(lerpTX-lerpX)*v.lerp;
+  lerpY=lerpY+(lerpTY-lerpY)*v.lerp;
+  // Target
+  ctx.strokeStyle='#84cc1644';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+  ctx.beginPath();ctx.arc(lerpTX,lerpTY,14,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#84cc1622';ctx.beginPath();ctx.arc(lerpTX,lerpTY,14,0,Math.PI*2);ctx.fill();
+  // Line
+  ctx.strokeStyle='#84cc1633';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(lerpX,lerpY);ctx.lineTo(lerpTX,lerpTY);ctx.stroke();
+  // Ball
+  ctx.beginPath();ctx.arc(lerpX,lerpY,12,0,Math.PI*2);
+  ctx.fillStyle='#84cc16';ctx.shadowColor='#84cc16';ctx.shadowBlur=14;ctx.fill();ctx.shadowBlur=0;
+  // Labels
+  ctx.fillStyle='#52566e';ctx.font=`400 9px 'Geist Mono'`;ctx.textAlign='left';
+  ctx.fillText(`lerp factor: ${v.lerp.toFixed(2)}  —  Mova o mouse na área`,10,16);
+  requestAnimationFrame(drawLerpLoop);
+}
+document.getElementById('pc-lerp').addEventListener('mousemove',e=>{
+  if(!lerpCanvas)return;
+  const r=e.target.getBoundingClientRect();
+  const scale=lerpCanvas.width/r.width;
+  lerpTX=(e.clientX-r.left)*scale;lerpTY=(e.clientY-r.top)*scale;
+});
+document.getElementById('pc-lerp').addEventListener('touchmove',e=>{
+  e.preventDefault();
+  if(!lerpCanvas)return;
+  const r=e.target.getBoundingClientRect();
+  const scale=lerpCanvas.width/r.width;
+  lerpTX=(e.touches[0].clientX-r.left)*scale;lerpTY=(e.touches[0].clientY-r.top)*scale;
+},{passive:false});
+
+// TRAIL DEMO
+let trailMX=160,trailMY=100,trailT=0;
+function drawTrailLoop(){
+  const d=getCtx('pc-trail');if(!d){requestAnimationFrame(drawTrailLoop);return;}
+  const {ctx,w,h}=d;const v=getP5();
+  const alpha=v.trail/255;
+  ctx.fillStyle=`rgba(7,8,13,${alpha})`;ctx.fillRect(0,0,w,h);
+  trailT+=0.04;
+  const x=w/2+Math.cos(trailT)*w*.3;
+  const y=h/2+Math.sin(trailT*1.3)*h*.3;
+  ctx.beginPath();ctx.arc(x,y,10,0,Math.PI*2);
+  ctx.fillStyle='#84cc16';ctx.shadowColor='#84cc16';ctx.shadowBlur=v.trail<100?16:6;ctx.fill();ctx.shadowBlur=0;
+  ctx.fillStyle='#52566e';ctx.font=`400 9px 'Geist Mono'`;ctx.textAlign='left';
+  ctx.fillText(`background alpha: ${v.trail}  |  ${v.trail<50?'rastro longo':v.trail<150?'rastro médio':'sem rastro'}`,10,16);
+  requestAnimationFrame(drawTrailLoop);
+}
+
+// FORCE DEMO
+let forceParticles=[];
+let forceMX=160,forceMY=100;
+function resetP5Force(){initForceParticles();}
+function initForceParticles(){
+  forceParticles=[];
+  for(let i=0;i<40;i++){
+    const d=getCtx('pc-force');
+    const w=d?d.w:320,h=d?d.h:200;
+    forceParticles.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*2,vy:(Math.random()-.5)*2,hue:200+Math.random()*80});
+  }
+}
+function drawForceLoop(){
+  const d=getCtx('pc-force');if(!d){requestAnimationFrame(drawForceLoop);return;}
+  const {ctx,w,h}=d;const v=getP5();
+  ctx.fillStyle='rgba(7,8,13,0.25)';ctx.fillRect(0,0,w,h);
+  forceParticles.forEach(p=>{
+    const dx=forceMX-p.x,dy=forceMY-p.y;
+    const dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist<120&&dist>1){const f=v.force*(1-dist/120);p.vx+=dx/dist*f;p.vy+=dy/dist*f;}
+    p.vx*=.9;p.vy*=.9;
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0)p.x=w;if(p.x>w)p.x=0;
+    if(p.y<0)p.y=h;if(p.y>h)p.y=0;
+    ctx.beginPath();ctx.arc(p.x,p.y,4,0,Math.PI*2);
+    ctx.fillStyle=`hsl(${p.hue},75%,65%)`;ctx.shadowColor=ctx.fillStyle;ctx.shadowBlur=6;ctx.fill();ctx.shadowBlur=0;
+  });
+  // Cursor ring
+  ctx.strokeStyle=v.force>0?'#84cc1644':'#ef444444';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+  ctx.beginPath();ctx.arc(forceMX,forceMY,60,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#52566e';ctx.font=`400 9px 'Geist Mono'`;ctx.textAlign='left';
+  ctx.fillText(`força: ${(v.force>=0?'+':'')+v.force.toFixed(1)}  ${v.force>0?'← atração →':'← repulsão →'}`,10,16);
+  requestAnimationFrame(drawForceLoop);
+}
+document.getElementById('pc-force').addEventListener('mousemove',e=>{
+  const r=e.target.getBoundingClientRect();
+  const d=getCtx('pc-force');if(!d)return;
+  const scale=d.w/r.width;
+  forceMX=(e.clientX-r.left)*scale;forceMY=(e.clientY-r.top)*scale;
+});
+document.getElementById('pc-force').addEventListener('touchmove',e=>{
+  e.preventDefault();
+  const r=e.target.getBoundingClientRect();
+  const d=getCtx('pc-force');if(!d)return;
+  const scale=d.w/r.width;
+  forceMX=(e.touches[0].clientX-r.left)*scale;forceMY=(e.touches[0].clientY-r.top)*scale;
+},{passive:false});
+
+// NOISE DEMO
+let noiseParticles=[];
+let noiseT=0;
+// Simple Perlin-like using sin/cos combinations
+function pseudoNoise(x,y,t){
+  return (Math.sin(x*7.3+t)*Math.cos(y*5.1+t*.7)+Math.sin(x*3.1-y*4.7+t*1.3))/2;
+}
+function resetP5Noise(){initNoiseParticles();}
+function initNoiseParticles(){
+  noiseParticles=[];
+  for(let i=0;i<60;i++){
+    const d=getCtx('pc-noise');
+    const w=d?d.w:320,h=d?d.h:200;
+    noiseParticles.push({x:Math.random()*w,y:Math.random()*h,life:Math.random()*100});
+  }
+}
+function drawNoiseLoop(){
+  const d=getCtx('pc-noise');if(!d){requestAnimationFrame(drawNoiseLoop);return;}
+  const {ctx,w,h}=d;const v=getP5();
+  ctx.fillStyle='rgba(7,8,13,0.15)';ctx.fillRect(0,0,w,h);
+  noiseT+=0.01;
+  noiseParticles.forEach(p=>{
+    const nx=pseudoNoise(p.x*v.noise,p.y*v.noise,noiseT);
+    const angle=nx*Math.PI*4;
+    p.x+=Math.cos(angle)*1.5;p.y+=Math.sin(angle)*1.5;
+    p.life--;
+    if(p.x<0||p.x>w||p.y<0||p.y>h||p.life<=0){
+      p.x=Math.random()*w;p.y=Math.random()*h;p.life=60+Math.random()*60;
+    }
+    const alpha=Math.min(1,p.life/20);
+    ctx.globalAlpha=alpha*.8;
+    ctx.beginPath();ctx.arc(p.x,p.y,2.5,0,Math.PI*2);
+    ctx.fillStyle='#84cc16';ctx.fill();
+    ctx.globalAlpha=1;
+  });
+  ctx.fillStyle='#52566e';ctx.font=`400 9px 'Geist Mono'`;ctx.textAlign='left';
+  ctx.fillText(`noiseScale: ${v.noise.toFixed(3)}  |  ${v.noise<0.005?'suave e amplo':v.noise<0.02?'orgânico natural':'turbulento'}`,10,16);
+  requestAnimationFrame(drawNoiseLoop);
+}
+
+// COLOR DEMO
+let colorT=0;
+function drawColorLoop(){
+  const d=getCtx('pc-color');if(!d){requestAnimationFrame(drawColorLoop);return;}
+  const {ctx,w,h}=d;const v=getP5();
+  ctx.fillStyle='rgba(7,8,13,0.3)';ctx.fillRect(0,0,w,h);
+  colorT+=.5;
+  const N=12;
+  for(let i=0;i<N;i++){
+    const angle=((i/N)*Math.PI*2)+colorT*.02;
+    const r=50+Math.sin(colorT*.04+i)*(h*.15);
+    const cx=w/2+Math.cos(angle)*r;
+    const cy=h/2+Math.sin(angle)*r;
+    const hue=(v.hue+(i/N)*v.hrange)%360;
+    const s=v.sat;
+    const ballR=8+Math.sin(colorT*.06+i)*3;
+    ctx.beginPath();ctx.arc(cx,cy,ballR,0,Math.PI*2);
+    ctx.fillStyle=`hsl(${hue},${s}%,65%)`;ctx.shadowColor=ctx.fillStyle;ctx.shadowBlur=12;ctx.fill();ctx.shadowBlur=0;
+  }
+  // Color swatches
+  for(let i=0;i<=8;i++){
+    const hue=(v.hue+(i/8)*v.hrange)%360;
+    const sw=Math.floor((w-40)/9);
+    ctx.fillStyle=`hsl(${hue},${v.sat}%,65%)`;
+    ctx.fillRect(20+i*sw,h-24,sw-2,12);
+  }
+  ctx.fillStyle='#52566e';ctx.font=`400 9px 'Geist Mono'`;ctx.textAlign='left';
+  ctx.fillText(`hue: ${v.hue}°  sat: ${v.sat}%  range: ${v.hrange}°`,10,16);
+  requestAnimationFrame(drawColorLoop);
+}
+
+// ════════════════════════════
+// INIT
+// ════════════════════════════
+function initAllCanvases(){
+  // Init lerp canvas
+  initLerpCanvas();
+  // Init force particles
+  if(forceParticles.length===0)initForceParticles();
+  if(noiseParticles.length===0)initNoiseParticles();
+}
+
+window.addEventListener('load',()=>{
+  // Start all loops
+  drawRuntime();drawLag();drawRatefunc();drawScale();drawGradient();
+  drawRDamping();drawRStiffness();drawRMass();drawRInterp();drawREasing();
+  initLerpCanvas();
+  drawLerpLoop();drawTrailLoop();
+  initForceParticles();drawForceLoop();
+  initNoiseParticles();drawNoiseLoop();
+  drawColorLoop();
+});
+
+let rzT;window.addEventListener('resize',()=>{
+  clearTimeout(rzT);rzT=setTimeout(()=>{
+    initLerpCanvas();
+    initForceParticles();
+    initNoiseParticles();
+    replayAll_manim();
+  },200);
+});
+</script>
+</body>
+</html>
