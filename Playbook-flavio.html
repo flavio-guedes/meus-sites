@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trilha Flavio · Design → Produto</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=Playfair+Display:wght@700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ─── RESET ─── */
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#06060e;
+  --ink:#f0f0fa;
+  --body:#c8c8e0;
+  --muted:#7070a0;
+  --dim:#2a2a42;
+  --card:#0c0c1a;
+  --card2:#11112a;
+
+  --p1:#ff4d4d;
+  --p2:#f97316;
+  --p3:#eab308;
+  --p4:#22c55e;
+  --p5:#3b82f6;
+
+  --g1:linear-gradient(135deg,#ff4d4d,#ff8c42);
+  --g2:linear-gradient(135deg,#f97316,#f5c518);
+  --g3:linear-gradient(135deg,#eab308,#a3e635);
+  --g4:linear-gradient(135deg,#22c55e,#06b6d4);
+  --g5:linear-gradient(135deg,#3b82f6,#8b5cf6);
+}
+
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--body);
+  font-family:'DM Sans',sans-serif;
+  line-height:1.7;
+  overflow-x:hidden;
+  font-size:15px;
+}
+
+/* ══ LIGHT ORB BACKGROUND ══ */
+.bg-orbs{
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  overflow:hidden;
+}
+.orb{
+  position:absolute;border-radius:50%;
+  filter:blur(120px);opacity:0;
+  animation:orbFloat 20s ease-in-out infinite;
+}
+.orb1{
+  width:600px;height:600px;
+  background:radial-gradient(circle,rgba(59,130,246,.18),transparent 70%);
+  top:-200px;left:-200px;
+  animation-delay:0s;
+}
+.orb2{
+  width:500px;height:500px;
+  background:radial-gradient(circle,rgba(34,197,94,.12),transparent 70%);
+  top:40%;right:-150px;
+  animation-delay:-6s;
+}
+.orb3{
+  width:400px;height:400px;
+  background:radial-gradient(circle,rgba(255,77,77,.1),transparent 70%);
+  bottom:10%;left:20%;
+  animation-delay:-12s;
+}
+@keyframes orbFloat{
+  0%{opacity:0;transform:scale(.8) translate(0,0)}
+  20%{opacity:1}
+  50%{transform:scale(1.1) translate(30px,-40px)}
+  80%{opacity:1}
+  100%{opacity:0;transform:scale(.8) translate(0,0)}
+}
+
+/* scanlines */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:repeating-linear-gradient(
+    0deg,transparent,transparent 3px,
+    rgba(0,0,0,.03) 3px,rgba(0,0,0,.03) 4px
+  );
+}
+
+.wrap{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:0 24px 120px}
+
+/* ══ HERO ══ */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  justify-content:flex-end;padding:80px 0 72px;
+}
+.hero-label{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  letter-spacing:.22em;text-transform:uppercase;
+  color:#35355a;margin-bottom:24px;
+}
+.hero-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(44px,8.5vw,80px);
+  font-weight:900;line-height:.95;
+  letter-spacing:-.04em;margin-bottom:28px;
+  color:var(--ink);
+}
+.hero-title .line2{
+  background:var(--g4);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero-desc{
+  font-size:17px;font-weight:400;
+  color:#9090b8;line-height:1.75;
+  max-width:520px;margin-bottom:40px;
+}
+.hero-desc strong{color:var(--ink);font-weight:700}
+
+.hero-stats{display:flex;gap:0;flex-wrap:wrap}
+.hstat{
+  padding:16px 22px;border:1px solid #1c1c34;border-right:none;
+  transition:background .2s;
+}
+.hstat:hover{background:rgba(255,255,255,.03)}
+.hstat:first-child{border-radius:10px 0 0 10px}
+.hstat:last-child{border-radius:0 10px 10px 0;border-right:1px solid #1c1c34}
+.hstat-n{font-size:24px;font-weight:700;line-height:1;margin-bottom:3px}
+.hstat-l{font-size:10px;color:#35355a;font-weight:500;text-transform:uppercase;letter-spacing:.1em}
+
+.scroll-hint{
+  margin-top:56px;display:flex;align-items:center;gap:12px;
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  color:#25254a;letter-spacing:.14em;text-transform:uppercase;
+}
+.scroll-line{width:36px;height:1px;background:#25254a}
+
+/* ══ CORE ANALOGY ══ */
+.core-analogy{
+  margin:80px 0;padding:36px 40px;border-radius:20px;
+  background:linear-gradient(135deg,rgba(59,130,246,.07),rgba(34,197,94,.05));
+  border:1px solid rgba(59,130,246,.2);
+  position:relative;overflow:hidden;
+  transition:border-color .3s,box-shadow .3s;
+}
+.core-analogy:hover{
+  border-color:rgba(59,130,246,.4);
+  box-shadow:0 0 60px rgba(59,130,246,.08);
+}
+.core-analogy::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(59,130,246,.04) 0%,transparent 60%);
+}
+.ca-inner{position:relative}
+.ca-tag{
+  display:inline-block;font-family:'JetBrains Mono',monospace;
+  font-size:10px;letter-spacing:.15em;text-transform:uppercase;
+  color:#3b82f6;background:rgba(59,130,246,.1);
+  border:1px solid rgba(59,130,246,.25);
+  border-radius:4px;padding:4px 10px;margin-bottom:16px;
+}
+.ca-text{font-size:17px;font-weight:400;line-height:1.8;color:#a0a0c8}
+.ca-text strong{color:var(--ink);font-weight:700}
+.ca-text em{color:#22c55e;font-style:normal;font-weight:700}
+
+/* ══ SECTION LABEL ══ */
+.section-label{
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  letter-spacing:.22em;text-transform:uppercase;
+  color:#2a2a48;margin-bottom:48px;
+  display:flex;align-items:center;gap:16px;
+}
+.section-label::after{content:'';flex:1;height:1px;background:#151528}
+
+/* ══ DESTINATION ══ */
+.destination{
+  margin-bottom:80px;padding:48px 40px;border-radius:24px;
+  background:var(--g1);
+  position:relative;overflow:hidden;
+  opacity:0;transform:translateY(40px);
+  transition:opacity .7s ease,transform .7s ease,box-shadow .4s;
+}
+.destination.visible{opacity:1;transform:translateY(0)}
+.destination:hover{
+  box-shadow:0 20px 80px rgba(255,77,77,.25),0 0 0 1px rgba(255,140,66,.3);
+  transform:translateY(-3px) !important;
+}
+.destination::before{
+  content:'';position:absolute;bottom:-40px;right:-40px;
+  width:260px;height:260px;border-radius:50%;
+  background:rgba(0,0,0,.12);
+}
+.destination::after{
+  content:'';position:absolute;top:-60px;left:-60px;
+  width:200px;height:200px;border-radius:50%;
+  background:rgba(255,255,255,.06);
+}
+.dest-inner{position:relative;z-index:1}
+.dest-eyebrow{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(8,8,15,.5);margin-bottom:16px;
+}
+.dest-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(28px,5vw,48px);
+  font-weight:900;line-height:.95;
+  letter-spacing:-.04em;color:#06060e;margin-bottom:16px;
+}
+.dest-desc{
+  font-size:16px;color:rgba(6,6,14,.6);
+  max-width:480px;line-height:1.65;margin-bottom:28px;
+}
+.dest-desc strong{color:#06060e;font-weight:700}
+.dest-salary{
+  display:inline-flex;align-items:center;gap:16px;
+  background:rgba(6,6,14,.14);backdrop-filter:blur(10px);
+  border-radius:12px;padding:16px 24px;
+  transition:background .2s;
+}
+.destination:hover .dest-salary{background:rgba(6,6,14,.2)}
+.ds-n{
+  font-family:'Playfair Display',serif;
+  font-size:36px;font-weight:900;color:#06060e;
+  letter-spacing:-.04em;line-height:1;
+}
+.ds-d{font-size:12px;color:rgba(6,6,14,.55);line-height:1.5}
+
+/* ══ ARROW ══ */
+.arrow-section{
+  display:flex;flex-direction:column;align-items:center;
+  gap:8px;padding:32px 0 48px;color:#20203a;
+}
+.arrow-label{
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  letter-spacing:.18em;text-transform:uppercase;color:#20203a;
+}
+.arrow-line{width:1px;height:60px;background:linear-gradient(to bottom,#20203a,transparent)}
+
+/* ══ PHASE ══ */
+.phase{
+  position:relative;
+  opacity:0;transform:translateY(40px);
+  transition:opacity .7s ease,transform .7s ease;
+}
+.phase.visible{opacity:1;transform:translateY(0)}
+
+.phase-connector{
+  position:absolute;left:0;top:0;bottom:0;
+  width:2px;margin-left:27px;
+}
+
+.phase-inner{padding-left:68px;padding-bottom:64px}
+
+/* badge número */
+.phase-badge{
+  position:absolute;left:0;top:4px;
+  width:56px;height:56px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;
+  font-size:22px;font-weight:900;color:#06060e;z-index:2;
+  transition:transform .3s,box-shadow .3s;
+}
+.phase:hover .phase-badge{
+  transform:scale(1.1);
+  box-shadow:0 8px 32px rgba(0,0,0,.4);
+}
+
+/* ══ PHASE CARD ══ */
+.phase-card{
+  border-radius:20px;overflow:hidden;
+  border:1px solid rgba(255,255,255,.05);
+  transition:border-color .35s,box-shadow .35s,transform .35s;
+  position:relative;
+}
+
+/* glow border on hover — cor injetada por JS */
+.phase:hover .phase-card{
+  transform:translateY(-4px);
+}
+
+/* header colorido */
+.phase-header{
+  padding:28px 32px 22px;
+  position:relative;overflow:hidden;
+}
+.phase-header::after{
+  content:'';position:absolute;
+  bottom:-1px;left:0;right:0;height:1px;
+  background:rgba(0,0,0,.35);
+}
+/* brilho interno no header */
+.phase-header::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.15) 0%,transparent 60%);
+  pointer-events:none;
+}
+
+.ph-time{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  font-weight:500;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(6,6,14,.55);margin-bottom:10px;
+}
+.ph-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(22px,3.5vw,30px);
+  font-weight:900;line-height:1.05;
+  letter-spacing:-.03em;color:#06060e;margin-bottom:8px;
+}
+.ph-sub{
+  font-size:14px;font-weight:500;
+  color:rgba(6,6,14,.6);line-height:1.5;max-width:420px;
+}
+.ph-salary{
+  position:absolute;top:28px;right:32px;text-align:right;
+}
+.ps-label{
+  font-family:'JetBrains Mono',monospace;font-size:9px;
+  letter-spacing:.15em;text-transform:uppercase;
+  color:rgba(6,6,14,.45);margin-bottom:4px;
+}
+.ps-value{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(20px,3vw,28px);
+  font-weight:900;color:#06060e;
+  letter-spacing:-.03em;line-height:1;
+}
+.ps-range{font-size:11px;color:rgba(6,6,14,.45);margin-top:2px}
+
+/* body do card */
+.phase-body{background:var(--card)}
+
+/* ══ TABS ══ */
+.tabs{
+  display:flex;border-bottom:1px solid #151530;
+  background:rgba(0,0,0,.2);
+}
+.tab-btn{
+  flex:1;padding:13px 10px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:#35355a;background:none;border:none;cursor:pointer;
+  font-weight:600;transition:color .2s,background .2s;
+  position:relative;
+}
+.tab-btn::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;
+  height:2px;background:transparent;
+  transition:background .25s;
+}
+.tab-btn.active{color:var(--ink)}
+.tab-btn:hover{color:#9090b8;background:rgba(255,255,255,.02)}
+
+.tab-content{display:none;padding:28px 32px 8px}
+.tab-content.active{display:block}
+
+/* ══ CHECKPOINTS ══ */
+.checkpoints{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
+
+.cp-item{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:16px 18px;
+  background:rgba(255,255,255,.028);
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.05);
+  transition:background .25s,border-color .25s,transform .25s;
+  cursor:pointer;
+  user-select:none;
+}
+.cp-item:hover{
+  background:rgba(255,255,255,.055);
+  transform:translateX(4px);
+}
+.cp-item.checked{
+  background:rgba(34,197,94,.05);
+  border-color:rgba(34,197,94,.2);
+}
+
+/* caixa do check */
+.cp-check-box{
+  width:24px;height:24px;border-radius:7px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:1px;
+  border:2px solid #2a2a48;
+  background:transparent;
+  transition:background .25s,border-color .25s,transform .2s;
+  position:relative;
+}
+.cp-item:hover .cp-check-box{border-color:#4a4a70}
+.cp-item.checked .cp-check-box{
+  background:#22c55e;border-color:#22c55e;
+  transform:scale(1.05);
+}
+.cp-check-box svg{
+  width:12px;height:12px;
+  stroke:#06060e;stroke-width:2.5;
+  stroke-linecap:round;stroke-linejoin:round;
+  fill:none;
+  transform:scale(0);
+  transition:transform .2s cubic-bezier(.34,1.56,.64,1);
+}
+.cp-item.checked .cp-check-box svg{transform:scale(1)}
+
+.cp-text-wrap{flex:1;min-width:0}
+.cp-title{
+  font-size:15px;font-weight:700;
+  color:var(--ink);margin-bottom:4px;
+  transition:color .2s;
+}
+.cp-item.checked .cp-title{color:#6060a0;text-decoration:line-through;text-decoration-color:#3a3a58}
+.cp-desc{
+  font-size:14px;color:#8080a8;line-height:1.6;
+}
+.cp-desc strong{font-weight:700}
+
+/* ══ ROTINA ══ */
+.rotina{display:flex;flex-direction:column;gap:0;margin-bottom:20px}
+.rotina-item{
+  display:grid;grid-template-columns:88px 1fr;
+  border-bottom:1px solid #111128;
+  transition:background .2s;
+}
+.rotina-item:hover{background:rgba(255,255,255,.025)}
+.rotina-item:last-child{border-bottom:none}
+.ri-time{
+  padding:16px 16px 16px 0;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;font-weight:500;color:#30305a;
+  border-right:1px solid #111128;
+  display:flex;align-items:flex-start;
+  justify-content:flex-end;padding-right:16px;
+}
+.ri-content{padding:16px 0 16px 18px}
+.ri-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.ri-desc{font-size:14px;color:#8080a8;line-height:1.55}
+.ri-desc strong{font-weight:700}
+
+/* ══ GLOSSÁRIO ══ */
+.glossary-inline{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.gi-item{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:14px 16px;
+  background:rgba(255,255,255,.02);border-radius:10px;
+  border:1px solid rgba(255,255,255,.04);
+  transition:background .2s,border-color .2s;
+}
+.gi-item:hover{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.08)}
+.gi-term{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;min-width:90px;flex-shrink:0;
+  padding-top:2px;
+}
+.gi-def{font-size:14px;color:#8080a8;line-height:1.55}
+.gi-def strong{color:var(--ink);font-weight:700}
+
+/* ══ ANALOGIA RODAPÉ ══ */
+.phase-analogy{
+  padding:20px 32px 28px;
+  background:rgba(0,0,0,.25);
+  border-left:3px solid transparent;
+}
+.pa-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+  font-weight:600;margin-bottom:8px;
+}
+.pa-text{font-size:14px;color:#6868a0;line-height:1.65}
+.pa-text strong{font-weight:700}
+
+/* ══ CORES POR FASE ══ */
+.p5-c .phase-header{background:var(--g5)}
+.p5-c .phase-badge{background:var(--g5)}
+.p5-c .phase-connector{background:linear-gradient(to bottom,#3b82f6,#8b5cf6)}
+.p5-c .tab-btn.active::after{background:#3b82f6}
+.p5-c .tab-btn.active{color:#3b82f6}
+.p5-c .phase-analogy{border-color:#3b82f6}
+.p5-c .pa-label{color:#3b82f6}
+.p5-c .pa-text strong{color:#60a5fa}
+.p5-c:hover .phase-card{
+  border-color:rgba(59,130,246,.3);
+  box-shadow:0 16px 64px rgba(59,130,246,.12),0 0 0 1px rgba(59,130,246,.15) inset;
+}
+
+.p4-c .phase-header{background:var(--g4)}
+.p4-c .phase-badge{background:var(--g4)}
+.p4-c .phase-connector{background:linear-gradient(to bottom,#22c55e,#06b6d4)}
+.p4-c .tab-btn.active::after{background:#22c55e}
+.p4-c .tab-btn.active{color:#22c55e}
+.p4-c .phase-analogy{border-color:#22c55e}
+.p4-c .pa-label{color:#22c55e}
+.p4-c .pa-text strong{color:#4ade80}
+.p4-c:hover .phase-card{
+  border-color:rgba(34,197,94,.3);
+  box-shadow:0 16px 64px rgba(34,197,94,.12),0 0 0 1px rgba(34,197,94,.15) inset;
+}
+
+.p3-c .phase-header{background:var(--g3)}
+.p3-c .phase-badge{background:var(--g3)}
+.p3-c .phase-connector{background:linear-gradient(to bottom,#eab308,#a3e635)}
+.p3-c .tab-btn.active::after{background:#eab308}
+.p3-c .tab-btn.active{color:#eab308}
+.p3-c .phase-analogy{border-color:#eab308}
+.p3-c .pa-label{color:#eab308}
+.p3-c .pa-text strong{color:#facc15}
+.p3-c:hover .phase-card{
+  border-color:rgba(234,179,8,.3);
+  box-shadow:0 16px 64px rgba(234,179,8,.1),0 0 0 1px rgba(234,179,8,.15) inset;
+}
+
+.p2-c .phase-header{background:var(--g2)}
+.p2-c .phase-badge{background:var(--g2)}
+.p2-c .phase-connector{background:linear-gradient(to bottom,#f97316,#f5c518)}
+.p2-c .tab-btn.active::after{background:#f97316}
+.p2-c .tab-btn.active{color:#f97316}
+.p2-c .phase-analogy{border-color:#f97316}
+.p2-c .pa-label{color:#f97316}
+.p2-c .pa-text strong{color:#fb923c}
+.p2-c:hover .phase-card{
+  border-color:rgba(249,115,22,.3);
+  box-shadow:0 16px 64px rgba(249,115,22,.1),0 0 0 1px rgba(249,115,22,.15) inset;
+}
+
+.p1-c .phase-header{background:var(--g1)}
+.p1-c .phase-badge{background:var(--g1)}
+.p1-c .phase-connector{background:linear-gradient(to bottom,#ff4d4d,#ff8c42)}
+.p1-c .tab-btn.active::after{background:#ff4d4d}
+.p1-c .tab-btn.active{color:#ff4d4d}
+.p1-c .phase-analogy{border-color:#ff4d4d}
+.p1-c .pa-label{color:#ff4d4d}
+.p1-c .pa-text strong{color:#f87171}
+.p1-c:hover .phase-card{
+  border-color:rgba(255,77,77,.3);
+  box-shadow:0 16px 64px rgba(255,77,77,.12),0 0 0 1px rgba(255,77,77,.15) inset;
+}
+
+/* ══ BOLDS COLORIDOS inline ══ */
+/* injetados via classes nos textos */
+.b-blue{color:#60a5fa;font-weight:700}
+.b-green{color:#4ade80;font-weight:700}
+.b-yellow{color:#facc15;font-weight:700}
+.b-orange{color:#fb923c;font-weight:700}
+.b-red{color:#f87171;font-weight:700}
+.b-white{color:var(--ink);font-weight:700}
+
+/* ══ PROGRESS BAR ══ */
+.phase-progress{
+  padding:0 32px 20px;
+  display:flex;align-items:center;gap:12px;
+  background:var(--card);
+  border-top:1px solid rgba(255,255,255,.04);
+}
+.pp-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;color:#35355a;letter-spacing:.1em;text-transform:uppercase;
+  white-space:nowrap;
+}
+.pp-bar{
+  flex:1;height:4px;background:#151530;border-radius:2px;overflow:hidden;
+}
+.pp-fill{
+  height:100%;border-radius:2px;
+  transition:width .6s cubic-bezier(.34,1.56,.64,1);
+  width:0%;
+}
+.pp-count{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;color:#35355a;letter-spacing:.05em;
+  min-width:36px;text-align:right;
+}
+
+/* ══ REVEAL / SCROLL ══ */
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .65s ease,transform .65s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ══ FOOTER ══ */
+.footer{
+  margin-top:80px;padding-top:24px;
+  border-top:1px solid #151528;
+  display:flex;justify-content:space-between;
+  align-items:center;flex-wrap:wrap;gap:12px;
+}
+.footer p{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;color:#20203a;
+}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:560px){
+  .ph-salary{position:static;text-align:left;margin-top:16px}
+  .tabs .tab-btn{padding:12px 6px;font-size:9px}
+  .hstat{padding:12px 14px}
+  .tab-content{padding:20px 20px 8px}
+  .phase-analogy{padding:16px 20px 22px}
+  .phase-progress{padding:12px 20px 16px}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ LIGHT ORBS ═══ -->
+<div class="bg-orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+
+<div class="wrap">
+
+<!-- ═══ HERO ═══ -->
+<div class="hero reveal">
+  <div class="hero-label">Trilha de Carreira · 2025–2028</div>
+  <h1 class="hero-title">
+    De Designer<br>
+    <span class="line2">a Product Leader</span>
+  </h1>
+  <p class="hero-desc">
+    Um mapa claro de <strong>5 fases</strong> para transformar sua experiência criativa
+    no perfil mais escasso — e <strong>mais bem pago</strong> — do mercado de produto digital.
+  </p>
+  <div class="hero-stats">
+    <div class="hstat">
+      <div class="hstat-n" style="background:var(--g5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">36</div>
+      <div class="hstat-l">meses total</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-n" style="background:var(--g4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">5</div>
+      <div class="hstat-l">fases</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-n" style="background:var(--g2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">3–5x</div>
+      <div class="hstat-l">salário atual</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-n" style="background:var(--g1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">$200k</div>
+      <div class="hstat-l">potencial USD</div>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span class="scroll-line"></span>
+    Role para ver a trilha completa
+  </div>
+</div>
+
+<!-- ═══ ANALOGIA CORE ═══ -->
+<div class="core-analogy reveal">
+  <div class="ca-inner">
+    <span class="ca-tag">A lógica da trilha</span>
+    <p class="ca-text">
+      Imagine aprender xadrez. Você não começa no campeonato mundial —
+      você aprende as peças, depois as jogadas, depois a estratégia.
+      Essa trilha funciona igual: cada fase <strong>usa o que você já sabe</strong>
+      e acrescenta <em>uma camada nova</em>. Sem pular etapas. Sem começar do zero.
+    </p>
+  </div>
+</div>
+
+<!-- ═══ DESTINO ═══ -->
+<div class="section-label reveal">destino em 36 meses</div>
+
+<div class="destination reveal">
+  <div class="dest-inner">
+    <div class="dest-eyebrow">Onde você chega</div>
+    <h2 class="dest-title">VP Design<br>ou Fractional CPO</h2>
+    <p class="dest-desc">
+      O perfil mais escasso do mercado: criativo com <strong>visão de negócio</strong>,
+      fluente em produto, com histórico mensurável em impacto real.
+    </p>
+    <div class="dest-salary">
+      <span class="ds-n">$200k</span>
+      <div class="ds-d">USD/ano remoto<br>ou R$ 40–60k/mês</div>
+    </div>
+  </div>
+</div>
+
+<div class="arrow-section reveal">
+  <div class="arrow-label">A trilha começa aqui</div>
+  <div class="arrow-line"></div>
+  <svg width="14" height="8" viewBox="0 0 14 8" fill="none"><path d="M1 1L7 7L13 1" stroke="#20203a" stroke-width="1.5" stroke-linecap="round"/></svg>
+</div>
+
+<div class="section-label reveal">fase a fase — de baixo para cima</div>
+
+<!-- ═══ TIMELINE ═══ -->
+<div class="timeline">
+
+<!-- ────────────────────────────────────────────
+     FASE 01
+──────────────────────────────────────────── -->
+<div class="phase p5-c" data-phase="1">
+  <div class="phase-connector"></div>
+  <div class="phase-badge">01</div>
+  <div class="phase-inner">
+    <div class="phase-card">
+
+      <div class="phase-header">
+        <div class="ph-time">Agora · Meses 0 a 3</div>
+        <h3 class="ph-title">Fechar o Gap<br>de Produto</h3>
+        <p class="ph-sub">Transformar seu Figma criativo em Figma de produto. Aprender a linguagem de UX.</p>
+        <div class="ph-salary">
+          <div class="ps-label">Foco</div>
+          <div class="ps-value">Prep</div>
+          <div class="ps-range">3 meses de investimento</div>
+        </div>
+      </div>
+
+      <div class="phase-body">
+        <div class="tabs" id="tabs-1">
+          <button class="tab-btn active" onclick="switchTab(1,'checks')">Checkpoints</button>
+          <button class="tab-btn" onclick="switchTab(1,'rotina')">Rotina Semanal</button>
+          <button class="tab-btn" onclick="switchTab(1,'glossary')">O que significa</button>
+        </div>
+
+        <!-- CHECKS -->
+        <div class="tab-content active" id="tab-1-checks">
+          <div class="checkpoints" id="cps-1">
+
+            <div class="cp-item" onclick="toggleCheck(this,1)">
+              <div class="cp-check-box"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></div>
+              <div class="cp-text-wrap">
+                <div class="cp-title">Figma avançado: prototipagem interativa</div>
+                <div class="cp-desc">Você já usa Figma para criar. Agora precisa aprender a fazer <span class="b-blue">protótipos clicáveis</span> — simulações do app que o usuário pode testar antes de programar. É o <span class="b-white">idioma principal</span> de qualquer vaga de Product Design.</div>
+              </div>
+            </div>
+
+            <div class="cp-item" onclick="toggleCheck(this,1)">
+              <div class="cp-check-box"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></div>
+              <div class="cp-text-wrap">
+                <div class="cp-title">Primeiro case de produto no portfólio</div>
+                <div class="cp-desc">Documente um projeto redesenhado com foco em <span class="b-blue">problema real do usuário</span> + solução + <span class="b-green">resultado medido</span>. Não basta ser bonito — precisa mostrar raciocínio de produto.</div>
+              </div>
+            </div>
+
+            <div class="cp-item" onclick="toggleCheck(this,1)">
+              <div class="cp-check-box"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></div>
+              <div class="cp-text-wrap">
+                <div class="cp-title">UX Research básico dominado</div>
+                <div class="cp-desc">Aprender a conduzir <span class="b-blue">entrevistas com usuários reais</span> e extrair insights. É a habilidade que mais diferencia um designer criativo de um Product Designer — e que quase nenhum curso de design ensina.</div>
+              </div>
+            </div>
+
+            <div class="cp-item" onclick="toggleCheck(this,1)">
+              <div class="cp-check-box"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></div>
+              <div class="cp-text-wrap">
+                <div class="cp-title">LinkedIn reposicionado para "Product Designer"</div>
+                <div class="cp-desc">Título, sobre, cases — tudo alinhado para a nova identidade. <span class="b-white">Recrutadores te encontram pelo que você escreve</span>, não pelo que você pensa que é. Essa mudança sozinha já gera entrevistas.</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ROTINA -->
+        <div class="tab-content" id="tab-1-rotina">
+          <div class="rotina">
+            <div class="rotina-item">
+              <div class="ri-time">Seg / Qua</div>
+              <div class="ri-content">
+                <div class="ri-title">2h de curso Figma avançado</div>
+                <div class="ri-desc">Foco em <span class="b-blue">auto-layout, variables e prototipagem interativa</span>. Curse no horário que o trabalho atual permite — 2h já são suficientes se forem consistentes.</div>
+              </div>
+            </div>
+            <div class="rotina-item">
+              <div class="ri-time">Terça</div>
+              <div class="ri-content">
+                <div class="ri-title">Redesenhar 1 tela de um app real</div>
+                <div class="ri-desc">Escolha um app que você usa e <span class="b-blue">melhore uma tela com justificativa de UX</span>. Por que essa mudança? O que ela resolve? Esse raciocínio vira portfólio.</div>
+              </div>
+            </div>
+            <div class="rotina-item">
+              <div class="ri-time">Qui / Sex</div>
+              <div class="ri-content">
+                <div class="ri-title">Ler 1 case de produto por semana</div>
+                <div class="ri-desc">Sites como <span class="b-white">Medium, UX Collective, Bootcamp</span> têm cases gratuitos de Product Designers reais. Absorva o vocabulário — você vai usá-lo nas entrevistas.</div>
+              </div>
+            </div>
+            <div class="rotina-item">
+              <div class="ri-time">Fim de semana</div>
+              <div class="ri-content">
+                <div class="ri-title">Documentar 1 projeto antigo como case</div>
+                <div class="ri-desc">Pegar um projeto seu e reescrever com foco em <span class="b-blue">problema, processo, resultado</span> — esse é o formato de portfólio de produto que recrutadores esperam.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- GLOSSARY -->
+        <div class="tab-content" id="tab-1-glossary">
+          <div class="glossary-inline">
+            <div class="gi-item">
+              <div class="gi-term" style="color:#3b82f6">UX Research</div>
+              <div class="gi-def"><span class="b-white">Pesquisa com usuários reais.</span> É conversar com pessoas que usam o produto para entender suas dificuldades. Como uma pesquisa de mercado, mas focada em <span class="b-blue">comportamento e emoção</span>, não em números.</div>
+            </div>
+            <div class="gi-item">
+              <div class="gi-term" style="color:#3b82f6">Protótipo</div>
+              <div class="gi-def"><span class="b-white">Simulação clicável do produto</span> antes de programar. Você navega nele como se fosse real, mas é só design. Serve para <span class="b-blue">testar ideias sem custo de engenharia</span>.</div>
+            </div>
+            <div class="gi-item">
+              <div class="gi-term" style="color:#3b82f6">Case de Produto</div>
+              <div class="gi-def">Documento que conta <span class="b-white">a história de um projeto</span>: qual era o problema, o que você fez, por que escolheu essa solução, e <span class="b-blue">o que melhorou em número</span>. É seu portfólio comentado.</div>
+            </div>
+            <div class="gi-item">
+              <div class="gi-term" style="color:#3b82f6">Auto-layout</div>
+              <div class="gi-def">Funcionalidade do Figma que faz <span class="b-white">componentes se ajustarem automaticamente</span>. Como um contêiner elástico no design — você muda o texto e tudo se reorganiza sozinho.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="phase-progress" id="prog-1">
+          <span class="pp-label">Progresso</span>
+          <div class="pp-bar"><div class="pp-fill" id="fill-1" style="background:linear-gradient(90deg,#3b82f6,#8b5cf6)"></div></div>
+          <span class="pp-count" id="count-1">0 / 4</span>
+        </div>
+
+        <div class="phase-analogy">
+          <div class="pa-label">Analogia desta fase</div>
+          <p class="pa-text">Como um jornalista migrando para o cinema. Ele já sabe escrever — mas precisa aprender o formato roteiro e a linguagem visual. <strong>O talento já existe. Só falta o vocabulário novo.</strong></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ────────────────────────────────────────────
+     FASE 02
+──────────────────────────────────────────── -->
+<div class="phase p4-c" data-phase="2">
+  <div class="phase-connector"></div>
+  <div class="phase-badge">02</div>
+  <div class="phase-inner">
+    <div class="phase-card">
+
+      <div class="phase-header">
+        <div class="ph-time">Meses 3 a 12 · Primeiro emprego de produto</div>
+        <h3 class="ph-title">Product Designer<br>Sênior</h3>
+        <p class="ph-sub">Entrar em uma empresa de tecnologia e aprender produto de dentro. A fase mais importante da trilha.</p>
+        <div class="ph-salary">
+          <div class="ps-label">Salário-alvo</div>
+          <div class="ps-value">R$ 12–18k</div>
+          <div class="ps-range">CLT ou PJ / mês</div>
+        </div>
+      </div>
+
+      <div class="phase-body">
+        <div class="tabs" id="tabs-2">
+          <button class="tab-btn active" onclick="switchTab(2,'checks')">Checkpoints</button>
+          <button class="tab-btn" onclick="switchTab(2,'rotina')">Rotina Semanal</button>
+          <button class="tab-btn" onclick="switchTab(2,'glossary')">O que significa</button>
+        </div>
+
+        <div class="tab-content active" id="tab-2-checks">
+          <div class="checkpoints" id="cps-2">
+
+            <div class="cp-item" onclick="toggleCheck(this,2)">
+              <div class="cp-check-box"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></div>
+              <div class="cp-text-wrap">
+                <div class="cp-title">Estar dentro de uma scale-up série B ou C</div>
+                <div class="cp-desc"><span class="b-green">Scale-up</span> é uma empresa que já funciona e está crescendo rápido. Série B/C = tem investimento mas ainda não é gigante. Você <span class="b-white">aprende muito mais rápido</span> do que em corporação.</div>
+              </div>
+            </div>
+
+            <div class="cp-item" onclick="toggleCheck(this,2)">
+              <div class="cp-check-box"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></div>
+              <div class="cp-text-wrap">
+                <div class="cp-title">Participar de discovery semanalmente</div>
+                <div class="cp-desc"><span class="b-green">Discovery</span> é o processo de entender o problema antes de criar a solução. Participar disso é <span class="b-white">absorver a lógica de produto</span> que nenhum curso ensina — só se aprende dentro da empresa.</div>
+              </div>
+            </div>
+
+            <div class="cp-item" onclick="toggleCheck(this,2)">
+              <div class="cp-check-box"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></div>
+              <div class="cp-text-wrap">
+                <div class="cp-title">Aprender a medir o impacto do seu design</div>
+                <div class="cp-desc">Todo projeto precisa de <span class="b-green">resultado em número</span>: aumentou conversão em X%, reduziu abandono em Y%. Isso é o que <span class="b-white">diferencia portfólio sênior de portfólio júnior</span> em qualquer empresa do mundo.</div>
+              </div>
+            </div>
+
+            <div class="cp-item" onclick="toggleCheck(this,2)">
+              <div class="cp-check-box"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></div>
+              <div class="cp-text-wrap">
+                <div class="cp-title">Construir relação próxima com o PM do time</div>
+                <div class="cp-desc">O <span class="b-green">PM (Product Manager)</span> decide o que o produto vai fazer. Trabalhar lado a lado com ele é a <span class="b-white">forma mais rápida de aprender a pensar como PM</span> sem precisar mudar de cargo ainda.</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="tab-content" id="tab-2-rotina">
+          <div class="rotina">
+            <div class="rotina-item">
+              <div class="ri-time">Todo dia</div>
+              <div class="ri-content">
+                <div class="ri-title">Participar das reuniões de produto, não só de design</div>
+                <div class="ri-desc">Planejamento de sprint, alinhamento com engenharia, revisão de métricas. <span class="b-green">Fique presente mesmo quando não é obrigado</span> — é aí que você aprende o que nenhum curso ensina.</div>
+              </div>
+            </div>
+            <div class="rotina-item">
+              <div class="ri-time">Semanal</div>
+              <div class="ri-content">
+                <div class="ri-title">Documentar 1 aprendizado de produto por semana</div>
+                <div class="ri-desc">Uma decisão do PM, uma métrica que mudou, um insight de usuário. <span class="b-white">Escreva num diário privado</span> — em 6 meses você tem material para cases que valem muito.</div>
+              </div>
+            </div>
+            <div class="rotina-item">
+              <div class="ri-time">Mensal</div>
+              <div class="ri-content">
+                <div class="ri-title">Atualizar o portfólio com o projeto atual</div>
+                <div class="ri-desc">Não espere sair da empresa. <span class="b-green">Documente enquanto está acontecendo</span> — você se lembra dos detalhes, das decisões e dos números com muito mais precisão.</div>
+              </div>
+            </div>
+            <div class="rotina-item">
+              <div class="ri-time">Inglês</div>
+              <div class="ri-content">
+                <div class="ri-title">30 min por dia de inglês executivo</div>
+                <div class="ri-desc">Não precisa de curso caro. <span class="b-white">Podcasts de produto em inglês</span> como Lenny's Podcast e Masters of Scale já constroem vocabulário profissional no caminho para o trabalho.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-content" id="tab-2-glossary">
+          <div class="glossary-inline">
+            <div class="gi-item">
+              <div class="gi-term" style="color:#22c55e">Scale-up</div>
+              <div class="gi-def">Empresa que <span class="b-white">já provou que o modelo de negócio funciona</span> e agora está crescendo aceleradamente. Geralmente tem entre 50 e 500 pessoas e recebeu <span class="b-green">investimento recente de um fundo</span>.</div>
+            </div>
+            <div class="gi-item">
+              <div class="gi-term" style="color:#22c55e">Discovery</div>
+              <div class="gi-def">Fase de <span class="b-white">entender o problema</span> antes de criar qualquer solução. Envolve pesquisa, entrevistas e análise de dados. É o <span class="b-green">oposto de "já sei o que construir"</span>.</div>
+            </div>
+            <div class="gi-item">
+              <div class="gi-term" style="color:#22c55e">OKR</div>
+              <div class="gi-def"><span class="b-white">Objetivo + Resultados-Chave.</span> Sistema de metas que empresas de produto usam. Ex: Objetivo = "Aumentar retenção". Resultado-Chave = <span class="b-green">"Churn abaixo de 3% no trimestre"</span>.</div>
+            </div>
+            <div class="gi-item">
+              <div class="gi-term" style="color:#22c55e">Churn</div>
+              <div class="gi-def"><span class="b-white">Taxa de cancelamento.</span> Percentual de usuários que pararam de usar o produto num período. <span class="b-green">Quanto menor, melhor.</span> É uma das métricas mais importantes de qualquer produto digital.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="phase-progress" id="prog-2">
+          <span class="pp-label">Progresso</span>
+          <div class="pp-bar"><div class="pp-fill" id="fill-2" style="background:linear-gradient(90deg,#22c55e,#06b6d4)"></div></div>
+          <span class="pp-count" id="count-2">0 / 4</span>
+        </div>
+
+        <div class="phase-analogy">
+          <div class="pa-label">Analogia desta fase</div>
+          <p class="pa-text">Como um médico recém-formado na residência. Ele já estudou muito — agora precisa de <strong>horas dentro do hospital para aprender o que nenhum livro ensina.</strong> Essa fase é sua residência em produto.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ────────────────────────────────────────────
+     FASE 03
+──────────────────────────────────────────── -->
+<div class="phase p3-c" data-phase="3">
+  <div class="phase-connector"></div>
+  <div class="phase-badge">03</div>
+  <div class="phase-inner">
+    <div class="phase-card">
+
+      <div class="phase-header">
+        <div class="ph-time">Meses 12 a 20 · A grande escolha</div>
+        <h3 class="ph-title">Head of Design<br>— ou virar PM</h3>
+        <p class="ph-sub">A bifurcação de carreira. Você decide se segue liderando design ou migra para gerência de produto.</p>
+        <div class="ph-salary">
+          <div class="ps-label">Salário-alvo</div>
+          <div class="ps-value">R$ 18–28k</div>
+          <div class="ps-range">+ equity possível</div>
+        </div>
+      </div>
+
+      <div class="phase-body">
+        <div class="tabs" id="tabs-3">
+          <button class="tab-btn active" onclick="switchTab(3,'checks')">Checkpoints</button>
+          <button class="tab-btn" onclick="switchTab(3,'rotina')">Rotina Semanal</button>
+          <button class="tab-btn" onclick="switchTab(3,'glossary')">O que significa</button>
+        </div>
+
+        <div class="tab-content active" id="tab-3-checks">
+          <div class="checkpoints" id="cps-3">
+
+            <div class="cp-item" onclick="toggleCheck(this,3)">
+              <div class="cp-check-box"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></div>
+              <div class="cp-text-wrap">
+                <div class="cp-title">Decidir: Head of Design ou PM Track</div>
+                <div class="cp-desc"><span class="b-yellow">Head of Design</span> = liderar time de designers, cultura criativa, design system. <span class="b-yellow">PM</span> = dono do produto, define roadmap, metrics-driven. Você escolhe baseado no que <span class="b-white">mais te energizou na fase anterior</span>.</div>
+              </div>
+            </div>
+
+            <div class="cp-item" onclick="toggleCheck(this,3)">
+              <div class="cp-check-box"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></div>
+              <div class="cp-text-wrap">
+                <div class="cp-title">Inglês em nível C1 — fluência profissional</div>
+                <div class="cp-desc">C1 significa <span class="b-white">conversar fluidamente em contexto profissional</span>, escrever e-mails formais, apresentar para stakeholders estrangeiros. É a <span class="b-yellow">chave para multiplicar o salário em 3–5x</span> na fase seguinte.</div>
+              </div>
+            </div>
+
+            <div class="cp-item" onclick="toggleCheck(this,3)">
+              <div class="cp-check-box"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></div>
+              <div class="cp-text-wrap">
+                <div class="cp-title">Liderar pelo menos 1 designer júnior</div>
+                <div class="cp-desc">Dar feedback, desenvolver alguém, tomar decisões de design pelo time. <span class="b-white">Liderança no currículo muda completamente a conversa salarial</span> — é o que abre cargos de Head e VP.</div>
+              </div>
+            </div>
+
+            <div class="cp-item" onclick="toggleCheck(this,3)">
+              <div class="cp-check-box"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></div>
+              <div class="cp-text-wrap">
+                <div class="cp-title">Criar portfólio em inglês com 3 cases</div>
+                <div class="cp-desc">Traduzir não é suficiente — precisa <span class="b-yellow">reescrever no vocabulário e formato americano</span>. Cases curtos, direto ao ponto, com impacto quantificado. Esse portfólio é seu passaporte internacional.</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="tab-content" id="tab-3-rotina">
+          <div class="rotina">
+            <div class="rotina-item">
+              <div class="ri-time">Diário</div>
+              <div class="ri-content">
+                <div class="ri-title">30 min de inglês — conversação executiva</div>
+                <div class="ri-desc">Use <span class="b-white">Preply ou italki</span> com professor nativo focado em vocabulário de produto e negócios. Sem isso, as fases 4 e 5 ficam bloqueadas.</div>
+              </div>
+            </div>
+            <div class="rotina-item">
+              <div class="ri-time">Semanal</div>
+              <div class="ri-content">
+                <div class="ri-title">1 post no LinkedIn sobre produto ou design</div>
+                <div class="ri-desc">Não precisa ser perfeito. <span class="b-yellow">Consistência importa mais que qualidade</span> no início. Mostre que você pensa sobre produto — recrutadores leem isso.</div>
+              </div>
+            </div>
+            <div class="rotina-item">
+              <div class="ri-time">Quinzenal</div>
+              <div class="ri-content">
+                <div class="ri-title">Mentoria com alguém na posição que você quer</div>
+                <div class="ri-desc">Use <span class="b-white">ADPList</span> — plataforma gratuita de mentoria. Converse com Head of Design ou PM de empresa que você admira. <span class="b-yellow">Uma conversa pode acelerar meses</span>.</div>
+              </div>
+            </div>
+            <div class="rotina-item">
+              <div class="ri-time">Mensal</div>
+              <div class="ri-content">
+                <div class="ri-title">Reescrever 1 case do portfólio em inglês</div>
+                <div class="ri-desc">Foco no formato americano: <span class="b-yellow">situação, problema, sua ação, resultado em número.</span> Em 3 meses você tem 3 cases prontos para entrevistas internacionais.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-content" id="tab-3-glossary">
+          <div class="glossary-inline">
+            <div class="gi-item">
+              <div class="gi-term" style="color:#eab308">Head of Design</div>
+              <div class="gi-def"><span class="b-white">Líder do time de design</span> dentro de uma empresa de tecnologia. Responde ao VP de Produto ou CPO. Define <span class="b-yellow">cultura, processo e qualidade de design</span> — é o gestor dos designers.</div>
+            </div>
+            <div class="gi-item">
+              <div class="gi-term" style="color:#eab308">Design System</div>
+              <div class="gi-def">Biblioteca de <span class="b-white">componentes visuais padronizados</span> que toda a empresa usa. É o "guia de estilo" do produto digital — botões, cores, fontes, ícones — tudo documentado e <span class="b-yellow">reutilizável por qualquer designer ou dev</span>.</div>
+            </div>
+            <div class="gi-item">
+              <div class="gi-term" style="color:#eab308">Roadmap</div>
+              <div class="gi-def"><span class="b-white">Plano do que o produto vai construir</span> nos próximos meses. O PM decide o roadmap baseado em dados, feedbacks e estratégia. É o <span class="b-yellow">cronograma estratégico</span> do produto.</div>
+            </div>
+            <div class="gi-item">
+              <div class="gi-term" style="color:#eab308">Inglês C1</div>
+              <div class="gi-def">Nível do Quadro Europeu de Referência. <span class="b-white">C1 = fluência profissional completa.</span> Você consegue apresentar, negociar e escrever em inglês sem travar. É o <span class="b-yellow">nível mínimo para vagas internacionais acima de $80k</span>.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="phase-progress" id="prog-3">
+          <span class="pp-label">Progresso</span>
+          <div class="pp-bar"><div class="pp-fill" id="fill-3" style="background:linear-gradient(90deg,#eab308,#a3e635)"></div></div>
+          <span class="pp-count" id="count-3">0 / 4</span>
+        </div>
+
+        <div class="phase-analogy">
+          <div class="pa-label">Analogia desta fase</div>
+          <p class="pa-text">Como um chef que precisa decidir: <strong>abrir o próprio restaurante</strong> (Head of Design) ou <strong>virar diretor de operações</strong> (PM). As duas escolhas são excelentes. A errada é não escolher.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ────────────────────────────────────────────
+     FASE 04
+──────────────────────────────────────────── -->
+<div class="phase p2-c" data-phase="4">
+  <div class="phase-connector"></div>
+  <div class="phase-badge">04</div>
+  <div class="phase-inner">
+    <div class="phase-card">
+
+      <div class="phase-header">
+        <div class="ph-time">Meses 20 a 30 · O maior salto de renda</div>
+        <h3 class="ph-title">Design Lead<br>Internacional · Remoto</h3>
+        <p class="ph-sub">Empresas americanas pagando em dólar. Mesmo trabalho, 3 a 5 vezes mais dinheiro. O gap é só inglês e posicionamento.</p>
+        <div class="ph-salary">
+          <div class="ps-label">Salário-alvo</div>
+          <div class="ps-value">$80–130k</div>
+          <div class="ps-range">USD/ano · remoto do Brasil</div>
+        </div>
+      </div>
+
+      <div class="phase-body">
+        <div class="tabs" id="tabs-4">
+          <button class="tab-btn active" onclick="switchTab(4,'checks')">Checkpoints</button>
+          <button class="tab-btn" onclick="switchTab(4,'rotina')">Rotina Semanal</button>
+          <button class="tab-btn" onclick="switchTab(4,'glossary')">O que significa</button>
+        </div>
+
+        <div class="tab-content active" id="tab-4-checks">
+          <div class="checkpoints" id="cps-4">
+
+            <div class="cp-item" onclick="toggleCheck(this,4)">
+              <div class="cp-check-box"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></div>
+              <div class="cp-text-wrap">
+                <div class="cp-title">Portfólio 100% em inglês publicado online</div>
+                <div class="cp-desc">Um site seu com <span class="b-orange">3 cases de produto em inglês, versão PDF e link para LinkedIn</span>. Recrutadores americanos <span class="b-white">não leem currículo — leem portfólio</span>. Sem isso você nem é considerado.</div>
+              </div>
+            </div>
+
+            <div class="cp-item" onclick="toggleCheck(this,4)">
+              <div class="cp-check-box"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></div>
+              <div class="cp-text-wrap">
+                <div class="cp-title">Aplicar em Arc.dev, Toptal ou Remote OK</div>
+                <div class="cp-desc">Plataformas onde empresas americanas <span class="b-orange">buscam profissionais remotos fora dos EUA</span>. O processo é rigoroso, mas a aprovação <span class="b-white">abre centenas de vagas simultaneamente</span>.</div>
+              </div>
+            </div>
+
+            <div class="cp-item" onclick="toggleCheck(this,4)">
+              <div class="cp-check-box"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></div>
+              <div class="cp-text-wrap">
+                <div class="cp-title">Passar por pelo menos 3 entrevistas no padrão americano</div>
+                <div class="cp-desc">Entrevistas nos EUA incluem <span class="b-orange">portfolio review</span> (apresentar seus cases), <span class="b-orange">design critique</span> (analisar um produto ao vivo) e <span class="b-orange">case study</span> (resolver um problema em tempo real). São formatos completamente diferentes do Brasil.</div>
+              </div>
+            </div>
+
+            <div class="cp-item" onclick="toggleCheck(this,4)">
+              <div class="cp-check-box"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></div>
+              <div class="cp-text-wrap">
+                <div class="cp-title">Conta PJ e estrutura para receber em USD</div>
+                <div class="cp-desc">Abrir conta em <span class="b-white">Wise ou Remessa Online</span> para receber em dólar com taxa justa. Precisa de CNPJ ativo e contrato de prestação de serviços — <span class="b-orange">a estrutura correta evita problemas fiscais</span>.</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="tab-content" id="tab-4-rotina">
+          <div class="rotina">
+            <div class="rotina-item">
+              <div class="ri-time">Diário</div>
+              <div class="ri-content">
+                <div class="ri-title">1h de inglês com foco em apresentação de design</div>
+                <div class="ri-desc">Pratique <span class="b-orange">apresentar seus cases em voz alta em inglês</span>. Grave e assista. A fluência em apresentação vem com repetição — não com teoria.</div>
+              </div>
+            </div>
+            <div class="rotina-item">
+              <div class="ri-time">Semanal</div>
+              <div class="ri-content">
+                <div class="ri-title">Aplicar para 3 a 5 vagas internacionais</div>
+                <div class="ri-desc">Volume importa. <span class="b-white">A taxa de resposta é baixa</span>, mas cada processo é aprendizado. Use Arc.dev, LinkedIn Jobs com filtro "Remote" e <span class="b-orange">Wellfound</span> (ex-AngelList).</div>
+              </div>
+            </div>
+            <div class="rotina-item">
+              <div class="ri-time">Quinzenal</div>
+              <div class="ri-content">
+                <div class="ri-title">Mock interview com profissional americano</div>
+                <div class="ri-desc">Simule entrevistas reais. <span class="b-white">ADPList tem mentores americanos</span> que fazem mock interviews gratuitas. Feedback imediato do que ajustar antes da entrevista real.</div>
+              </div>
+            </div>
+            <div class="rotina-item">
+              <div class="ri-time">Mensal</div>
+              <div class="ri-content">
+                <div class="ri-title">Atualizar portfólio com métricas reais</div>
+                <div class="ri-desc">Cada número real que você conseguir <span class="b-orange">vale mais que 10 projetos sem resultado documentado.</span> Métricas reais são o que convencem recrutadores americanos.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-content" id="tab-4-glossary">
+          <div class="glossary-inline">
+            <div class="gi-item">
+              <div class="gi-term" style="color:#f97316">Arc.dev</div>
+              <div class="gi-def">Plataforma americana que <span class="b-white">conecta talentos globais a empresas dos EUA</span>. Você passa por uma seleção rigorosa e entra em um <span class="b-orange">pool de profissionais pré-aprovados</span> — empresas te encontram.</div>
+            </div>
+            <div class="gi-item">
+              <div class="gi-term" style="color:#f97316">Portfolio Review</div>
+              <div class="gi-def">Etapa da entrevista onde você <span class="b-white">apresenta seus cases de design para o time</span>. É <span class="b-orange">mais importante que o currículo nos EUA</span> — eles querem ver como você pensa, não o que você lista.</div>
+            </div>
+            <div class="gi-item">
+              <div class="gi-term" style="color:#f97316">Remote-first</div>
+              <div class="gi-def">Empresas construídas para funcionar com time <span class="b-white">100% remoto desde o início</span>. Não é home office eventual — é a <span class="b-orange">estrutura padrão de trabalho</span>. A maioria das startups americanas modernas são assim.</div>
+            </div>
+            <div class="gi-item">
+              <div class="gi-term" style="color:#f97316">Wise</div>
+              <div class="gi-def">Serviço para <span class="b-white">receber dinheiro do exterior com taxa de câmbio justa</span>. Sem as tarifas absurdas dos bancos tradicionais. <span class="b-orange">Essencial para trabalho remoto internacional</span> do Brasil.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="phase-progress" id="prog-4">
+          <span class="pp-label">Progresso</span>
+          <div class="pp-bar"><div class="pp-fill" id="fill-4" style="background:linear-gradient(90deg,#f97316,#f5c518)"></div></div>
+          <span class="pp-count" id="count-4">0 / 4</span>
+        </div>
+
+        <div class="phase-analogy">
+          <div class="pa-label">Analogia desta fase</div>
+          <p class="pa-text">Como um jogador brasileiro indo para a Europa. <strong>O talento já estava lá</strong> — só precisava do palco certo. O único "idioma" que faltava era o inglês, não a habilidade.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ────────────────────────────────────────────
+     FASE 05
+──────────────────────────────────────────── -->
+<div class="phase p1-c" data-phase="5">
+  <div class="phase-connector"></div>
+  <div class="phase-badge">05</div>
+  <div class="phase-inner">
+    <div class="phase-card">
+
+      <div class="phase-header">
+        <div class="ph-time">Meses 30 a 36 · Teto sem limite</div>
+        <h3 class="ph-title">VP Design<br>Fractional CPO</h3>
+        <p class="ph-sub">Liderança executiva em empresa americana — ou autonomia total como consultor externo de múltiplas empresas.</p>
+        <div class="ph-salary">
+          <div class="ps-label">Potencial</div>
+          <div class="ps-value">$150–200k</div>
+          <div class="ps-range">USD/ano ou R$ 40–60k/mês</div>
+        </div>
+      </div>
+
+      <div class="phase-body">
+        <div class="tabs" id="tabs-5">
+          <button class="tab-btn active" onclick="switchTab(5,'checks')">Checkpoints</button>
+          <button class="tab-btn" onclick="switchTab(5,'rotina')">Rotina Semanal</button>
+          <button class="tab-btn" onclick="switchTab(5,'glossary')">O que significa</button>
+        </div>
+
+        <div class="tab-content active" id="tab-5-checks">
+          <div class="checkpoints" id="cps-5">
+
+            <div class="cp-item" onclick="toggleCheck(this,5)">
+              <div class="cp-check-box"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></div>
+              <div class="cp-text-wrap">
+                <div class="cp-title">VP Design em empresa americana com equity</div>
+                <div class="cp-desc"><span class="b-red">Equity</span> significa que você recebe parte da empresa em ações. Se a empresa crescer e for vendida ou abrir capital, essas ações podem <span class="b-white">valer dezenas de vezes o salário anual</span>.</div>
+              </div>
+            </div>
+
+            <div class="cp-item" onclick="toggleCheck(this,5)">
+              <div class="cp-check-box"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></div>
+              <div class="cp-text-wrap">
+                <div class="cp-title">Marca pessoal consolidada gerando inbound</div>
+                <div class="cp-desc"><span class="b-red">Inbound</span> = oportunidades chegando até você sem precisar procurar. LinkedIn ativo + portfólio público + cases documentados fazem <span class="b-white">recrutadores te encontrarem</span> — não o contrário.</div>
+              </div>
+            </div>
+
+            <div class="cp-item" onclick="toggleCheck(this,5)">
+              <div class="cp-check-box"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></div>
+              <div class="cp-text-wrap">
+                <div class="cp-title">Opção: Fractional CPO em 2–3 startups</div>
+                <div class="cp-desc"><span class="b-red">Fractional CPO</span> = você atua como Diretor de Produto externo de várias empresas ao mesmo tempo, cada uma pagando R$ 15–20k/mês. <span class="b-white">Autonomia total, sem ser funcionário de nenhuma</span>.</div>
+              </div>
+            </div>
+
+            <div class="cp-item" onclick="toggleCheck(this,5)">
+              <div class="cp-check-box"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></div>
+              <div class="cp-text-wrap">
+                <div class="cp-title">5 cases documentados com impacto real e mensurável</div>
+                <div class="cp-desc">Cada case com <span class="b-red">problema, solução, resultado em número e aprendizado</span>. Esse é o <span class="b-white">ativo de carreira mais valioso</span> que você pode ter neste nível — vale mais que qualquer diploma.</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="tab-content" id="tab-5-rotina">
+          <div class="rotina">
+            <div class="rotina-item">
+              <div class="ri-time">Semanal</div>
+              <div class="ri-content">
+                <div class="ri-title">Publicar conteúdo sobre liderança de design ou produto</div>
+                <div class="ri-desc">Neste nível, <span class="b-red">sua opinião pública tem peso</span>. Posts sobre decisões, frameworks e aprendizados constroem autoridade que <span class="b-white">nenhum currículo consegue replicar</span>.</div>
+              </div>
+            </div>
+            <div class="rotina-item">
+              <div class="ri-time">Mensal</div>
+              <div class="ri-content">
+                <div class="ri-title">1 conversa com fundador ou investidor</div>
+                <div class="ri-desc">Para o caminho Fractional, <span class="b-white">quem te indica é mais poderoso que qualquer plataforma</span>. O primeiro cliente <span class="b-red">sempre vem de indicação</span> — ative o network agora.</div>
+              </div>
+            </div>
+            <div class="rotina-item">
+              <div class="ri-time">Trimestral</div>
+              <div class="ri-content">
+                <div class="ri-title">Revisar e aumentar sua taxa ou salário</div>
+                <div class="ri-desc">Neste nível o mercado paga quem <span class="b-red">pede e justifica com valor entregue</span>. Profissionais que nunca pedem aumento <span class="b-white">ficam para trás mesmo sendo os melhores</span>.</div>
+              </div>
+            </div>
+            <div class="rotina-item">
+              <div class="ri-time">Sempre</div>
+              <div class="ri-content">
+                <div class="ri-title">Documentar cases com dados — mesmo informalmente</div>
+                <div class="ri-desc">Um Notion com anotações semanais sobre <span class="b-red">decisões, resultados e aprendizados</span> vira um portfólio executivo em 12 meses — <span class="b-white">sem precisar de tempo extra</span>.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-content" id="tab-5-glossary">
+          <div class="glossary-inline">
+            <div class="gi-item">
+              <div class="gi-term" style="color:#ff4d4d">Equity</div>
+              <div class="gi-def"><span class="b-white">Participação acionária na empresa.</span> Você recebe ações que valem dinheiro se a empresa crescer, for vendida ou abrir capital (IPO). É o <span class="b-red">grande multiplicador de renda em startups</span> — pode valer 10–50x o salário anual.</div>
+            </div>
+            <div class="gi-item">
+              <div class="gi-term" style="color:#ff4d4d">Fractional CPO</div>
+              <div class="gi-def"><span class="b-white">Chief Product Officer fracionado.</span> Você atua como diretor de produto de <span class="b-red">várias empresas ao mesmo tempo</span>, trabalhando parcialmente em cada. É consultoria de alto nível com autonomia total.</div>
+            </div>
+            <div class="gi-item">
+              <div class="gi-term" style="color:#ff4d4d">Inbound</div>
+              <div class="gi-def">Quando as oportunidades <span class="b-white">chegam até você</span> sem precisar correr atrás. Resultado de marca pessoal forte e portfólio visível. <span class="b-red">O oposto de ficar mandando currículo no escuro</span>.</div>
+            </div>
+            <div class="gi-item">
+              <div class="gi-term" style="color:#ff4d4d">IPO</div>
+              <div class="gi-def"><span class="b-white">Abertura de capital na bolsa de valores.</span> Quando uma startup vira empresa pública, as ações que você recebeu como equity podem ser vendidas — <span class="b-red">às vezes valendo muito mais do que anos de salário</span>.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="phase-progress" id="prog-5">
+          <span class="pp-label">Progresso</span>
+          <div class="pp-bar"><div class="pp-fill" id="fill-5" style="background:linear-gradient(90deg,#ff4d4d,#ff8c42)"></div></div>
+          <span class="pp-count" id="count-5">0 / 4</span>
+        </div>
+
+        <div class="phase-analogy">
+          <div class="pa-label">Analogia desta fase</div>
+          <p class="pa-text">Como um arquiteto renomado que parou de projetar casas individuais — <strong>agora define a linguagem visual de cidades inteiras.</strong> Você parou de executar e começou a decidir o que vale a pena existir.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /timeline -->
+
+<!-- FOOTER -->
+<div class="footer reveal">
+  <p>Flavio Guedes · Trilha Design → Produto · 2025–2028</p>
+  <p>Baseado em análise de fit, skills map e benchmarks de mercado</p>
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+/* ══ TABS ══ */
+function switchTab(phase, tab) {
+  document.querySelectorAll(`[id^="tab-${phase}-"]`).forEach(c => c.classList.remove('active'));
+  document.querySelectorAll(`#tabs-${phase} .tab-btn`).forEach(b => b.classList.remove('active'));
+  const target = document.getElementById(`tab-${phase}-${tab}`);
+  if(target) target.classList.add('active');
+  const btnIdx = tab==='checks'?0:tab==='rotina'?1:2;
+  const btns = document.querySelectorAll(`#tabs-${phase} .tab-btn`);
+  if(btns[btnIdx]) btns[btnIdx].classList.add('active');
+}
+
+/* ══ CHECKBOX TOGGLE ══ */
+function toggleCheck(item, phase) {
+  item.classList.toggle('checked');
+  updateProgress(phase);
+}
+
+function updateProgress(phase) {
+  const container = document.getElementById(`cps-${phase}`);
+  if(!container) return;
+  const all = container.querySelectorAll('.cp-item');
+  const done = container.querySelectorAll('.cp-item.checked');
+  const total = all.length;
+  const count = done.length;
+  const pct = total > 0 ? (count / total) * 100 : 0;
+
+  const fill = document.getElementById(`fill-${phase}`);
+  const counter = document.getElementById(`count-${phase}`);
+  if(fill) fill.style.width = pct + '%';
+  if(counter) counter.textContent = `${count} / ${total}`;
+}
+
+/* ══ SCROLL REVEAL ══ */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, {threshold: 0.08, rootMargin:'0px 0px -30px 0px'});
+
+document.querySelectorAll('.reveal, .phase, .destination').forEach(el => observer.observe(el));
+
+document.querySelectorAll('.phase').forEach((el, i) => {
+  el.style.transitionDelay = `${i * 0.07}s`;
+});
+
+/* ══ MOUSE PARALLAX on ORBS ══ */
+document.addEventListener('mousemove', (e) => {
+  const x = (e.clientX / window.innerWidth - 0.5) * 30;
+  const y = (e.clientY / window.innerHeight - 0.5) * 30;
+  const orbs = document.querySelectorAll('.orb');
+  orbs[0] && (orbs[0].style.transform = `translate(${x * 0.6}px, ${y * 0.6}px)`);
+  orbs[1] && (orbs[1].style.transform = `translate(${-x * 0.4}px, ${-y * 0.4}px)`);
+  orbs[2] && (orbs[2].style.transform = `translate(${x * 0.3}px, ${y * 0.5}px)`);
+});
+</script>
+</body>
+</html>
