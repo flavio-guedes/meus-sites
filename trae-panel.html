@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trae × Claude — Guia Visual</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #0a0a12;
+  --card: #11111e;
+  --card2: #16162a;
+  --border: rgba(255,255,255,0.08);
+  --green: #4fffb0;
+  --green-dim: rgba(79,255,176,0.12);
+  --purple: #c084fc;
+  --purple-dim: rgba(192,132,252,0.12);
+  --orange: #fb923c;
+  --orange-dim: rgba(251,146,60,0.12);
+  --yellow: #fde047;
+  --yellow-dim: rgba(253,224,71,0.1);
+  --red: #f87171;
+  --red-dim: rgba(248,113,113,0.1);
+  --blue: #60a5fa;
+  --blue-dim: rgba(96,165,250,0.1);
+  --white: #f0f0ff;
+  --gray: #8888aa;
+  --dim: #44445a;
+}
+body {
+  background: var(--bg);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: var(--white);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(79,255,176,0.06) 0%, transparent 60%),
+    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size: 100% 100%, 48px 48px, 48px 48px;
+  pointer-events: none;
+  z-index: 0;
+}
+.page { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 60px 24px 100px; }
+
+/* HERO */
+.hero { text-align: center; padding: 80px 0 64px; }
+.hero-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--green-dim); border: 1px solid rgba(79,255,176,0.25);
+  border-radius: 100px; padding: 6px 16px; font-size: 12px; font-weight: 600;
+  color: var(--green); letter-spacing: 0.05em; margin-bottom: 28px;
+}
+.hero-pill .dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; animation: pulse 2s ease infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.8)} }
+h1 { font-family: 'Fraunces', serif; font-size: clamp(42px,8vw,80px); font-weight: 700; line-height: 1.0; letter-spacing: -0.03em; margin-bottom: 20px; }
+h1 .t { color: var(--green); }
+h1 .c { color: var(--purple); }
+h1 .amp { color: var(--dim); font-weight: 300; font-style: italic; }
+.hero-sub { font-size: 18px; color: var(--gray); max-width: 540px; margin: 0 auto 40px; line-height: 1.7; }
+.hero-sub strong { color: var(--white); }
+
+.analogy-hero {
+  display: flex; align-items: stretch; max-width: 700px; margin: 0 auto;
+  background: var(--card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden;
+}
+.ah-block { flex: 1; padding: 28px 20px; text-align: center; }
+.ah-block:not(:last-child) { border-right: 1px solid var(--border); }
+.ah-emoji { font-size: 36px; display: block; margin-bottom: 10px; }
+.ah-label { font-size: 10px; font-weight: 700; color: var(--gray); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 6px; }
+.ah-text { font-size: 15px; font-weight: 700; color: var(--white); line-height: 1.3; margin-bottom: 6px; }
+.ah-sub { font-size: 12px; color: var(--gray); font-style: italic; }
+.ah-arrow-block { display: flex; align-items: center; justify-content: center; padding: 0 4px; color: var(--dim); font-size: 20px; }
+
+/* SECTION */
+.section { margin-bottom: 80px; animation: fadeUp .6s ease both; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+.section:nth-child(2){animation-delay:.05s} .section:nth-child(3){animation-delay:.1s}
+.section:nth-child(4){animation-delay:.15s} .section:nth-child(5){animation-delay:.2s}
+.section:nth-child(6){animation-delay:.25s} .section:nth-child(7){animation-delay:.3s}
+.section:nth-child(8){animation-delay:.35s}
+
+.section-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 32px; }
+.section-num {
+  width: 36px; height: 36px; background: var(--green-dim); border: 1px solid rgba(79,255,176,0.3);
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; color: var(--green); flex-shrink: 0; margin-top: 3px;
+}
+.section-header h2 { font-size: 24px; font-weight: 800; color: var(--white); letter-spacing: -0.02em; line-height: 1.2; }
+.section-header p { font-size: 14px; color: var(--gray); margin-top: 4px; }
+
+/* ANALOGY BOX */
+.analogy-box {
+  background: linear-gradient(135deg, var(--card), var(--card2));
+  border: 1px solid rgba(79,255,176,0.2); border-left: 3px solid var(--green);
+  border-radius: 12px; padding: 20px 24px; margin-bottom: 28px;
+  display: flex; gap: 16px; align-items: flex-start;
+}
+.analogy-icon { font-size: 26px; flex-shrink: 0; }
+.analogy-box p { font-size: 15px; color: var(--gray); line-height: 1.8; }
+.analogy-box strong { color: var(--green); font-weight: 700; }
+.analogy-box em { color: var(--white); font-style: normal; font-weight: 600; }
+
+/* STAT STRIP */
+.stat-strip { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 32px; }
+.stat-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+  padding: 20px 16px; text-align: center; transition: transform .2s, border-color .2s;
+}
+.stat-card:hover { transform: translateY(-3px); border-color: rgba(79,255,176,0.3); }
+.stat-emoji { font-size: 26px; display: block; margin-bottom: 8px; }
+.stat-num { font-size: 28px; font-weight: 800; color: var(--green); line-height: 1; margin-bottom: 4px; }
+.stat-label { font-size: 11px; color: var(--gray); font-weight: 500; line-height: 1.4; }
+
+/* FLOW VISUAL */
+.flow-visual { display: flex; flex-direction: column; gap: 0; }
+.flow-row { display: grid; grid-template-columns: 64px 1fr; gap: 20px; position: relative; }
+.flow-connector {
+  position: absolute; left: 32px; top: 64px; bottom: 0; width: 1px;
+  background: linear-gradient(to bottom, var(--border), transparent);
+}
+.flow-bubble {
+  width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center;
+  justify-content: center; font-size: 28px; flex-shrink: 0; position: relative; z-index: 1;
+}
+.flow-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+  padding: 20px 24px; margin-bottom: 16px; transition: border-color .2s;
+}
+.flow-card:hover { border-color: rgba(79,255,176,0.2); }
+.flow-card h4 { font-size: 16px; font-weight: 800; color: var(--white); margin-bottom: 6px; }
+.flow-card p { font-size: 13px; color: var(--gray); line-height: 1.7; }
+.flow-card strong { color: var(--green); font-weight: 700; }
+.flow-card em { color: var(--yellow); font-style: normal; font-weight: 600; }
+.prompt-bubble {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: rgba(192,132,252,0.07); border: 1px solid rgba(192,132,252,0.2);
+  border-radius: 10px; padding: 12px 14px; margin-top: 12px;
+}
+.prompt-avatar {
+  width: 28px; height: 28px; background: var(--purple-dim); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;
+}
+.prompt-text { font-size: 13px; color: var(--purple); line-height: 1.6; font-style: italic; }
+.prompt-text strong { color: var(--white); font-style: normal; }
+
+/* FEATURES */
+.features-infographic { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.feat-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+  padding: 24px; position: relative; overflow: hidden; transition: transform .2s;
+}
+.feat-card:hover { transform: translateY(-3px); }
+.feat-card.green { border-color: rgba(79,255,176,0.15); }
+.feat-card.green:hover { border-color: rgba(79,255,176,0.45); }
+.feat-card.purple { border-color: rgba(192,132,252,0.15); }
+.feat-card.purple:hover { border-color: rgba(192,132,252,0.45); }
+.feat-card.orange { border-color: rgba(251,146,60,0.15); }
+.feat-card.orange:hover { border-color: rgba(251,146,60,0.45); }
+.feat-card.blue { border-color: rgba(96,165,250,0.15); }
+.feat-card.blue:hover { border-color: rgba(96,165,250,0.45); }
+.feat-card.yellow { border-color: rgba(253,224,71,0.15); }
+.feat-card.yellow:hover { border-color: rgba(253,224,71,0.45); }
+.feat-glow { position: absolute; top: -30px; right: -30px; width: 120px; height: 120px; border-radius: 50%; pointer-events: none; opacity: .5; }
+.green .feat-glow { background: radial-gradient(circle, rgba(79,255,176,.15), transparent 70%); }
+.purple .feat-glow { background: radial-gradient(circle, rgba(192,132,252,.15), transparent 70%); }
+.orange .feat-glow { background: radial-gradient(circle, rgba(251,146,60,.15), transparent 70%); }
+.blue .feat-glow { background: radial-gradient(circle, rgba(96,165,250,.15), transparent 70%); }
+.yellow .feat-glow { background: radial-gradient(circle, rgba(253,224,71,.15), transparent 70%); }
+.feat-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+.feat-emoji { font-size: 28px; }
+.feat-title { font-size: 16px; font-weight: 800; color: var(--white); }
+.feat-badge { font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 100px; letter-spacing: .05em; text-transform: uppercase; margin-left: auto; }
+.badge-free { background: var(--green-dim); color: var(--green); border: 1px solid rgba(79,255,176,.3); }
+.badge-ai { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(192,132,252,.3); }
+.badge-pro { background: var(--yellow-dim); color: var(--yellow); border: 1px solid rgba(253,224,71,.3); }
+.feat-desc { font-size: 13px; color: var(--gray); line-height: 1.7; margin-bottom: 14px; }
+.feat-desc strong { font-weight: 700; }
+.green .feat-desc strong { color: var(--green); }
+.purple .feat-desc strong { color: var(--purple); }
+.orange .feat-desc strong { color: var(--orange); }
+.blue .feat-desc strong { color: var(--blue); }
+.yellow .feat-desc strong { color: var(--yellow); }
+.feat-analogy { background: rgba(255,255,255,.03); border-radius: 8px; padding: 10px 12px; font-size: 12px; color: var(--gray); line-height: 1.5; }
+.feat-analogy::before { content: '💡 '; }
+
+/* USE CASES */
+.usecase-flow {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+  overflow: hidden; margin-bottom: 24px;
+}
+.uc-step { padding: 28px 20px; border-right: 1px solid var(--border); text-align: center; }
+.uc-step:last-child { border-right: none; }
+.uc-num {
+  width: 28px; height: 28px; background: var(--green-dim); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800; color: var(--green); margin: 0 auto 12px;
+}
+.uc-step h4 { font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 6px; }
+.uc-step p { font-size: 12px; color: var(--gray); line-height: 1.5; }
+.usecases-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.uc-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+  padding: 22px; transition: transform .2s, border-color .2s;
+}
+.uc-card:hover { transform: translateY(-2px); border-color: rgba(192,132,252,.3); }
+.uc-header-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.uc-icon { font-size: 22px; }
+.uc-title { font-size: 14px; font-weight: 800; color: var(--white); }
+.uc-scenario { font-size: 13px; color: var(--gray); line-height: 1.6; margin-bottom: 12px; }
+.uc-scenario strong { color: var(--white); font-weight: 700; }
+.uc-prompt-box { background: rgba(192,132,252,.06); border: 1px solid rgba(192,132,252,.2); border-radius: 10px; padding: 10px 12px; }
+.uc-prompt-label { font-size: 10px; font-weight: 700; color: var(--purple); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 5px; }
+.uc-prompt-text { font-size: 12px; color: var(--gray); line-height: 1.5; font-style: italic; }
+
+/* COMPARE */
+.compare-visual {
+  display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  border: 1px solid var(--border); border-radius: 20px; overflow: hidden;
+}
+.cv-cell {
+  padding: 14px 18px; border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border); font-size: 13px; color: var(--gray);
+  display: flex; align-items: center;
+}
+.cv-cell:nth-child(4n) { border-right: none; }
+.compare-visual .cv-cell:nth-last-child(-n+4) { border-bottom: none; }
+.cv-cell.header { background: var(--card2); font-weight: 700; font-size: 11px; letter-spacing: .05em; text-transform: uppercase; padding: 16px 18px; }
+.cv-cell.header.trae-col { background: rgba(79,255,176,.08); color: var(--green); font-weight: 800; }
+.cv-cell.trae-col { background: rgba(79,255,176,.03); }
+.cv-cell.feature-col { color: var(--white); font-weight: 600; font-size: 13px; }
+.check-icon { color: var(--green); font-weight: 800; margin-right: 4px; }
+.cross-icon { color: var(--dim); margin-right: 4px; }
+.warn-icon { color: var(--yellow); margin-right: 4px; }
+.price-tag { font-weight: 800; font-size: 15px; }
+.free { color: var(--green); }
+.paid { color: var(--red); }
+
+/* WARNING */
+.warning-section {
+  background: rgba(248,113,113,.06); border: 1px solid rgba(248,113,113,.25);
+  border-radius: 20px; padding: 28px 32px;
+  display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: start;
+}
+.warning-left { font-size: 40px; }
+.warning-right h3 { font-size: 18px; font-weight: 800; color: var(--red); margin-bottom: 10px; }
+.warning-right p { font-size: 14px; color: var(--gray); line-height: 1.8; margin-bottom: 16px; }
+.warning-right strong { color: var(--white); font-weight: 700; }
+.warning-tips { display: flex; flex-direction: column; gap: 10px; }
+.warning-tip { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--gray); line-height: 1.5; }
+.warning-tip .tip-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.warning-tip strong { color: var(--white); }
+
+/* STRATEGIC */
+.strategic-section {
+  background: var(--card); border: 1px solid rgba(79,255,176,.25);
+  border-radius: 24px; padding: 40px; position: relative; overflow: hidden;
+}
+.strategic-section::before {
+  content: ''; position: absolute; top: -80px; right: -80px; width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(79,255,176,.08), transparent 70%); pointer-events: none;
+}
+.strategic-section::after {
+  content: ''; position: absolute; bottom: -60px; left: -60px; width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(192,132,252,.06), transparent 70%); pointer-events: none;
+}
+.strategic-inner { position: relative; z-index: 1; }
+.strategic-title { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 700; line-height: 1.2; margin-bottom: 12px; }
+.strategic-title span { color: var(--green); }
+.strategic-sub { font-size: 15px; color: var(--gray); line-height: 1.7; max-width: 580px; margin-bottom: 32px; }
+.strategic-sub strong { color: var(--white); }
+.actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.action-card { background: rgba(255,255,255,.03); border: 1px solid var(--border); border-radius: 14px; padding: 20px; transition: border-color .2s; }
+.action-card:hover { border-color: rgba(79,255,176,.3); }
+.action-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+.action-emoji { font-size: 20px; }
+.action-label { font-size: 12px; font-weight: 800; color: var(--green); text-transform: uppercase; letter-spacing: .05em; }
+.action-time { font-size: 11px; color: var(--gray); margin-left: auto; background: var(--card2); padding: 2px 8px; border-radius: 100px; }
+.action-text { font-size: 13px; color: var(--gray); line-height: 1.6; }
+.action-text strong { color: var(--white); font-weight: 700; }
+
+/* GLOSSARY */
+.glossary { background: var(--card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
+.glossary-title { background: var(--card2); padding: 14px 24px; font-size: 12px; font-weight: 700; color: var(--gray); text-transform: uppercase; letter-spacing: .1em; border-bottom: 1px solid var(--border); }
+.glossary-grid { display: grid; grid-template-columns: 1fr 1fr; }
+.glossary-item { padding: 16px 22px; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); }
+.glossary-item:nth-child(even) { border-right: none; }
+.glossary-item:nth-last-child(-n+2) { border-bottom: none; }
+.g-term { font-size: 13px; font-weight: 800; color: var(--green); margin-bottom: 4px; }
+.g-def { font-size: 12px; color: var(--gray); line-height: 1.5; }
+.g-def strong { color: var(--white); }
+
+/* FOOTER */
+.footer { margin-top: 80px; padding-top: 28px; border-top: 1px solid var(--border); text-align: center; }
+.footer p { font-size: 12px; color: var(--dim); }
+.footer strong { color: var(--gray); }
+
+/* RESPONSIVE */
+@media (max-width: 620px) {
+  .stat-strip { grid-template-columns: 1fr 1fr; }
+  .features-infographic { grid-template-columns: 1fr; }
+  .usecases-grid { grid-template-columns: 1fr; }
+  .actions-grid { grid-template-columns: 1fr; }
+  .glossary-grid { grid-template-columns: 1fr; }
+  .glossary-item { border-right: none !important; }
+  .usecase-flow { grid-template-columns: 1fr; }
+  .uc-step { border-right: none; border-bottom: 1px solid var(--border); }
+  .uc-step:last-child { border-bottom: none; }
+  .analogy-hero { flex-direction: column; }
+  .ah-block { border-right: none !important; border-bottom: 1px solid var(--border); }
+  .ah-block:last-child { border-bottom: none; }
+  .ah-arrow-block { display: none; }
+  .compare-visual { grid-template-columns: 1.6fr 1fr 1fr; }
+  /* hide last col */
+  .cv-cell:nth-child(4), .cv-cell:nth-child(8), .cv-cell:nth-child(12), .cv-cell:nth-child(16), .cv-cell:nth-child(20), .cv-cell:nth-child(24) { display: none; }
+  .cv-cell:nth-child(3n) { border-right: none; }
+  .warning-section { grid-template-columns: 1fr; }
+  .warning-left { font-size: 28px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- HERO -->
+<div class="hero section">
+  <div class="hero-pill">
+    <span class="dot"></span>
+    Lançado em 2025 · Gratuito para usar agora
+  </div>
+  <h1>
+    <span class="t">Trae</span> <span class="amp">&</span> <span class="c">Claude</span><br>
+    criam produtos juntos
+  </h1>
+  <p class="hero-sub">
+    Um guia <strong>sem jargão técnico</strong> para entender como essa ferramenta pode ser sua maior alavanca como líder de produto com IA
+  </p>
+  <div class="analogy-hero">
+    <div class="ah-block">
+      <span class="ah-emoji">💬</span>
+      <div class="ah-label">Você faz</div>
+      <div class="ah-text">Descreve em português o que quer criar</div>
+      <div class="ah-sub">"Quero um dashboard de métricas"</div>
+    </div>
+    <div class="ah-arrow-block">→</div>
+    <div class="ah-block">
+      <span class="ah-emoji">🤖</span>
+      <div class="ah-label">Trae + Claude fazem</div>
+      <div class="ah-text">Constroem todo o código automaticamente</div>
+      <div class="ah-sub">Em minutos, não semanas</div>
+    </div>
+    <div class="ah-arrow-block">→</div>
+    <div class="ah-block">
+      <span class="ah-emoji">🚀</span>
+      <div class="ah-label">Resultado</div>
+      <div class="ah-text">Aplicação real funcionando</div>
+      <div class="ah-sub">Sem precisar saber programar</div>
+    </div>
+  </div>
+</div>
+
+<!-- 1. O QUE É -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <div>
+      <h2>O que é o Trae</h2>
+      <p>A analogia que explica tudo em 10 segundos</p>
+    </div>
+  </div>
+  <div class="analogy-box">
+    <div class="analogy-icon">🏗️</div>
+    <p>
+      Imagine que você quer construir uma casa. Normalmente você precisaria aprender arquitetura, engenharia, elétrica... Com o Trae, é como ter um <strong>time de construção especializado do seu lado</strong>. Você fala: <em>"Quero uma casa de 3 quartos com varanda"</em> — e eles constroem pra você, tijolo por tijolo. O <strong>Claude é o arquiteto mais inteligente</strong> desse time — e tudo isso é grátis.
+    </p>
+  </div>
+  <div class="stat-strip">
+    <div class="stat-card">
+      <span class="stat-emoji">👥</span>
+      <div class="stat-num">6M+</div>
+      <div class="stat-label">pessoas já usando no mundo</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-emoji">🌍</span>
+      <div class="stat-num">200</div>
+      <div class="stat-label">países cobertos</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-emoji">🧠</span>
+      <div class="stat-num" style="font-size:18px;padding-top:4px;">Claude 3.7</div>
+      <div class="stat-label">Sonnet incluso <strong style="color:var(--green)">de graça</strong></div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-emoji">💰</span>
+      <div class="stat-num free">R$ 0</div>
+      <div class="stat-label">para começar hoje</div>
+    </div>
+  </div>
+</div>
+
+<!-- 2. COMO FUNCIONA -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <div>
+      <h2>Como funciona na prática</h2>
+      <p>Do pedido ao produto em 4 passos — sem escrever uma linha de código</p>
+    </div>
+  </div>
+  <div class="flow-visual">
+
+    <div class="flow-row">
+      <div class="flow-connector"></div>
+      <div class="flow-bubble" style="background:rgba(79,255,176,.1);">🗣️</div>
+      <div class="flow-card">
+        <h4>Você descreve o que quer — em português</h4>
+        <p>Abre o <strong>Builder Mode</strong> (modo construtor) e escreve o que precisa, como se estivesse explicando pra um colega. Sem precisar saber nada de código.</p>
+        <div class="prompt-bubble">
+          <div class="prompt-avatar">💬</div>
+          <div class="prompt-text">"Cria pra mim um <strong>dashboard de métricas de produto</strong> com gráfico de retenção, funil de cadastro e comparativo por mês"</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-row">
+      <div class="flow-connector"></div>
+      <div class="flow-bubble" style="background:rgba(192,132,252,.1);">🤖</div>
+      <div class="flow-card">
+        <h4>Claude pensa, planeja e escreve todo o código</h4>
+        <p>O Trae usa o <strong>Claude</strong> — a IA da Anthropic, considerada uma das mais inteligentes do mundo — pra criar todos os arquivos e a lógica da aplicação. Como ter um <em>dev sênior digitando na sua frente</em>, em tempo real.</p>
+      </div>
+    </div>
+
+    <div class="flow-row">
+      <div class="flow-connector"></div>
+      <div class="flow-bubble" style="background:rgba(253,224,71,.1);">👁️</div>
+      <div class="flow-card">
+        <h4>Você vê o resultado ao vivo e ajusta falando</h4>
+        <p>O Trae mostra um <strong>preview em tempo real</strong> enquanto constrói. Se não gostou de algo, só diz — sem precisar editar código manualmente.</p>
+        <div class="prompt-bubble">
+          <div class="prompt-avatar">💬</div>
+          <div class="prompt-text">"Muda a cor dos gráficos pra verde e <strong>adiciona um filtro</strong> pra ver só os dados dos últimos 30 dias"</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-row">
+      <div class="flow-bubble" style="background:rgba(251,146,60,.1);">🚀</div>
+      <div class="flow-card">
+        <h4>Publica e compartilha em minutos</h4>
+        <p>Com um comando, a aplicação vai ao ar. O Trae integra com o <strong>GitHub</strong> <em>(é como um Google Drive para código)</em> e serviços de publicação. De ideia a produto funcionando em horas — não semanas.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 3. RECURSOS -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <div>
+      <h2>Os 6 superpoderes do Trae</h2>
+      <p>Cada recurso explicado em linguagem humana, com analogia</p>
+    </div>
+  </div>
+  <div class="features-infographic">
+
+    <div class="feat-card green">
+      <div class="feat-glow"></div>
+      <div class="feat-top">
+        <span class="feat-emoji">⚡</span>
+        <div class="feat-title">Builder Mode</div>
+        <span class="feat-badge badge-free">Grátis</span>
+      </div>
+      <p class="feat-desc">O modo estrela. Você <strong>descreve um produto do zero</strong> em texto livre e o Claude constrói toda a estrutura: páginas, botões, banco de dados e lógica. Literalmente do zero ao app funcionando.</p>
+      <div class="feat-analogy">É como contratar um dev full-stack que executa tudo que você pensa em voz alta</div>
+    </div>
+
+    <div class="feat-card purple">
+      <div class="feat-glow"></div>
+      <div class="feat-top">
+        <span class="feat-emoji">🤖</span>
+        <div class="feat-title">SOLO Mode — Agente Autônomo</div>
+        <span class="feat-badge badge-ai">Agente</span>
+      </div>
+      <p class="feat-desc">Um <strong>agente que age sozinho</strong>. Você define um objetivo grande e ele quebra em tarefas e executa tudo autonomamente, sem você acompanhar cada passo.</p>
+      <div class="feat-analogy">Como um gerente de projeto que executa: você define o destino, ele traça e percorre o caminho</div>
+    </div>
+
+    <div class="feat-card orange">
+      <div class="feat-glow"></div>
+      <div class="feat-top">
+        <span class="feat-emoji">🧩</span>
+        <div class="feat-title">MCP — Conexões Externas</div>
+        <span class="feat-badge badge-pro">Pro</span>
+      </div>
+      <p class="feat-desc"><strong>MCP</strong> são "tomadas" que conectam o Trae a ferramentas externas: <strong>banco de dados, Figma, GitHub, APIs</strong>. O agente passa a interagir com esses sistemas diretamente.</p>
+      <div class="feat-analogy">Como dar ao seu assistente a chave de todos os armários da empresa — ele acessa tudo que precisa</div>
+    </div>
+
+    <div class="feat-card blue">
+      <div class="feat-glow"></div>
+      <div class="feat-top">
+        <span class="feat-emoji">💬</span>
+        <div class="feat-title">Chat com o Código</div>
+        <span class="feat-badge badge-free">Grátis</span>
+      </div>
+      <p class="feat-desc">Converse com o Claude sobre <strong>qualquer projeto existente</strong>. Pergunte o que uma parte faz, peça revisão, peça sugestões. Funciona mesmo em projetos herdados de outros devs.</p>
+      <div class="feat-analogy">Como ter um especialista que lê qualquer contrato complicado e explica em linguagem simples</div>
+    </div>
+
+    <div class="feat-card yellow">
+      <div class="feat-glow"></div>
+      <div class="feat-top">
+        <span class="feat-emoji">🔌</span>
+        <div class="feat-title">Compatível com VS Code</div>
+        <span class="feat-badge badge-free">1 Clique</span>
+      </div>
+      <p class="feat-desc">O <strong>VS Code</strong> é o editor de código mais popular entre devs do mundo. O Trae é construído em cima dele — todas as extensões e configurações já conhecidas <strong>funcionam aqui sem adaptação</strong>.</p>
+      <div class="feat-analogy">Como mudar de carro mantendo o volante, espelhos e painel idênticos — zero atrito para devs</div>
+    </div>
+
+    <div class="feat-card purple">
+      <div class="feat-glow"></div>
+      <div class="feat-top">
+        <span class="feat-emoji">🎙️</span>
+        <div class="feat-title">Voz + Imagem (Trae 2.0)</div>
+        <span class="feat-badge badge-ai">Novo</span>
+      </div>
+      <p class="feat-desc">No Trae 2.0 você pode <strong>falar em vez de digitar</strong> e também <strong>mandar um screenshot</strong> de um design — o Trae converte automaticamente a imagem no código equivalente.</p>
+      <div class="feat-analogy">Mostra uma foto de como quer que fique e ele reproduz. Como mostrar um prato e pedir "quero igual a esse"</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 4. USE CASES -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <div>
+      <h2>O que você pode construir</h2>
+      <p>Exemplos reais para AI Product Leaders e futuros Fractional CPOs</p>
+    </div>
+  </div>
+  <div class="usecase-flow">
+    <div class="uc-step">
+      <div class="uc-num">1</div>
+      <h4>Você tem uma ideia</h4>
+      <p>Um dashboard, uma ferramenta interna, um protótipo para validar</p>
+    </div>
+    <div class="uc-step">
+      <div class="uc-num">2</div>
+      <h4>Descreve pro Trae</h4>
+      <p>Em português, sem termos técnicos, como explicaria a um colega</p>
+    </div>
+    <div class="uc-step">
+      <div class="uc-num">3</div>
+      <h4>Produto funcionando</h4>
+      <p>Em horas, não semanas — sem squad, sprint ou ticket no Jira</p>
+    </div>
+  </div>
+  <div class="usecases-grid">
+
+    <div class="uc-card">
+      <div class="uc-header-row"><span class="uc-icon">📊</span><div class="uc-title">Dashboard de Métricas Executivas</div></div>
+      <div class="uc-scenario">Crie seus <strong>próprios gráficos de LTV, churn e retenção</strong> sem esperar o time de dados. Apresente pro board com dados atualizados, construído por você.</div>
+      <div class="uc-prompt-box">
+        <div class="uc-prompt-label">O que você digita no Trae</div>
+        <div class="uc-prompt-text">"Cria um dashboard com LTV por cohort, churn mensal e payback period — com filtro por canal de aquisição"</div>
+      </div>
+    </div>
+
+    <div class="uc-card">
+      <div class="uc-header-row"><span class="uc-icon">🧪</span><div class="uc-title">Avaliador de Qualidade de IA</div></div>
+      <div class="uc-scenario">Como AI Product Lead, você precisa saber <strong>se a IA do seu produto está respondendo bem</strong>. Construa uma ferramenta para testar e pontuar os resultados.</div>
+      <div class="uc-prompt-box">
+        <div class="uc-prompt-label">O que você digita no Trae</div>
+        <div class="uc-prompt-text">"Ferramenta pra comparar respostas de IA: coloco o prompt, a resposta esperada e a real — ela mostra um score de qualidade"</div>
+      </div>
+    </div>
+
+    <div class="uc-card">
+      <div class="uc-header-row"><span class="uc-icon">🌎</span><div class="uc-title">Portfólio Técnico Internacional</div></div>
+      <div class="uc-scenario">Para a <strong>trilha nos EUA como Director of Product</strong>, projetos funcionais em inglês valem mais que qualquer currículo. Mostra que você cria — não só gerencia.</div>
+      <div class="uc-prompt-box">
+        <div class="uc-prompt-label">O que você digita no Trae</div>
+        <div class="uc-prompt-text">"Build a PLG activation funnel simulator — user inputs their metrics and gets projected revenue impact"</div>
+      </div>
+    </div>
+
+    <div class="uc-card">
+      <div class="uc-header-row"><span class="uc-icon">💼</span><div class="uc-title">Cartão de Visitas como Fractional CPO</div></div>
+      <div class="uc-scenario">Impressione seus primeiros clientes <strong>entregando ferramentas funcionais em dias</strong>. Quem entrega um produto concreto na primeira semana fecha mais contratos.</div>
+      <div class="uc-prompt-box">
+        <div class="uc-prompt-label">O que você digita no Trae</div>
+        <div class="uc-prompt-text">"Cria um Product Health Score: startup digita métricas e recebe um score com recomendações personalizadas"</div>
+      </div>
+    </div>
+
+    <div class="uc-card">
+      <div class="uc-header-row"><span class="uc-icon">🔍</span><div class="uc-title">Análise Automática de Feedbacks</div></div>
+      <div class="uc-scenario">Automatize a coleta e classificação de <strong>feedbacks de usuários</strong>. Saiba os maiores problemas do produto toda semana sem ler centenas de reviews.</div>
+      <div class="uc-prompt-box">
+        <div class="uc-prompt-label">O que você digita no Trae</div>
+        <div class="uc-prompt-text">"App que importa reviews do App Store, classifica por tema com IA e gera os top 5 problemas da semana"</div>
+      </div>
+    </div>
+
+    <div class="uc-card">
+      <div class="uc-header-row"><span class="uc-icon">⚗️</span><div class="uc-title">Protótipo Antes do Sprint</div></div>
+      <div class="uc-scenario">Antes de levar uma ideia pra engenharia, <strong>valide com um protótipo real</strong>. Apresente ao CEO com algo clicável — não só um slide.</div>
+      <div class="uc-prompt-box">
+        <div class="uc-prompt-label">O que você digita no Trae</div>
+        <div class="uc-prompt-text">"MVP de onboarding com checklist de ativação, barra de progresso e notificação ao completar 3 passos"</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 5. COMPARATIVO -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <div>
+      <h2>Trae vs. Concorrentes</h2>
+      <p>Vale a pena? Comparação honesta</p>
+    </div>
+  </div>
+  <div class="analogy-box" style="margin-bottom:20px;">
+    <div class="analogy-icon">⚖️</div>
+    <p>
+      O <strong>Cursor</strong> é como uma academia premium com todos os equipamentos — ótimo, mas custa R$120/mês. O <strong>GitHub Copilot</strong> é um personal trainer básico. O <strong>Trae</strong> é como ter uma academia completa <strong>de graça</strong> — porque a ByteDance (dona do TikTok) está bancando tudo pra ganhar mercado agora.
+    </p>
+  </div>
+  <div class="compare-visual">
+    <div class="cv-cell header feature-col">Recurso</div>
+    <div class="cv-cell header trae-col">🟢 Trae</div>
+    <div class="cv-cell header">Cursor</div>
+    <div class="cv-cell header">Copilot</div>
+
+    <div class="cv-cell feature-col">Claude 3.7 incluso grátis</div>
+    <div class="cv-cell trae-col"><span class="check-icon">✓</span> Grátis</div>
+    <div class="cv-cell"><span class="warn-icon">⚠</span> Pago</div>
+    <div class="cv-cell"><span class="cross-icon">✗</span> Não tem</div>
+
+    <div class="cv-cell feature-col">Modo construtor zero→app</div>
+    <div class="cv-cell trae-col"><span class="check-icon">✓</span> Sim</div>
+    <div class="cv-cell"><span class="warn-icon">⚠</span> Parcial</div>
+    <div class="cv-cell"><span class="cross-icon">✗</span> Não</div>
+
+    <div class="cv-cell feature-col">Compatível com VS Code</div>
+    <div class="cv-cell trae-col"><span class="check-icon">✓</span> Total</div>
+    <div class="cv-cell"><span class="check-icon">✓</span> Total</div>
+    <div class="cv-cell"><span class="warn-icon">⚠</span> Extensão</div>
+
+    <div class="cv-cell feature-col">Preço mensal</div>
+    <div class="cv-cell trae-col"><span class="price-tag free">R$ 0</span></div>
+    <div class="cv-cell"><span class="price-tag paid">~R$ 120</span></div>
+    <div class="cv-cell"><span class="price-tag paid">~R$ 50</span></div>
+
+    <div class="cv-cell feature-col">Maturidade do produto</div>
+    <div class="cv-cell trae-col"><span class="warn-icon">⚠</span> Crescendo</div>
+    <div class="cv-cell"><span class="check-icon">✓</span> Maduro</div>
+    <div class="cv-cell"><span class="check-icon">✓</span> Maduro</div>
+  </div>
+</div>
+
+<!-- 6. AVISO -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <div>
+      <h2>Um aviso importante antes de usar</h2>
+      <p>Privacidade e segurança de dados — leia antes de começar</p>
+    </div>
+  </div>
+  <div class="warning-section">
+    <div class="warning-left">⚠️</div>
+    <div class="warning-right">
+      <h3>O Trae é da ByteDance — a mesma empresa do TikTok</h3>
+      <p>
+        Pesquisas de segurança identificaram que o Trae <strong>coleta dados de uso e pode transmitir conteúdo de arquivos</strong> para servidores da ByteDance, empresa chinesa. Não é necessariamente um problema — mas depende do que você está construindo.
+      </p>
+      <div class="warning-tips">
+        <div class="warning-tip">
+          <span class="tip-icon">✅</span>
+          <span><strong>Seguro usar:</strong> projetos pessoais, portfólio, experimentos, ferramentas internas não-confidenciais</span>
+        </div>
+        <div class="warning-tip">
+          <span class="tip-icon">⚠️</span>
+          <span><strong>Use com cuidado:</strong> ative o <strong>Privacy Mode</strong> nas configurações antes de abrir qualquer projeto</span>
+        </div>
+        <div class="warning-tip">
+          <span class="tip-icon">🚫</span>
+          <span><strong>Evite usar:</strong> código proprietário de clientes, dados sensíveis de usuários, projetos com NDA (acordo de confidencialidade)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 7. ESTRATÉGIA -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">7</div>
+    <div>
+      <h2>Como usar como alavanca de carreira</h2>
+      <p>Ações concretas para o seu perfil de AI Product Leader</p>
+    </div>
+  </div>
+  <div class="strategic-section">
+    <div class="strategic-inner">
+      <h3 class="strategic-title">
+        Dominar vibe code é o que separa<br>
+        <span>PMs que falam sobre IA dos que constroem com IA</span>
+      </h3>
+      <p class="strategic-sub">
+        Em 2025–2026, <strong>líderes de produto que entregam protótipos funcionais em horas</strong> têm vantagem enorme sobre quem só discute estratégia em slides. Isso vale para CPO, mercado internacional e modelo Fractional.
+      </p>
+      <div class="actions-grid">
+        <div class="action-card">
+          <div class="action-top">
+            <span class="action-emoji">🌎</span>
+            <span class="action-label">Trilha Internacional</span>
+            <span class="action-time">6–12 meses</span>
+          </div>
+          <p class="action-text">Construa <strong>2 projetos em inglês no GitHub</strong> com Trae + Claude. Um simulador de PLG, um avaliador de métricas. Coloque no LinkedIn. Empresas americanas <strong>contratam quem cria, não só quem gerencia</strong>.</p>
+        </div>
+        <div class="action-card">
+          <div class="action-top">
+            <span class="action-emoji">💼</span>
+            <span class="action-label">Fractional CPO</span>
+            <span class="action-time">3–6 meses</span>
+          </div>
+          <p class="action-text">Crie uma <strong>ferramenta vitrine</strong> — um Product Health Score pra startups. Ofereça de graça nos primeiros usos. Quem usa uma ferramenta sua já é cliente em potencial. <strong>É o portfólio mais poderoso</strong>.</p>
+        </div>
+        <div class="action-card">
+          <div class="action-top">
+            <span class="action-emoji">🤖</span>
+            <span class="action-label">AI Product Lead</span>
+            <span class="action-time">Agora</span>
+          </div>
+          <p class="action-text">Use o Trae para <strong>construir ferramentas de avaliação de LLM</strong> na prática. Entender como IA funciona construindo com ela vale mais que qualquer curso teórico. Você ganha <strong>credibilidade técnica real</strong>.</p>
+        </div>
+        <div class="action-card">
+          <div class="action-top">
+            <span class="action-emoji">📝</span>
+            <span class="action-label">LinkedIn</span>
+            <span class="action-time">Contínuo</span>
+          </div>
+          <p class="action-text">Documente tudo que construir. <strong>"Construí um dashboard em 2 horas com IA — veja como"</strong> performa 3× mais que posts teóricos. <strong>Mostre o produto funcionando</strong>, não só o conceito.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GLOSSÁRIO -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">+</div>
+    <div>
+      <h2>Glossário — os termos que você vai ouvir</h2>
+      <p>Definições diretas, sem enrolação</p>
+    </div>
+  </div>
+  <div class="glossary">
+    <div class="glossary-title">📖 Termos técnicos explicados</div>
+    <div class="glossary-grid">
+      <div class="glossary-item">
+        <div class="g-term">Vibe Code / Vibe Coding</div>
+        <div class="g-def">Estilo de programar onde você <strong>descreve o que quer em texto</strong> e a IA escreve o código. Como "vibrar" com a ideia em vez de programar linha por linha.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="g-term">LLM — Large Language Model</div>
+        <div class="g-def"><strong>Modelo de linguagem grande</strong>. É o tipo de IA por trás do Claude e ChatGPT — treinado em bilhões de textos para entender e gerar linguagem.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="g-term">RAG</div>
+        <div class="g-def">Técnica que faz a IA <strong>buscar informações externas</strong> antes de responder. Como dar um Google pra IA antes de ela falar — ela busca, depois responde.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="g-term">MCP — Model Context Protocol</div>
+        <div class="g-def">"Tomadas" que conectam a IA a <strong>ferramentas externas</strong> como Figma, banco de dados e GitHub. Padroniza como AIs se comunicam com sistemas reais.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="g-term">Builder Mode</div>
+        <div class="g-def">Modo do Trae que <strong>constrói aplicações do zero</strong> a partir de descrição em texto. O modo mais poderoso da ferramenta para criar produtos novos.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="g-term">VS Code</div>
+        <div class="g-def">Editor de código mais popular do mundo, da Microsoft. <strong>Gratuito e open-source</strong>. O Trae é construído em cima dele, herdando todas as suas funcionalidades.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="g-term">GitHub</div>
+        <div class="g-def">Plataforma onde devs <strong>guardam e compartilham código</strong>. É como um Google Drive especializado para projetos de software, com histórico de versões.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="g-term">Deploy / Publicar</div>
+        <div class="g-def">Ato de <strong>colocar uma aplicação no ar</strong> para outras pessoas acessarem. De "só no meu computador" para "qualquer um pode ver na internet".</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <p>Zona Dourada · <strong>AI Product Leader</strong> · Produto & UX · 2025–2026</p>
+  <p style="margin-top:8px;">trae.ai · Claude 3.7 Sonnet · Grátis para começar</p>
+</div>
+
+</div>
+</body>
+</html>
