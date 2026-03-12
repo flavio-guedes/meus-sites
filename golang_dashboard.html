@@ -1,0 +1,801 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+--go:#00ACD7;--go2:#007FA8;--go3:#00D4FF;
+--amb:#F59E0B;--grn:#10B981;--cor:#F97316;--pur:#8B5CF6;--pnk:#EC4899;
+--bg:#080D1A;--s1:#0C1220;--s2:#101829;--s3:#162035;
+--br:rgba(0,172,215,0.14);--br2:rgba(0,172,215,0.32);--br3:rgba(0,172,215,0.5);
+--tx:#F0F6FA;--tx2:#B8D4E0;--tx3:#6A8E9E;
+--mono:'JetBrains Mono',monospace;
+--sans:'Plus Jakarta Sans',sans-serif;
+}
+
+body{font-family:var(--sans);background:var(--bg);color:var(--tx);line-height:1.6;overflow-x:hidden}
+
+.hero{
+  position:relative;padding:52px 36px 44px;
+  border-bottom:1px solid var(--br);overflow:hidden;
+  background:var(--s1);
+}
+#hcvs{position:absolute;inset:0;pointer-events:none;z-index:0}
+.hero-inner{position:relative;z-index:2}
+
+.live-dot{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(0,172,215,0.1);border:1px solid rgba(0,172,215,0.3);
+  border-radius:20px;padding:5px 14px;font-size:11px;color:var(--go);
+  letter-spacing:1.8px;text-transform:uppercase;font-family:var(--mono);margin-bottom:20px;
+}
+.live-dot::before{
+  content:'';width:6px;height:6px;border-radius:50%;background:var(--go3);
+  animation:blink 2s ease-in-out infinite;
+}
+@keyframes blink{0%,100%{opacity:1;box-shadow:0 0 6px var(--go3)}50%{opacity:.3;box-shadow:none}}
+
+.hero h1{
+  font-size:40px;font-weight:800;line-height:1.05;letter-spacing:-1px;
+  color:var(--tx);margin-bottom:14px;
+}
+.hero h1 span{color:var(--go3)}
+
+.hero-desc{font-size:16px;color:var(--tx2);max-width:580px;line-height:1.75;font-weight:400}
+.hero-desc strong{color:var(--tx);font-weight:700}
+
+.hero-pills{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}
+.hpill{
+  display:flex;align-items:center;gap:10px;
+  background:var(--s2);border:1px solid var(--br);border-radius:12px;
+  padding:10px 18px;transition:all .25s;cursor:default;
+}
+.hpill:hover{border-color:var(--br2);background:var(--s3);transform:translateY(-2px)}
+.hpill:hover .hpill-line{box-shadow:0 0 12px var(--go);opacity:1}
+.hpill-line{width:2px;height:28px;border-radius:2px;opacity:.7;transition:all .25s}
+.hpill-num{font-size:22px;font-weight:800;color:var(--go3);font-family:var(--mono);line-height:1}
+.hpill-lbl{font-size:11px;color:var(--tx3);line-height:1.4;max-width:72px}
+
+.tabs-bar{
+  background:var(--s1);border-bottom:1px solid var(--br);
+  position:sticky;top:0;z-index:100;
+}
+.tabs{display:flex;gap:2px;padding:0 36px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+
+.tab{
+  display:flex;align-items:center;gap:8px;padding:14px 18px;
+  font-size:13px;font-weight:600;color:var(--tx3);
+  background:none;border:none;border-bottom:2px solid transparent;
+  cursor:pointer;white-space:nowrap;transition:all .2s;font-family:var(--sans);
+}
+.tab svg{width:15px;height:15px;stroke-width:1.7;flex-shrink:0}
+.tab:hover{color:var(--tx2)}
+.tab.on{color:var(--go3);border-bottom-color:var(--go3)}
+
+.main{padding:32px 36px;max-width:1200px}
+
+.sec{display:none}.sec.on{display:block;animation:fadein .3s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.sec-hd{
+  font-size:11px;font-weight:700;color:var(--go);letter-spacing:2.5px;
+  text-transform:uppercase;font-family:var(--mono);
+  margin-bottom:24px;display:flex;align-items:center;gap:12px;
+}
+.sec-hd::after{content:'';flex:1;height:1px;background:var(--br)}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+
+.card{
+  background:var(--s2);border:1px solid var(--br);border-radius:16px;
+  padding:22px 24px;position:relative;overflow:hidden;transition:all .3s;
+}
+.card::after{
+  content:'';position:absolute;inset:0;border-radius:16px;
+  background:radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(0,172,215,0.06) 0%, transparent 65%);
+  pointer-events:none;opacity:0;transition:opacity .3s;
+}
+.card:hover{border-color:var(--br2);transform:translateY(-3px)}
+.card:hover::after{opacity:1}
+.card:hover .card-shine{opacity:1}
+.card-shine{
+  position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--go),transparent);
+  opacity:0;transition:opacity .3s;
+}
+
+.ci{
+  width:40px;height:40px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;flex-shrink:0;
+}
+.ci svg{width:20px;height:20px;stroke-width:1.6}
+
+.ct{font-size:15px;font-weight:700;color:var(--tx);margin-bottom:8px}
+.cb{font-size:15px;line-height:1.75;color:var(--tx2)}
+.cb strong{font-weight:700}
+.cb .bl{color:var(--go3)}
+.cb .ba{color:var(--amb)}
+.cb .bg{color:var(--grn)}
+.cb .bc{color:var(--cor)}
+.cb .bp{color:var(--pur)}
+.cb .bk{color:var(--pnk)}
+
+.code{
+  background:#050810;border:1px solid rgba(0,172,215,0.12);
+  border-radius:10px;padding:16px 18px;font-family:var(--mono);
+  font-size:13px;line-height:1.9;overflow-x:auto;margin-top:14px;position:relative;
+}
+.code .ltag{
+  position:absolute;top:8px;right:12px;font-size:9px;
+  color:var(--tx3);letter-spacing:1.5px;text-transform:uppercase;
+}
+.kw{color:#7DD3FC}.fn{color:#86EFAC}.str{color:#FCA5A5}
+.num{color:#FCD34D}.cmt{color:#2E4A58;font-style:italic}.pk{color:var(--go3)}
+
+.analogy{
+  display:flex;gap:18px;align-items:flex-start;
+  background:rgba(0,172,215,0.05);border:1px solid rgba(0,172,215,0.18);
+  border-radius:14px;padding:20px;margin-bottom:20px;
+}
+.analogy svg{width:28px;height:28px;flex-shrink:0;color:var(--go);stroke-width:1.5;margin-top:2px}
+.analogy-title{font-size:11px;font-weight:700;color:var(--go);letter-spacing:2px;text-transform:uppercase;font-family:var(--mono);margin-bottom:6px}
+.analogy-body{font-size:15px;color:var(--tx2);line-height:1.75}
+.analogy-body strong{color:var(--tx);font-weight:700}
+
+.checklist-wrap{display:flex;flex-direction:column}
+.cli{
+  display:flex;align-items:flex-start;gap:12px;padding:13px 10px;
+  border-bottom:1px solid var(--br);cursor:pointer;
+  transition:all .2s;border-radius:8px;
+}
+.cli:last-child{border-bottom:none}
+.cli:hover{background:var(--s3)}
+.cli.done .chk{background:var(--grn);border-color:var(--grn)}
+.cli.done .chk-mark{opacity:1}
+.cli.done .cl-txt{color:var(--tx3);text-decoration:line-through}
+
+.chk{
+  width:22px;height:22px;border-radius:6px;border:1.5px solid var(--br2);
+  flex-shrink:0;position:relative;margin-top:1px;transition:all .2s;background:transparent;
+}
+.chk-mark{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .2s;
+}
+.chk-mark svg{width:12px;height:12px;stroke:#fff;stroke-width:2.5}
+
+.cl-txt{font-size:15px;color:var(--tx);flex:1;line-height:1.6}
+.cl-txt strong{color:var(--go3);font-weight:700}
+
+.badge{
+  font-size:10px;font-family:var(--mono);font-weight:700;
+  padding:3px 8px;border-radius:5px;flex-shrink:0;
+}
+.be{background:rgba(16,185,129,.12);color:var(--grn);border:1px solid rgba(16,185,129,.25)}
+.bm{background:rgba(245,158,11,.12);color:var(--amb);border:1px solid rgba(245,158,11,.25)}
+.bh{background:rgba(249,115,22,.12);color:var(--cor);border:1px solid rgba(249,115,22,.25)}
+
+.prog-wrap{background:var(--s3);border-radius:100px;height:7px;overflow:hidden}
+.prog-bar{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--go2),var(--go3));transition:width .7s cubic-bezier(.4,0,.2,1)}
+
+.type-row{
+  display:flex;align-items:center;gap:14px;padding:11px 14px;
+  border-radius:10px;border:1px solid var(--br);transition:all .22s;
+  cursor:default;margin-bottom:7px;background:var(--s2);
+}
+.type-row:hover{border-color:var(--br2);background:var(--s3);transform:translateX(5px);box-shadow:-3px 0 0 var(--go)}
+.ttag{font-family:var(--mono);font-size:11px;font-weight:700;padding:4px 9px;border-radius:5px;min-width:72px;text-align:center}
+.tnm{font-size:14px;font-weight:700;min-width:90px;color:var(--tx)}
+.td{font-size:13px;color:var(--tx2);flex:1}
+.tex{font-family:var(--mono);font-size:12px;color:var(--amb)}
+
+.ch-demo{display:flex;align-items:center;gap:0;overflow:hidden;margin:14px 0}
+.ch-node{background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.35);border-radius:10px;padding:10px 14px;font-size:12px;font-family:var(--mono);color:#C4B5FD;font-weight:600;white-space:nowrap}
+.ch-pipe{flex:1;height:2px;background:var(--br);position:relative;overflow:hidden}
+.ch-dot{position:absolute;top:-4px;width:10px;height:10px;background:var(--go3);border-radius:50%;animation:flow 2s linear infinite}
+.ch-dot:nth-child(2){animation-delay:.67s}
+.ch-dot:nth-child(3){animation-delay:1.33s}
+@keyframes flow{from{left:-12px}to{left:calc(100% + 12px)}}
+
+.gtdot{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-family:var(--mono);transition:all .3s}
+.gt-on{background:rgba(0,172,215,.2);border:1px solid var(--go);color:var(--go3);animation:gpulse 1.6s ease-in-out infinite}
+.gt-off{background:var(--s3);border:1px solid var(--br);color:var(--tx3)}
+@keyframes gpulse{0%,100%{box-shadow:0 0 4px rgba(0,172,215,.3)}50%{box-shadow:0 0 14px rgba(0,172,215,.7)}}
+
+.metric{text-align:center;padding:20px 14px;background:var(--s2);border-radius:12px;border:1px solid var(--br);transition:all .3s;cursor:default}
+.metric:hover{border-color:var(--br2);transform:translateY(-3px)}
+.metric .mn{font-size:28px;font-weight:800;font-family:var(--mono);color:var(--go3);line-height:1}
+.metric .ml{font-size:11px;color:var(--tx3);margin-top:5px}
+
+.tl{position:relative;padding-left:28px}
+.tl::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:1px;background:linear-gradient(180deg,var(--go),transparent)}
+.tli{position:relative;margin-bottom:18px;padding:16px 20px;background:var(--s2);border:1px solid var(--br);border-radius:12px;transition:all .3s}
+.tli:hover{border-color:var(--br2)}
+.tli::before{content:'';position:absolute;left:-24px;top:20px;width:10px;height:10px;border-radius:50%;background:var(--go);box-shadow:0 0 8px var(--go)}
+.tl-yr{font-size:11px;color:var(--go);font-family:var(--mono);margin-bottom:3px}
+.tl-ti{font-size:15px;font-weight:700;color:var(--tx);margin-bottom:5px}
+.tl-bd{font-size:15px;color:var(--tx2);line-height:1.7}
+.tl-bd strong{color:var(--tx);font-weight:700}
+
+.mx-cell{border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;font-family:var(--mono);transition:transform .2s;cursor:default}
+.mx-cell:hover{transform:scale(1.12);z-index:2}
+
+.cmp-tbl{width:100%;border-collapse:separate;border-spacing:0}
+.cmp-tbl th{padding:11px 14px;font-size:11px;font-weight:700;color:var(--tx3);text-align:left;border-bottom:1px solid var(--br);text-transform:uppercase;letter-spacing:1.2px;font-family:var(--mono)}
+.cmp-tbl td{padding:12px 14px;font-size:14px;color:var(--tx2);border-bottom:1px solid var(--br);transition:background .2s;vertical-align:middle}
+.cmp-tbl tr:hover td{background:var(--s3)}
+.cmp-tbl tr:last-child td{border-bottom:none}
+.cmp-tbl td:first-child{color:var(--tx);font-weight:600;font-size:14px}
+.cg{color:var(--grn);font-weight:700}.cx{color:var(--cor)}.cm{color:var(--amb)}
+
+.proj-card{padding:12px 14px;background:var(--s3);border-radius:10px;border:1px solid var(--br);font-size:14px;line-height:1.65;transition:all .25s;cursor:default}
+.proj-card:hover{border-color:var(--br2);background:rgba(0,172,215,0.06)}
+.proj-card strong{color:var(--tx);font-weight:700}
+
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:var(--br2);border-radius:4px}
+
+@media(max-width:700px){.grid2,.grid3,.grid4{grid-template-columns:1fr}.hero h1{font-size:26px}.main{padding:20px 18px}}
+</style>
+
+<div class="hero">
+<canvas id="hcvs"></canvas>
+<div class="hero-inner">
+  <div class="live-dot">Painel de Aprendizado</div>
+  <h1>Aprenda <span>Go</span> do Zero</h1>
+  <p class="hero-desc">
+    <strong>Go (Golang)</strong> é uma linguagem criada pelo Google — rápida como C, fácil como Python,
+    feita para apps que precisam lidar com <strong>muitas tarefas ao mesmo tempo</strong>.
+  </p>
+  <div class="hero-pills">
+    <div class="hpill">
+      <div class="hpill-line" style="background:var(--go3)"></div>
+      <div><div class="hpill-num">3×</div><div class="hpill-lbl">mais rápida que Python</div></div>
+    </div>
+    <div class="hpill">
+      <div class="hpill-line" style="background:var(--amb)"></div>
+      <div><div class="hpill-num" style="color:var(--amb)">2009</div><div class="hpill-lbl">criada pelo Google</div></div>
+    </div>
+    <div class="hpill">
+      <div class="hpill-line" style="background:var(--grn)"></div>
+      <div><div class="hpill-num" style="color:var(--grn)">#10</div><div class="hpill-lbl">linguagem mais popular</div></div>
+    </div>
+    <div class="hpill">
+      <div class="hpill-line" style="background:var(--pur)"></div>
+      <div><div class="hpill-num" style="color:var(--pur)">Docker</div><div class="hpill-lbl">escrito em Go</div></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="tabs-bar">
+<div class="tabs">
+  <button class="tab on" data-t="conceitos" onclick="sw('conceitos',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Conceitos
+  </button>
+  <button class="tab" data-t="checklist" onclick="sw('checklist',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+    Trilha
+  </button>
+  <button class="tab" data-t="tipos" onclick="sw('tipos',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+    Tipos
+  </button>
+  <button class="tab" data-t="goroutines" onclick="sw('goroutines',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+    Goroutines
+  </button>
+  <button class="tab" data-t="graficos" onclick="sw('graficos',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    Gráficos
+  </button>
+  <button class="tab" data-t="historia" onclick="sw('historia',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    História
+  </button>
+  <button class="tab" data-t="vs" onclick="sw('vs',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    Go vs outros
+  </button>
+</div>
+</div>
+
+<div class="main">
+
+<div class="sec on" id="s-conceitos">
+<div class="sec-hd">Conceitos Fundamentais</div>
+
+<div class="analogy">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+  <div>
+    <div class="analogy-title">Analogia — Go é como uma fábrica moderna</div>
+    <div class="analogy-body">Imagine uma fábrica onde cada <strong>trabalhador (goroutine)</strong> executa sua parte ao mesmo tempo, comunicando-se por <strong>esteiras (channels)</strong>, sem conflitos. O gerente (runtime do Go) decide quem trabalha em qual máquina e quando.</div>
+  </div>
+</div>
+
+<div class="grid2" style="margin-bottom:18px">
+  <div class="card" onmousemove="glow(event,this)">
+    <div class="card-shine"></div>
+    <div class="ci" style="background:rgba(0,172,215,.12)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--go)" stroke-width="1.6"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+    </div>
+    <div class="ct">Package (Pacote)</div>
+    <div class="cb">Todo código Go fica dentro de um <span class="bl"><strong>pacote</strong></span>. É como uma <strong>pasta temática</strong> — você agrupa funções relacionadas. O pacote especial <span class="ba"><strong>main</strong></span> é onde o programa começa a executar.</div>
+    <div class="code"><span class="ltag">go</span><span class="kw">package</span> <span class="pk">main</span><br><span class="cmt">// ponto de entrada do programa</span></div>
+  </div>
+  <div class="card" onmousemove="glow(event,this)">
+    <div class="card-shine"></div>
+    <div class="ci" style="background:rgba(16,185,129,.12)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--grn)" stroke-width="1.6"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    </div>
+    <div class="ct">Função (Function)</div>
+    <div class="cb">Uma <span class="bg"><strong>função</strong></span> é um bloco de ações que você pode <strong>chamar pelo nome</strong>. Recebe entradas, executa algo, devolve um resultado. A função <span class="ba"><strong>main()</strong></span> roda automaticamente ao iniciar.</div>
+    <div class="code"><span class="kw">func</span> <span class="fn">soma</span>(a, b <span class="kw">int</span>) <span class="kw">int</span> {<br>&nbsp;&nbsp;<span class="kw">return</span> a + b<br>}</div>
+  </div>
+  <div class="card" onmousemove="glow(event,this)">
+    <div class="card-shine"></div>
+    <div class="ci" style="background:rgba(245,158,11,.12)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--amb)" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+    </div>
+    <div class="ct">Variável e Tipo</div>
+    <div class="cb">Uma <span class="ba"><strong>variável</strong></span> é uma caixinha com nome que guarda um valor. Em Go, toda variável tem um <span class="bl"><strong>tipo</strong></span> — número, texto, booleano. O operador <span class="bc"><strong>:=</strong></span> cria a variável e já define o tipo sozinho.</div>
+    <div class="code"><span class="kw">var</span> idade <span class="kw">int</span> = <span class="num">25</span><br>nome := <span class="str">"Ana"</span> <span class="cmt">// tipo inferido</span></div>
+  </div>
+  <div class="card" onmousemove="glow(event,this)">
+    <div class="card-shine"></div>
+    <div class="ci" style="background:rgba(139,92,246,.12)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--pur)" stroke-width="1.6"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+    </div>
+    <div class="ct">Loop (Laço)</div>
+    <div class="cb">Em Go existe <span class="bp"><strong>apenas o for</strong></span> para repetições — substitui o while e o do-while. É como um <strong>robô que repete uma tarefa</strong> enquanto a condição for verdadeira. Simples e poderoso.</div>
+    <div class="code"><span class="kw">for</span> i := <span class="num">0</span>; i &lt; <span class="num">5</span>; i++ {<br>&nbsp;&nbsp;<span class="fn">fmt</span>.<span class="fn">Println</span>(i)<br>}</div>
+  </div>
+  <div class="card" onmousemove="glow(event,this)">
+    <div class="card-shine"></div>
+    <div class="ci" style="background:rgba(236,72,153,.12)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--pnk)" stroke-width="1.6"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+    </div>
+    <div class="ct">Struct (Estrutura)</div>
+    <div class="cb">Uma <span class="bk"><strong>struct</strong></span> é como um <strong>formulário personalizado</strong> — você define quais campos ela tem. Quer guardar dados de um usuário? Crie uma struct <span class="ba"><strong>Usuario</strong></span> com Nome, Email e Idade.</div>
+    <div class="code"><span class="kw">type</span> <span class="pk">Usuario</span> <span class="kw">struct</span> {<br>&nbsp;&nbsp;Nome  <span class="kw">string</span><br>&nbsp;&nbsp;Idade <span class="kw">int</span><br>}</div>
+  </div>
+  <div class="card" onmousemove="glow(event,this)">
+    <div class="card-shine"></div>
+    <div class="ci" style="background:rgba(249,115,22,.12)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--cor)" stroke-width="1.6"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </div>
+    <div class="ct">Error Handling (Erros)</div>
+    <div class="cb">Go não usa <strong>exceções</strong> como Java. Funções retornam <span class="bc"><strong>dois valores</strong></span>: o resultado e um possível erro. Você é <strong>obrigado a verificar o erro</strong> — Go não deixa você ignorar problemas.</div>
+    <div class="code">val, err := <span class="fn">abrirArquivo</span>(<span class="str">"x.txt"</span>)<br><span class="kw">if</span> err != <span class="kw">nil</span> {<br>&nbsp;&nbsp;<span class="fn">fmt</span>.<span class="fn">Println</span>(<span class="str">"erro!"</span>)<br>}</div>
+  </div>
+</div>
+</div>
+
+<div class="sec" id="s-checklist">
+<div class="sec-hd">Trilha de Aprendizado</div>
+<div class="grid2">
+  <div>
+    <div class="card" style="margin-bottom:18px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <span style="font-size:14px;font-weight:700;color:var(--tx)">Nível Iniciante</span>
+        <span id="lbl1" style="font-size:12px;color:var(--go);font-family:var(--mono)">0/6</span>
+      </div>
+      <div class="prog-wrap" style="margin-bottom:18px"><div class="prog-bar" id="pb1" style="width:0%"></div></div>
+      <div class="checklist-wrap">
+        <div class="cli" onclick="ck(this,'pb1','lbl1',6)"><div class="chk"><div class="chk-mark"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg></div></div><div class="cl-txt">Entender o que é <strong>Go e por que usá-lo</strong></div><span class="badge be">fácil</span></div>
+        <div class="cli" onclick="ck(this,'pb1','lbl1',6)"><div class="chk"><div class="chk-mark"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg></div></div><div class="cl-txt">Instalar Go e criar o primeiro <strong>Hello World</strong></div><span class="badge be">fácil</span></div>
+        <div class="cli" onclick="ck(this,'pb1','lbl1',6)"><div class="chk"><div class="chk-mark"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg></div></div><div class="cl-txt">Aprender <strong>variáveis, tipos e operadores</strong></div><span class="badge be">fácil</span></div>
+        <div class="cli" onclick="ck(this,'pb1','lbl1',6)"><div class="chk"><div class="chk-mark"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg></div></div><div class="cl-txt">Dominar <strong>if/else e for loops</strong></div><span class="badge be">fácil</span></div>
+        <div class="cli" onclick="ck(this,'pb1','lbl1',6)"><div class="chk"><div class="chk-mark"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg></div></div><div class="cl-txt">Criar e usar <strong>funções simples</strong></div><span class="badge bm">médio</span></div>
+        <div class="cli" onclick="ck(this,'pb1','lbl1',6)"><div class="chk"><div class="chk-mark"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg></div></div><div class="cl-txt">Trabalhar com <strong>arrays e slices</strong></div><span class="badge bm">médio</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <span style="font-size:14px;font-weight:700;color:var(--tx)">Nível Avançado</span>
+        <span id="lbl3" style="font-size:12px;color:var(--go);font-family:var(--mono)">0/5</span>
+      </div>
+      <div class="prog-wrap" style="margin-bottom:18px"><div class="prog-bar" id="pb3" style="width:0%"></div></div>
+      <div class="checklist-wrap">
+        <div class="cli" onclick="ck(this,'pb3','lbl3',5)"><div class="chk"><div class="chk-mark"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg></div></div><div class="cl-txt">Dominar <strong>goroutines e channels</strong></div><span class="badge bh">avançado</span></div>
+        <div class="cli" onclick="ck(this,'pb3','lbl3',5)"><div class="chk"><div class="chk-mark"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg></div></div><div class="cl-txt">Usar <strong>sync.WaitGroup e Mutex</strong></div><span class="badge bh">avançado</span></div>
+        <div class="cli" onclick="ck(this,'pb3','lbl3',5)"><div class="chk"><div class="chk-mark"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg></div></div><div class="cl-txt">Escrever <strong>testes unitários</strong> com testing</div><span class="badge bm">médio</span></div>
+        <div class="cli" onclick="ck(this,'pb3','lbl3',5)"><div class="chk"><div class="chk-mark"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg></div></div><div class="cl-txt">Usar <strong>context</strong> para cancelamento</div><span class="badge bh">avançado</span></div>
+        <div class="cli" onclick="ck(this,'pb3','lbl3',5)"><div class="chk"><div class="chk-mark"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg></div></div><div class="cl-txt">Publicar uma <strong>API REST completa</strong></div><span class="badge bh">avançado</span></div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="card" style="margin-bottom:18px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <span style="font-size:14px;font-weight:700;color:var(--tx)">Nível Intermediário</span>
+        <span id="lbl2" style="font-size:12px;color:var(--go);font-family:var(--mono)">0/5</span>
+      </div>
+      <div class="prog-wrap" style="margin-bottom:18px"><div class="prog-bar" id="pb2" style="width:0%"></div></div>
+      <div class="checklist-wrap">
+        <div class="cli" onclick="ck(this,'pb2','lbl2',5)"><div class="chk"><div class="chk-mark"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg></div></div><div class="cl-txt">Criar <strong>structs e métodos</strong></div><span class="badge bm">médio</span></div>
+        <div class="cli" onclick="ck(this,'pb2','lbl2',5)"><div class="chk"><div class="chk-mark"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg></div></div><div class="cl-txt">Entender <strong>interfaces</strong> como contratos</div><span class="badge bm">médio</span></div>
+        <div class="cli" onclick="ck(this,'pb2','lbl2',5)"><div class="chk"><div class="chk-mark"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg></div></div><div class="cl-txt">Tratar <strong>erros corretamente</strong> com nil checks</div><span class="badge bm">médio</span></div>
+        <div class="cli" onclick="ck(this,'pb2','lbl2',5)"><div class="chk"><div class="chk-mark"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg></div></div><div class="cl-txt">Ler e gravar <strong>arquivos e JSON</strong></div><span class="badge bm">médio</span></div>
+        <div class="cli" onclick="ck(this,'pb2','lbl2',5)"><div class="chk"><div class="chk-mark"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg></div></div><div class="cl-txt">Criar um <strong>servidor HTTP</strong> com net/http</div><span class="badge bh">avançado</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="font-size:14px;font-weight:700;color:var(--tx);margin-bottom:16px">Projetos Práticos Recomendados</div>
+      <div style="display:flex;flex-direction:column;gap:9px">
+        <div class="proj-card"><strong>API REST</strong> — servidor com rotas, JSON e banco de dados</div>
+        <div class="proj-card"><strong>CLI Tool</strong> — ferramenta de linha de comando com flags</div>
+        <div class="proj-card"><strong>Web Scraper</strong> — coleta de dados com goroutines em paralelo</div>
+        <div class="proj-card"><strong>Chat em tempo real</strong> — WebSockets e uma goroutine por cliente</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="sec" id="s-tipos">
+<div class="sec-hd">Tipos de Dados e Sintaxe</div>
+<div class="grid2" style="margin-bottom:22px">
+  <div>
+    <div class="sec-hd" style="font-size:10px;margin-bottom:14px">Tipos básicos — caixinhas de tipos diferentes</div>
+    <div class="type-row"><div class="ttag" style="background:rgba(0,172,215,.12);color:var(--go3);border:1px solid rgba(0,172,215,.25)">int</div><div class="tnm">Inteiro</div><div class="td">Números sem vírgula</div><div class="tex">42, -7</div></div>
+    <div class="type-row"><div class="ttag" style="background:rgba(245,158,11,.12);color:var(--amb);border:1px solid rgba(245,158,11,.25)">float64</div><div class="tnm">Decimal</div><div class="td">Números com vírgula</div><div class="tex">3.14</div></div>
+    <div class="type-row"><div class="ttag" style="background:rgba(249,115,22,.12);color:var(--cor);border:1px solid rgba(249,115,22,.25)">string</div><div class="tnm">Texto</div><div class="td">Sequência de caracteres</div><div class="tex">"Olá"</div></div>
+    <div class="type-row"><div class="ttag" style="background:rgba(16,185,129,.12);color:var(--grn);border:1px solid rgba(16,185,129,.25)">bool</div><div class="tnm">Booleano</div><div class="td">Verdadeiro ou Falso</div><div class="tex">true</div></div>
+    <div class="type-row"><div class="ttag" style="background:rgba(139,92,246,.12);color:var(--pur);border:1px solid rgba(139,92,246,.25)">[]int</div><div class="tnm">Slice</div><div class="td">Lista dinâmica de valores</div><div class="tex">[1,2,3]</div></div>
+    <div class="type-row"><div class="ttag" style="background:rgba(236,72,153,.12);color:var(--pnk);border:1px solid rgba(236,72,153,.25)">map</div><div class="tnm">Mapa</div><div class="td">Dicionário chave→valor</div><div class="tex">"k":"v"</div></div>
+  </div>
+  <div>
+    <div class="sec-hd" style="font-size:10px;margin-bottom:14px">Código exemplo — programa completo</div>
+    <div class="code" style="font-size:13px;line-height:1.9">
+      <span class="ltag">go</span>
+      <span class="kw">package</span> <span class="pk">main</span><br><br>
+      <span class="kw">import</span> <span class="str">"fmt"</span><br><br>
+      <span class="cmt">// Struct = modelo de dados personalizado</span><br>
+      <span class="kw">type</span> <span class="pk">Produto</span> <span class="kw">struct</span> {<br>
+      &nbsp;&nbsp;Nome  <span class="kw">string</span><br>
+      &nbsp;&nbsp;Preco <span class="kw">float64</span><br>
+      }<br><br>
+      <span class="kw">func</span> <span class="fn">main</span>() {<br>
+      &nbsp;&nbsp;p := <span class="pk">Produto</span>{Nome: <span class="str">"Tênis"</span>, Preco: <span class="num">199.90</span>}<br>
+      &nbsp;&nbsp;<span class="fn">fmt</span>.<span class="fn">Printf</span>(<span class="str">"%s custa R$%.2f\n"</span>, p.Nome, p.Preco)<br>
+      }
+    </div>
+    <div class="analogy" style="margin-top:16px;margin-bottom:0">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+      <div>
+        <div class="analogy-title">Map = Dicionário físico</div>
+        <div class="analogy-body">Um <strong>map</strong> é como um dicionário: você procura pela <strong>palavra (chave)</strong> e encontra a <strong>definição (valor)</strong>. Exemplo: <code style="color:var(--amb);font-family:var(--mono);font-size:13px">capitais["Brasil"] = "Brasília"</code></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card" onmousemove="glow(event,this)">
+  <div class="card-shine"></div>
+  <div style="font-size:14px;font-weight:700;color:var(--tx);margin-bottom:5px">Matriz de decisão — qual tipo usar?</div>
+  <div style="font-size:14px;color:var(--tx2);margin-bottom:20px">Passe o mouse para ver o calor de cada combinação</div>
+  <div id="mx"></div>
+</div>
+</div>
+
+<div class="sec" id="s-goroutines">
+<div class="sec-hd">Goroutines e Concorrência</div>
+<div class="analogy" style="margin-bottom:20px">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+  <div>
+    <div class="analogy-title">Analogia — Cozinha de restaurante</div>
+    <div class="analogy-body"><strong>1 cozinheiro (thread)</strong> faz tudo em sequência. <strong>Goroutines</strong> são como ter <strong>10 cozinheiros simultâneos</strong> — cada um faz sua parte ao mesmo tempo, comunicando-se pelo balcão de pedidos <strong>(channel)</strong>. O resultado chega muito mais rápido.</div>
+  </div>
+</div>
+<div class="grid2" style="margin-bottom:18px">
+  <div class="card" onmousemove="glow(event,this)">
+    <div class="card-shine"></div>
+    <div style="font-size:14px;font-weight:700;color:var(--tx);margin-bottom:10px">Goroutines ativas — simulação</div>
+    <div style="font-size:14px;color:var(--tx2);margin-bottom:12px">Cada quadrado representa uma <span style="color:var(--go3);font-weight:700">goroutine</span> rodando em paralelo</div>
+    <div id="gviz" style="display:flex;gap:5px;flex-wrap:wrap"></div>
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button onclick="addG()" style="flex:1;padding:10px;background:rgba(0,172,215,.12);border:1px solid rgba(0,172,215,.35);border-radius:8px;color:var(--go3);font-weight:700;font-size:13px;cursor:pointer;font-family:var(--sans);transition:all .2s" onmouseover="this.style.background='rgba(0,172,215,.22)'" onmouseout="this.style.background='rgba(0,172,215,.12)'">+ go func()</button>
+      <button onclick="resetG()" style="flex:1;padding:10px;background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.28);border-radius:8px;color:var(--cor);font-weight:700;font-size:13px;cursor:pointer;font-family:var(--sans);transition:all .2s" onmouseover="this.style.background='rgba(249,115,22,.18)'" onmouseout="this.style.background='rgba(249,115,22,.08)'">Resetar</button>
+    </div>
+    <div id="gcount" style="font-size:12px;color:var(--tx3);margin-top:10px;font-family:var(--mono)">goroutines ativas: 3</div>
+  </div>
+  <div class="card" onmousemove="glow(event,this)">
+    <div class="card-shine"></div>
+    <div style="font-size:14px;font-weight:700;color:var(--tx);margin-bottom:10px">Channel — comunicação entre goroutines</div>
+    <div style="font-size:14px;color:var(--tx2);margin-bottom:14px">O <span style="color:var(--pur);font-weight:700">channel</span> é uma <strong>esteira compartilhada</strong> — uma goroutine envia, a outra recebe</div>
+    <div class="ch-demo">
+      <div class="ch-node">goroutine A<br><span style="font-size:10px;opacity:.6">envia</span></div>
+      <div class="ch-pipe"><div class="ch-dot"></div><div class="ch-dot"></div><div class="ch-dot"></div></div>
+      <div class="ch-node">goroutine B<br><span style="font-size:10px;opacity:.6">recebe</span></div>
+    </div>
+    <div class="code" style="font-size:12px">ch := <span class="fn">make</span>(<span class="kw">chan</span> <span class="kw">string</span>)<br><span class="kw">go func</span>() { ch &lt;- <span class="str">"mensagem"</span> }()<br>msg := &lt;-ch <span class="cmt">// recebe</span></div>
+  </div>
+  <div class="card" onmousemove="glow(event,this)">
+    <div class="card-shine"></div>
+    <div style="font-size:14px;font-weight:700;color:var(--tx);margin-bottom:10px">Mutex — sem conflito de acesso</div>
+    <div style="font-size:15px;color:var(--tx2);line-height:1.75;margin-bottom:14px">Imagine <strong>duas goroutines escrevendo no mesmo arquivo</strong> ao mesmo tempo — daria bagunça. O <span style="color:var(--amb);font-weight:700">Mutex</span> é como uma <strong>chave de banheiro</strong>: só uma goroutine usa o recurso por vez.</div>
+    <div class="code" style="font-size:12px"><span class="kw">var</span> mu sync.<span class="pk">Mutex</span><br>mu.<span class="fn">Lock</span>()   <span class="cmt">// pega a chave</span><br>mu.<span class="fn">Unlock</span>() <span class="cmt">// devolve a chave</span></div>
+  </div>
+  <div class="card" onmousemove="glow(event,this)">
+    <div class="card-shine"></div>
+    <div style="font-size:14px;font-weight:700;color:var(--tx);margin-bottom:10px">WaitGroup — sincronização de tarefas</div>
+    <div style="font-size:15px;color:var(--tx2);line-height:1.75;margin-bottom:14px">O <span style="color:var(--grn);font-weight:700">WaitGroup</span> é como um <strong>placar de presença</strong>: você registra quantas goroutines vão trabalhar e espera todas terminarem antes de continuar. Igual aguardar todos os cozinheiros para servir a mesa.</div>
+    <div class="code" style="font-size:12px"><span class="kw">var</span> wg sync.<span class="pk">WaitGroup</span><br>wg.<span class="fn">Add</span>(<span class="num">3</span>)<br><span class="kw">go</span> <span class="fn">tarefa</span>(&wg) <span class="cmt">// wg.Done() no fim</span><br>wg.<span class="fn">Wait</span>()</div>
+  </div>
+</div>
+<div class="card" onmousemove="glow(event,this)">
+  <div class="card-shine"></div>
+  <div style="font-size:14px;font-weight:700;color:var(--tx);margin-bottom:4px">Go vs Thread tradicional — por que goroutines são melhores?</div>
+  <div style="font-size:14px;color:var(--tx2);margin-bottom:18px">Uma goroutine usa <span style="color:var(--go3);font-weight:700">~2 KB</span> de memória. Uma thread do SO usa <span style="color:var(--cor);font-weight:700">~1 MB</span>. Você pode ter <span style="color:var(--grn);font-weight:700">milhões de goroutines</span> simultâneas.</div>
+  <div style="position:relative;height:200px"><canvas id="gtchart"></canvas></div>
+</div>
+</div>
+
+<div class="sec" id="s-graficos">
+<div class="sec-hd">Dashboards e Gráficos</div>
+<div class="grid4" style="margin-bottom:22px">
+  <div class="metric"><div class="mn">1.8M</div><div class="ml">devs usando Go</div></div>
+  <div class="metric"><div class="mn" style="color:var(--amb)">74%</div><div class="ml">satisfação entre devs</div></div>
+  <div class="metric"><div class="mn" style="color:var(--grn)">52×</div><div class="ml">mais rápido que Ruby</div></div>
+  <div class="metric"><div class="mn" style="color:var(--cor)">30s</div><div class="ml">tempo médio de build</div></div>
+</div>
+<div class="grid2" style="margin-bottom:20px">
+  <div class="card" onmousemove="glow(event,this)">
+    <div class="card-shine"></div>
+    <div style="font-size:14px;font-weight:700;color:var(--tx);margin-bottom:3px">Performance — Go vs outras linguagens</div>
+    <div style="font-size:13px;color:var(--tx3);margin-bottom:14px">Tempo relativo para 1M requisições (menor = melhor)</div>
+    <div style="position:relative;height:240px"><canvas id="pchart"></canvas></div>
+  </div>
+  <div class="card" onmousemove="glow(event,this)">
+    <div class="card-shine"></div>
+    <div style="font-size:14px;font-weight:700;color:var(--tx);margin-bottom:3px">Crescimento da comunidade Go (2014–2024)</div>
+    <div style="font-size:13px;color:var(--tx3);margin-bottom:14px">Desenvolvedores ativos — em milhares</div>
+    <div style="position:relative;height:240px"><canvas id="achart"></canvas></div>
+  </div>
+</div>
+<div class="card" onmousemove="glow(event,this)">
+  <div class="card-shine"></div>
+  <div style="font-size:14px;font-weight:700;color:var(--tx);margin-bottom:3px">Uso do Go por setor de mercado</div>
+  <div style="font-size:13px;color:var(--tx3);margin-bottom:18px">Em quais áreas o Go é mais utilizado profissionalmente</div>
+  <div class="grid2">
+    <div style="position:relative;height:240px"><canvas id="uchart"></canvas></div>
+    <div style="display:flex;flex-direction:column;justify-content:center;gap:10px">
+      <div style="font-size:11px;font-weight:700;color:var(--tx3);letter-spacing:2px;font-family:var(--mono);margin-bottom:4px">EMPRESAS QUE USAM GO</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div class="proj-card" style="text-align:center"><strong>Google</strong></div>
+        <div class="proj-card" style="text-align:center"><strong>Docker</strong></div>
+        <div class="proj-card" style="text-align:center"><strong>Kubernetes</strong></div>
+        <div class="proj-card" style="text-align:center"><strong>Uber</strong></div>
+        <div class="proj-card" style="text-align:center"><strong>Cloudflare</strong></div>
+        <div class="proj-card" style="text-align:center"><strong>Stripe</strong></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="sec" id="s-historia">
+<div class="sec-hd">História do Go</div>
+<div class="grid2">
+  <div class="tl">
+    <div class="tli"><div class="tl-yr">2007</div><div class="tl-ti">A frustração do Google</div><div class="tl-bd"><strong>Robert Griesemer, Rob Pike e Ken Thompson</strong> — criadores do UNIX — estavam cansados de C++ demorar <strong>horas para compilar</strong>. Decidiram criar algo melhor.</div></div>
+    <div class="tli"><div class="tl-yr">2009</div><div class="tl-ti">Go torna-se open-source</div><div class="tl-bd">Go é anunciado em <strong>10 de novembro de 2009</strong>. A mascote Gopher nasce, desenhada por <strong>Renée French</strong>.</div></div>
+    <div class="tli"><div class="tl-yr">2012</div><div class="tl-ti">Versão 1.0 — estabilidade garantida</div><div class="tl-bd">Go 1.0 é lançado com promessa de <strong>compatibilidade permanente</strong>: código escrito hoje funcionará em versões futuras.</div></div>
+    <div class="tli"><div class="tl-yr">2013</div><div class="tl-ti">Docker nasce em Go</div><div class="tl-bd">O <strong>Docker</strong>, que revolucionou o DevOps, foi escrito em Go. Provou que Go era perfeito para <strong>ferramentas de infraestrutura</strong>.</div></div>
+    <div class="tli"><div class="tl-yr">2014</div><div class="tl-ti">Kubernetes — orquestração em Go</div><div class="tl-bd">O Google lança o <strong>Kubernetes</strong> em Go. Hoje é o padrão mundial para gerenciar apps na nuvem.</div></div>
+    <div class="tli"><div class="tl-yr">2022</div><div class="tl-ti">Go 1.18 — Generics chegam</div><div class="tl-bd">O recurso mais pedido da história: <strong>Generics</strong>. Permite escrever funções que funcionam com qualquer tipo sem repetição de código.</div></div>
+  </div>
+  <div>
+    <div class="card" style="margin-bottom:18px" onmousemove="glow(event,this)">
+      <div class="card-shine"></div>
+      <div style="font-size:14px;font-weight:700;color:var(--tx);margin-bottom:14px">Os criadores do Go</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;gap:14px;align-items:center;padding:14px;background:var(--s3);border-radius:10px;border:1px solid var(--br);transition:all .2s" onmouseover="this.style.borderColor='var(--br2)'" onmouseout="this.style.borderColor='var(--br)'">
+          <div style="width:40px;height:40px;border-radius:10px;background:rgba(0,172,215,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--go)" stroke-width="1.6"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <div><div style="font-weight:700;font-size:14px;color:var(--tx)">Rob Pike</div><div style="font-size:13px;color:var(--tx2)">Co-criou o <strong>UNIX</strong> e o <strong>UTF-8</strong>. Pensou na concorrência do Go.</div></div>
+        </div>
+        <div style="display:flex;gap:14px;align-items:center;padding:14px;background:var(--s3);border-radius:10px;border:1px solid var(--br);transition:all .2s" onmouseover="this.style.borderColor='var(--br2)'" onmouseout="this.style.borderColor='var(--br)'">
+          <div style="width:40px;height:40px;border-radius:10px;background:rgba(245,158,11,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--amb)" stroke-width="1.6"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+          </div>
+          <div><div style="font-weight:700;font-size:14px;color:var(--tx)">Ken Thompson</div><div style="font-size:13px;color:var(--tx2)">Criou o <strong>UNIX</strong> e a linguagem B. Vencedor do <strong>Prêmio Turing</strong>.</div></div>
+        </div>
+        <div style="display:flex;gap:14px;align-items:center;padding:14px;background:var(--s3);border-radius:10px;border:1px solid var(--br);transition:all .2s" onmouseover="this.style.borderColor='var(--br2)'" onmouseout="this.style.borderColor='var(--br)'">
+          <div style="width:40px;height:40px;border-radius:10px;background:rgba(16,185,129,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--grn)" stroke-width="1.6"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <div><div style="font-weight:700;font-size:14px;color:var(--tx)">Robert Griesemer</div><div style="font-size:13px;color:var(--tx2)">Engenheiro do Google. Projetou a <strong>sintaxe limpa</strong> que Go tem hoje.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card" onmousemove="glow(event,this)">
+      <div class="card-shine"></div>
+      <div style="font-size:14px;font-weight:700;color:var(--tx);margin-bottom:14px">Por que o nome "Go"?</div>
+      <div class="analogy" style="margin-bottom:0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div>
+          <div class="analogy-title">Simples por filosofia</div>
+          <div class="analogy-body">O nome curto reflete a essência da linguagem: <strong>fazer tudo com simplicidade</strong>. Go compila em segundos, tem poucos comandos, e o código parece inglês simples. Um dev pode ler código Go de outra pessoa sem precisar de manual.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="sec" id="s-vs">
+<div class="sec-hd">Go vs outras linguagens</div>
+<div class="analogy" style="margin-bottom:20px">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8zM6 1v3M10 1v3M14 1v3"/></svg>
+  <div>
+    <div class="analogy-title">Analogia — Escolhendo o veículo certo</div>
+    <div class="analogy-body"><strong>Python</strong> é um carro automático — fácil de dirigir, ótimo para cidade. <strong>C++</strong> é uma Fórmula 1 — ultra rápido, mas difícil de pilotar. <strong>Go</strong> é um carro esportivo com câmbio automático — <strong>rápido e ainda fácil de usar</strong>.</div>
+  </div>
+</div>
+<div class="card" style="margin-bottom:20px;overflow-x:auto">
+  <div class="card-shine"></div>
+  <table class="cmp-tbl">
+    <thead><tr><th>Característica</th><th>Go</th><th>Python</th><th>Java</th><th>Node.js</th><th>C++</th></tr></thead>
+    <tbody>
+      <tr><td>Velocidade de execução</td><td><span class="cg">★★★★★</span></td><td><span class="cx">★★☆☆☆</span></td><td><span class="cm">★★★★☆</span></td><td><span class="cm">★★★☆☆</span></td><td><span class="cg">★★★★★</span></td></tr>
+      <tr><td>Facilidade de aprender</td><td><span class="cg">★★★★☆</span></td><td><span class="cg">★★★★★</span></td><td><span class="cx">★★☆☆☆</span></td><td><span class="cm">★★★☆☆</span></td><td><span class="cx">★☆☆☆☆</span></td></tr>
+      <tr><td>Concorrência</td><td style="color:var(--grn);font-weight:700">Nativa — excelente</td><td style="color:var(--cor)">Limitada (GIL)</td><td style="color:var(--amb)">Threads complexas</td><td style="color:var(--amb)">Event loop</td><td style="color:var(--cor)">Manual / complexo</td></tr>
+      <tr><td>Tempo de compilação</td><td style="color:var(--grn);font-weight:700">Segundos</td><td style="color:var(--grn)">Interpretado</td><td style="color:var(--cor)">Minutos</td><td style="color:var(--grn)">Interpretado</td><td style="color:var(--cor)">Minutos ou horas</td></tr>
+      <tr><td>Uso ideal</td><td style="color:var(--go3);font-weight:700">APIs, Cloud, DevOps</td><td style="color:var(--amb)">IA, Scripts, Data</td><td style="color:var(--tx2)">Enterprise, Android</td><td style="color:var(--grn)">Frontend, APIs</td><td style="color:var(--tx2)">Games, Sistemas</td></tr>
+    </tbody>
+  </table>
+</div>
+<div class="grid3">
+  <div class="card" style="border-color:rgba(0,172,215,.25)" onmousemove="glow(event,this)">
+    <div class="card-shine"></div>
+    <div style="width:36px;height:36px;border-radius:9px;background:rgba(16,185,129,.12);display:flex;align-items:center;justify-content:center;margin-bottom:12px">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--grn)" stroke-width="1.7"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div style="font-size:14px;font-weight:700;color:var(--grn);margin-bottom:10px">Use Go quando...</div>
+    <div style="font-size:14px;color:var(--tx2);line-height:1.8">Precisa de <strong style="color:var(--tx)">alta performance</strong> com muitas tarefas <strong style="color:var(--tx)">simultâneas</strong>, criando <strong style="color:var(--tx)">APIs e microserviços</strong>, ferramentas de <strong style="color:var(--tx)">linha de comando</strong> ou projetos de <strong style="color:var(--tx)">infraestrutura cloud</strong>.</div>
+  </div>
+  <div class="card" style="border-color:rgba(249,115,22,.2)" onmousemove="glow(event,this)">
+    <div class="card-shine"></div>
+    <div style="width:36px;height:36px;border-radius:9px;background:rgba(249,115,22,.1);display:flex;align-items:center;justify-content:center;margin-bottom:12px">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cor)" stroke-width="1.7"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </div>
+    <div style="font-size:14px;font-weight:700;color:var(--cor);margin-bottom:10px">Evite Go quando...</div>
+    <div style="font-size:14px;color:var(--tx2);line-height:1.8">Precisa de <strong style="color:var(--tx)">Machine Learning</strong> (use Python), quer <strong style="color:var(--tx)">protótipos ultra-rápidos</strong>, necessita de <strong style="color:var(--tx)">GUI desktop</strong>, ou a equipe só conhece <strong style="color:var(--tx)">Java/OOP clássico</strong>.</div>
+  </div>
+  <div class="card" style="border-color:rgba(16,185,129,.2)" onmousemove="glow(event,this)">
+    <div class="card-shine"></div>
+    <div style="width:36px;height:36px;border-radius:9px;background:rgba(16,185,129,.1);display:flex;align-items:center;justify-content:center;margin-bottom:12px">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--grn)" stroke-width="1.7"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    </div>
+    <div style="font-size:14px;font-weight:700;color:var(--grn);margin-bottom:10px">Pontos únicos do Go</div>
+    <div style="font-size:14px;color:var(--tx2);line-height:1.8"><strong style="color:var(--tx)">1 binário</strong> sem dependências extras, erros <strong style="color:var(--tx)">explícitos e claros</strong>, build em <strong style="color:var(--tx)">segundos</strong>, <strong style="color:var(--go3)">gofmt</strong> formata o código automaticamente, e <strong style="color:var(--tx)">testes</strong> já vêm embutidos.</div>
+  </div>
+</div>
+</div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const cvs=document.getElementById('hcvs');
+const cx=cvs.getContext('2d');
+let pts=[];
+function rsz(){cvs.width=cvs.parentElement.offsetWidth;cvs.height=cvs.parentElement.offsetHeight}
+function mkp(){return{x:Math.random()*cvs.width,y:Math.random()*cvs.height,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,r:Math.random()*1.2+.3,a:Math.random()*.35+.1}}
+function init(){rsz();pts=Array.from({length:55},mkp)}
+function anim(){
+  cx.clearRect(0,0,cvs.width,cvs.height);
+  pts.forEach(p=>{
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0||p.x>cvs.width)p.vx*=-1;
+    if(p.y<0||p.y>cvs.height)p.vy*=-1;
+    cx.beginPath();cx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    cx.fillStyle=`rgba(0,172,215,${p.a})`;cx.fill();
+  });
+  for(let i=0;i<pts.length;i++){
+    for(let j=i+1;j<pts.length;j++){
+      const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      if(d<75){cx.beginPath();cx.moveTo(pts[i].x,pts[i].y);cx.lineTo(pts[j].x,pts[j].y);cx.strokeStyle=`rgba(0,172,215,${.1*(1-d/75)})`;cx.lineWidth=.5;cx.stroke()}
+    }
+  }
+  requestAnimationFrame(anim);
+}
+init();anim();
+window.addEventListener('resize',init);
+
+function sw(id,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('s-'+id).classList.add('on');
+  if(id==='graficos')setTimeout(initCharts,80);
+  if(id==='goroutines')setTimeout(initGT,80);
+}
+
+function ck(el,pbId,lblId,tot){
+  el.classList.toggle('done');
+  const done=el.parentElement.querySelectorAll('.cli.done').length;
+  document.getElementById(pbId).style.width=Math.round(done/tot*100)+'%';
+  document.getElementById(lblId).textContent=done+'/'+tot;
+}
+
+function glow(e,el){
+  const r=el.getBoundingClientRect();
+  el.style.setProperty('--mx',Math.round(e.clientX-r.left)+'px');
+  el.style.setProperty('--my',Math.round(e.clientY-r.top)+'px');
+}
+
+let gc=3;
+function renderG(){
+  const v=document.getElementById('gviz');v.innerHTML='';
+  document.getElementById('gcount').textContent='goroutines ativas: '+gc;
+  for(let i=0;i<gc;i++){
+    const d=document.createElement('div');
+    d.className='gtdot gt-on';d.style.animationDelay=(i*.18)+'s';
+    d.textContent='G'+(i+1);v.appendChild(d);
+  }
+}
+function addG(){if(gc<24)gc++;renderG()}
+function resetG(){gc=3;renderG()}
+renderG();
+
+const mxRows=[
+  {label:'int',col:'#00ACD7',op:[.9,.6,.2,.1,.1]},
+  {label:'float64',col:'#F59E0B',op:[.1,.9,.5,.2,.1]},
+  {label:'string',col:'#F97316',op:[.1,.1,.9,.3,.1]},
+  {label:'bool',col:'#10B981',op:[.1,.1,.2,.9,.1]},
+  {label:'[]T',col:'#8B5CF6',op:[.1,.2,.3,.2,.9]},
+];
+const mxCols=['Contagem','Cálculo $','Texto','Sim/Não','Coleção'];
+const mx=document.getElementById('mx');
+if(mx){
+  const n=mxCols.length+1;
+  const hdr=document.createElement('div');
+  hdr.style.cssText=`display:grid;grid-template-columns:repeat(${n},1fr);gap:3px;margin-bottom:3px`;
+  hdr.innerHTML='<div></div>'+mxCols.map(c=>`<div style="font-size:11px;color:var(--tx3);text-align:center;padding:6px 3px;font-family:var(--mono)">${c}</div>`).join('');
+  mx.appendChild(hdr);
+  mxRows.forEach(row=>{
+    const rEl=document.createElement('div');
+    rEl.style.cssText=`display:grid;grid-template-columns:repeat(${n},1fr);gap:3px;margin-bottom:3px`;
+    rEl.innerHTML=`<div style="font-size:12px;font-family:var(--mono);color:${row.col};font-weight:700;display:flex;align-items:center;padding:0 4px">${row.label}</div>`+
+      row.op.map((op,i)=>{
+        const sym=op>.6?'✓':op>.3?'~':'·';
+        const bg=op>.6?row.col:op>.3?row.col+'44':'#ffffff06';
+        const tc=op>.6?'#fff':op>.3?row.col:'#334455';
+        return`<div class="mx-cell" style="height:34px;background:${bg};color:${tc}" title="${row.label} → ${mxCols[i]}">${sym}</div>`;
+      }).join('');
+    mx.appendChild(rEl);
+  });
+  const leg=document.createElement('div');
+  leg.style.cssText='display:flex;gap:16px;margin-top:10px;font-size:12px;color:var(--tx3);font-family:var(--mono)';
+  leg.innerHTML='<span>✓ Ideal</span><span>~ Funciona</span><span>· Evitar</span>';
+  mx.appendChild(leg);
+}
+
+let cInited=false,gtInited=false;
+
+function initGT(){
+  if(gtInited)return;gtInited=true;
+  const c=document.getElementById('gtchart');if(!c)return;
+  new Chart(c,{type:'bar',data:{labels:['Thread do SO','Goroutine Go'],datasets:[{label:'Memória (KB)',data:[1024,2],backgroundColor:['rgba(249,115,22,.55)','rgba(0,172,215,.55)'],borderColor:['#F97316','#00ACD7'],borderWidth:1,borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6A8E9E',font:{size:12}}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6A8E9E',font:{size:11},callback:v=>v+' KB'}}}}});
+}
+
+function initCharts(){
+  if(cInited)return;cInited=true;
+  const pc=document.getElementById('pchart');
+  if(pc)new Chart(pc,{type:'bar',data:{labels:['Go','Java','Node.js','Python','Ruby'],datasets:[{label:'Tempo relativo',data:[1,1.8,3.2,15,52],backgroundColor:['rgba(0,172,215,.65)','rgba(245,158,11,.5)','rgba(16,185,129,.5)','rgba(139,92,246,.5)','rgba(249,115,22,.5)'],borderColor:['#00ACD7','#F59E0B','#10B981','#8B5CF6','#F97316'],borderWidth:1,borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6A8E9E',font:{size:11}}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6A8E9E',font:{size:12}}}}}});
+  const ac=document.getElementById('achart');
+  if(ac)new Chart(ac,{type:'line',data:{labels:['2014','2015','2016','2017','2018','2019','2020','2021','2022','2023','2024'],datasets:[{label:'Devs (mil)',data:[50,120,280,480,720,950,1100,1350,1550,1700,1820],borderColor:'#00ACD7',backgroundColor:'rgba(0,172,215,0.07)',borderWidth:2,pointRadius:3,pointBackgroundColor:'#00ACD7',tension:.4,fill:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6A8E9E',font:{size:10}}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6A8E9E',font:{size:11},callback:v=>v+'k'}}}}});
+  const uc=document.getElementById('uchart');
+  if(uc)new Chart(uc,{type:'doughnut',data:{labels:['APIs/Backends','DevOps/Cloud','Ferramentas CLI','Microserviços','Sistemas'],datasets:[{data:[35,28,18,12,7],backgroundColor:['rgba(0,172,215,.7)','rgba(245,158,11,.7)','rgba(16,185,129,.7)','rgba(139,92,246,.7)','rgba(249,115,22,.7)'],borderColor:'#0C1220',borderWidth:3}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:true,position:'bottom',labels:{color:'#94B8C8',font:{size:11},padding:10,boxWidth:10,boxHeight:10}}}}});
+}
+</script>
