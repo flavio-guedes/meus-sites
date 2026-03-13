@@ -1,0 +1,1719 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RH • Painel de Rotina</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f5f5;
+  --surface: #ffffff;
+  --surface2: #f0f0f0;
+  --border: #e0e0e0;
+  --border2: #d0d0d0;
+  --text: #1a1a1a;
+  --text2: #555555;
+  --text3: #999999;
+  --red: #cc1111;
+  --red2: #e02020;
+  --red-dim: #fdeaea;
+  --red-border: #f5b0b0;
+  --green: #2e7d32;
+  --green-dim: #e8f5e9;
+  --amber: #b45309;
+  --amber-dim: #fef3c7;
+  --gray: #6b7280;
+  --gray-dim: #f3f4f6;
+  --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --shadow-lg: 0 4px 20px rgba(0,0,0,0.12);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 14px;
+}
+
+/* HEADER */
+.header {
+  background: var(--red);
+  color: #fff;
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  box-shadow: 0 2px 12px rgba(204,17,17,0.3);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-left { display: flex; align-items: center; gap: 14px; }
+.header-logo {
+  width: 38px; height: 38px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 800; color: #fff;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+.header-title { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+.header-sub { font-size: 11px; opacity: 0.75; font-family: 'JetBrains Mono'; }
+.header-stats { display: flex; gap: 10px; }
+.hstat {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 8px;
+  padding: 5px 14px;
+  text-align: center;
+}
+.hstat-num { font-size: 17px; font-weight: 800; font-family: 'JetBrains Mono'; }
+.hstat-lbl { font-size: 10px; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px; }
+.header-date {
+  font-size: 12px; opacity: 0.85;
+  font-family: 'JetBrains Mono';
+  background: rgba(255,255,255,0.15);
+  padding: 6px 12px; border-radius: 8px;
+}
+
+/* LAYOUT */
+.layout { display: flex; height: calc(100vh - 60px); overflow: hidden; }
+
+/* SIDEBAR */
+.sidebar {
+  width: 260px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.sidebar-section {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text2);
+  transition: all 0.15s;
+  margin-bottom: 2px;
+  border: none; background: none; width: 100%; text-align: left;
+}
+.nav-item:hover { background: var(--gray-dim); color: var(--text); }
+.nav-item.active { background: var(--red-dim); color: var(--red); font-weight: 600; }
+.nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+.nav-badge {
+  margin-left: auto;
+  background: var(--red);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 2px 7px;
+  font-family: 'JetBrains Mono';
+}
+
+/* TAREFAS SIDEBAR */
+.mini-task {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+.mini-task:last-child { border-bottom: none; }
+.mini-check {
+  width: 16px; height: 16px;
+  border-radius: 4px;
+  border: 2px solid var(--border2);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.mini-check.done { background: var(--green); border-color: var(--green); color: #fff; font-size: 9px; }
+.mini-task-text { flex: 1; color: var(--text2); }
+.mini-task-text.done { text-decoration: line-through; color: var(--text3); }
+.mini-task-time { font-size: 10px; color: var(--text3); font-family: 'JetBrains Mono'; }
+
+/* MAIN */
+.main { flex: 1; overflow-y: auto; padding: 24px; }
+
+/* PAGE SECTIONS */
+.page { display: none; }
+.page.active { display: block; }
+
+.page-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.page-title { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+.page-title span { color: var(--red); }
+
+/* CARDS GRID */
+.cards-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 24px; }
+.card {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+.card-icon { font-size: 22px; margin-bottom: 10px; }
+.card-num {
+  font-size: 28px; font-weight: 800;
+  font-family: 'JetBrains Mono';
+  letter-spacing: -1px;
+}
+.card-label { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.card.red .card-num { color: var(--red); }
+.card.green .card-num { color: var(--green); }
+.card.amber .card-num { color: var(--amber); }
+.card.gray .card-num { color: var(--gray); }
+.card-bar { height: 3px; border-radius: 2px; margin-top: 12px; background: var(--border); overflow: hidden; }
+.card-bar-fill { height: 100%; border-radius: 2px; transition: width 0.5s; }
+
+/* TWO COLS */
+.two-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.three-cols { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+
+/* PANEL */
+.panel {
+  background: var(--surface);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.panel-head {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.panel-title { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.panel-title .dot { width: 8px; height: 8px; border-radius: 50%; }
+.panel-body { padding: 16px 18px; }
+.panel-action {
+  font-size: 11px; color: var(--red); font-weight: 600; cursor: pointer;
+  padding: 4px 10px; border-radius: 6px; border: 1px solid var(--red-border);
+  background: var(--red-dim); transition: all 0.15s;
+}
+.panel-action:hover { background: var(--red); color: #fff; }
+
+/* TABLE */
+.table { width: 100%; border-collapse: collapse; }
+.table th {
+  text-align: left; font-size: 10px; font-weight: 700;
+  color: var(--text3); text-transform: uppercase; letter-spacing: 0.8px;
+  padding: 8px 10px; background: var(--gray-dim);
+  border-bottom: 1px solid var(--border);
+}
+.table td { padding: 10px; border-bottom: 1px solid var(--border); font-size: 13px; }
+.table tr:last-child td { border-bottom: none; }
+.table tr:hover td { background: var(--gray-dim); }
+.table tr { cursor: pointer; transition: background 0.1s; }
+
+/* BADGES */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 9px; border-radius: 20px;
+  font-size: 11px; font-weight: 600;
+}
+.badge-red { background: var(--red-dim); color: var(--red); border: 1px solid var(--red-border); }
+.badge-green { background: var(--green-dim); color: var(--green); border: 1px solid #a7d7aa; }
+.badge-amber { background: var(--amber-dim); color: var(--amber); border: 1px solid #f5d28a; }
+.badge-gray { background: var(--gray-dim); color: var(--gray); border: 1px solid var(--border2); }
+
+/* BUTTON */
+.btn {
+  padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer;
+  font-family: 'Plus Jakarta Sans'; font-size: 13px; font-weight: 600;
+  transition: all 0.15s;
+}
+.btn-red { background: var(--red); color: #fff; }
+.btn-red:hover { background: var(--red2); }
+.btn-outline { background: #fff; color: var(--text); border: 1px solid var(--border2); }
+.btn-outline:hover { border-color: var(--red); color: var(--red); }
+.btn-sm { padding: 5px 11px; font-size: 11px; }
+
+/* ROTINA / CHECKLIST */
+.rotina-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.rotina-item:last-child { border-bottom: none; }
+.rotina-check {
+  width: 20px; height: 20px; border-radius: 6px;
+  border: 2px solid var(--border2);
+  cursor: pointer; flex-shrink: 0; margin-top: 1px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.rotina-check.done { background: var(--green); border-color: var(--green); color: #fff; font-size: 11px; }
+.rotina-info { flex: 1; }
+.rotina-title { font-size: 13px; font-weight: 600; }
+.rotina-title.done { text-decoration: line-through; color: var(--text3); }
+.rotina-desc { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.rotina-meta { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+.rotina-tag {
+  font-size: 10px; padding: 2px 8px; border-radius: 10px;
+  font-weight: 600; background: var(--gray-dim); color: var(--text3);
+  border: 1px solid var(--border);
+}
+.rotina-tag.red { background: var(--red-dim); color: var(--red); border-color: var(--red-border); }
+.rotina-tag.green { background: var(--green-dim); color: var(--green); }
+.rotina-tag.amber { background: var(--amber-dim); color: var(--amber); }
+.rotina-priority {
+  width: 4px; border-radius: 2px; align-self: stretch; flex-shrink: 0;
+}
+
+/* AGENDA */
+.agenda-slot {
+  display: flex; gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.agenda-slot:last-child { border-bottom: none; }
+.agenda-time {
+  width: 60px; font-size: 11px; font-weight: 600;
+  font-family: 'JetBrains Mono'; color: var(--text3);
+  padding-top: 2px; flex-shrink: 0;
+}
+.agenda-event {
+  flex: 1; padding: 8px 12px; border-radius: 8px;
+  border-left: 3px solid var(--red);
+  background: var(--red-dim);
+}
+.agenda-event.green { border-color: var(--green); background: var(--green-dim); }
+.agenda-event.amber { border-color: var(--amber); background: var(--amber-dim); }
+.agenda-event.gray { border-color: var(--border2); background: var(--gray-dim); }
+.agenda-event-title { font-size: 13px; font-weight: 600; }
+.agenda-event-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+/* PROGRESSO CANDIDATOS */
+.cand-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+.cand-row:last-child { border-bottom: none; }
+.cand-avatar {
+  width: 34px; height: 34px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--red), #ff6b6b);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+.cand-avatar.done { background: linear-gradient(135deg, var(--green), #4ade80); }
+.cand-name { font-size: 13px; font-weight: 600; }
+.cand-cargo { font-size: 11px; color: var(--text3); }
+.cand-steps { display: flex; gap: 4px; margin-top: 5px; }
+.cand-step {
+  height: 4px; border-radius: 2px; flex: 1;
+  background: var(--border);
+}
+.cand-step.done { background: var(--green); }
+.cand-step.active { background: var(--red); }
+.cand-step.pending { background: var(--amber); }
+
+/* MENSAGENS */
+.msg-box {
+  background: var(--gray-dim);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  border: 1px solid var(--border);
+}
+.msg-head { display: flex; justify-content: space-between; margin-bottom: 5px; }
+.msg-de { font-size: 12px; font-weight: 700; color: var(--red); }
+.msg-hora { font-size: 10px; color: var(--text3); font-family: 'JetBrains Mono'; }
+.msg-texto { font-size: 13px; color: var(--text2); }
+.msg-input-row { display: flex; gap: 8px; margin-top: 10px; }
+.msg-input {
+  flex: 1; padding: 8px 12px; border-radius: 8px;
+  border: 1px solid var(--border2); font-family: 'Plus Jakarta Sans';
+  font-size: 13px; background: #fff; color: var(--text);
+  outline: none;
+}
+.msg-input:focus { border-color: var(--red); }
+
+/* RELATÓRIOS */
+.rel-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  display: flex; align-items: center; gap: 12px;
+  cursor: pointer; transition: all 0.15s;
+  box-shadow: var(--shadow);
+}
+.rel-card:hover { border-color: var(--red); box-shadow: 0 4px 16px rgba(204,17,17,0.1); }
+.rel-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: var(--red-dim); border: 1px solid var(--red-border);
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+  flex-shrink: 0;
+}
+.rel-name { font-size: 13px; font-weight: 600; }
+.rel-desc { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.rel-arrow { margin-left: auto; color: var(--text3); font-size: 16px; }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+  display: none; align-items: center; justify-content: center; z-index: 999;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--surface); border-radius: 14px;
+  width: 480px; max-width: 95vw;
+  box-shadow: var(--shadow-lg); border: 1px solid var(--border);
+}
+.modal-head {
+  padding: 18px 20px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.modal-title { font-size: 15px; font-weight: 700; }
+.modal-close { cursor: pointer; color: var(--text3); font-size: 20px; border: none; background: none; }
+.modal-body { padding: 20px; }
+.modal-foot { padding: 14px 20px; border-top: 1px solid var(--border); display: flex; gap: 8px; justify-content: flex-end; }
+.form-group { margin-bottom: 14px; }
+.form-label { font-size: 11px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: block; }
+.form-input {
+  width: 100%; padding: 9px 12px; border: 1px solid var(--border2);
+  border-radius: 8px; font-family: 'Plus Jakarta Sans'; font-size: 13px;
+  color: var(--text); background: #fff; outline: none; transition: border 0.15s;
+}
+.form-input:focus { border-color: var(--red); }
+.form-select {
+  width: 100%; padding: 9px 12px; border: 1px solid var(--border2);
+  border-radius: 8px; font-family: 'Plus Jakarta Sans'; font-size: 13px;
+  color: var(--text); background: #fff; outline: none;
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* NOTIFICAÇÃO */
+.notif-toast {
+  position: fixed; bottom: 20px; right: 20px;
+  background: var(--red); color: #fff;
+  padding: 12px 20px; border-radius: 10px;
+  font-size: 13px; font-weight: 600;
+  box-shadow: 0 4px 20px rgba(204,17,17,0.4);
+  transform: translateY(80px); opacity: 0;
+  transition: all 0.3s; z-index: 9999;
+}
+.notif-toast.show { transform: translateY(0); opacity: 1; }
+
+/* SEPARATOR */
+.sep { height: 1px; background: var(--border); margin: 16px 0; }
+
+/* EMPTY STATE */
+.empty { text-align: center; padding: 40px; color: var(--text3); }
+.empty-icon { font-size: 36px; margin-bottom: 10px; }
+.empty-text { font-size: 13px; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+/* APONTAMENTOS */
+.apo-row {
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.apo-row:last-child { border-bottom: none; }
+.apo-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red); margin-top: 5px; flex-shrink: 0; }
+.apo-dot.green { background: var(--green); }
+.apo-dot.amber { background: var(--amber); }
+.apo-content { flex: 1; }
+.apo-title { font-size: 13px; font-weight: 600; }
+.apo-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+/* PROGRESS RING */
+.progress-wrap { text-align: center; padding: 10px 0; }
+.progress-num { font-size: 26px; font-weight: 800; font-family: 'JetBrains Mono'; color: var(--red); }
+.progress-label { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+/* INLINE FLEX UTILS */
+.flex { display: flex; }
+.items-center { align-items: center; }
+.gap-8 { gap: 8px; }
+.gap-12 { gap: 12px; }
+.ml-auto { margin-left: auto; }
+.mb-16 { margin-bottom: 16px; }
+.mt-12 { margin-top: 12px; }
+.w-full { width: 100%; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="header-logo">RH</div>
+    <div>
+      <div class="header-title">Painel de Rotina — Assistente de RH</div>
+      <div class="header-sub">Gestão Admissional · Produtividade · Acompanhamento</div>
+    </div>
+  </div>
+  <div class="header-stats">
+    <div class="hstat"><div class="hstat-num" id="stat-total">4</div><div class="hstat-lbl">Candidatos</div></div>
+    <div class="hstat"><div class="hstat-num" id="stat-pendentes">3</div><div class="hstat-lbl">Pendências</div></div>
+    <div class="hstat"><div class="hstat-num" id="stat-concluidos">1</div><div class="hstat-lbl">Concluídos</div></div>
+    <div class="hstat"><div class="hstat-num" id="stat-tarefas">0</div><div class="hstat-lbl">Tarefas Feitas</div></div>
+  </div>
+  <div class="header-date" id="header-date"></div>
+</div>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Menu Principal</div>
+    <button class="nav-item active" onclick="showPage('dashboard')">
+      <span class="icon">📊</span> Dashboard
+    </button>
+    <button class="nav-item" onclick="showPage('rotina')">
+      <span class="icon">✅</span> Rotina Diária
+      <span class="nav-badge" id="badge-rotina">5</span>
+    </button>
+    <button class="nav-item" onclick="showPage('agenda')">
+      <span class="icon">📅</span> Agenda
+    </button>
+    <button class="nav-item" onclick="showPage('candidatos')">
+      <span class="icon">👤</span> Candidatos
+      <span class="nav-badge">4</span>
+    </button>
+    <button class="nav-item" onclick="showPage('mensagens')">
+      <span class="icon">💬</span> Mensagens
+    </button>
+    <button class="nav-item" onclick="showPage('apontamentos')">
+      <span class="icon">📝</span> Apontamentos
+    </button>
+    <button class="nav-item" onclick="showPage('relatorios')">
+      <span class="icon">📈</span> Relatórios
+    </button>
+    <button class="nav-item" onclick="showPage('gestao')">
+      <span class="icon">👔</span> Gestão
+    </button>
+  </div>
+
+  <div class="sidebar-section" style="flex:1; overflow-y:auto;">
+    <div class="sidebar-section-title">Tarefas Rápidas — Hoje</div>
+    <div id="mini-tasks"></div>
+  </div>
+
+  <div class="sidebar-section">
+    <button class="btn btn-red w-full" onclick="openModal('nova-tarefa')">+ Nova Tarefa</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- ===== DASHBOARD ===== -->
+  <div class="page active" id="page-dashboard">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Bom dia! <span>Resumo do Dia</span></div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px;">Acompanhe tudo que precisa de atenção hoje</div>
+      </div>
+      <button class="btn btn-red" onclick="openModal('nova-tarefa')">+ Adicionar Tarefa</button>
+    </div>
+
+    <div class="cards-grid">
+      <div class="card red">
+        <div class="card-icon">⏳</div>
+        <div class="card-num">3</div>
+        <div class="card-label">Aprovações Pendentes</div>
+        <div class="card-bar"><div class="card-bar-fill" style="width:75%;background:var(--red)"></div></div>
+      </div>
+      <div class="card green">
+        <div class="card-icon">✅</div>
+        <div class="card-num" id="dash-feitas">0</div>
+        <div class="card-label">Tarefas Concluídas</div>
+        <div class="card-bar"><div class="card-bar-fill" id="bar-feitas" style="width:0%;background:var(--green)"></div></div>
+      </div>
+      <div class="card amber">
+        <div class="card-icon">📋</div>
+        <div class="card-num">2</div>
+        <div class="card-label">Exames Aguardando</div>
+        <div class="card-bar"><div class="card-bar-fill" style="width:40%;background:var(--amber)"></div></div>
+      </div>
+      <div class="card gray">
+        <div class="card-icon">📄</div>
+        <div class="card-num">1</div>
+        <div class="card-label">Contratos p/ Enviar</div>
+        <div class="card-bar"><div class="card-bar-fill" style="width:25%;background:var(--gray)"></div></div>
+      </div>
+    </div>
+
+    <div class="two-cols">
+      <!-- Candidatos em andamento -->
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title"><div class="dot" style="background:var(--red)"></div> Candidatos em Andamento</div>
+          <button class="panel-action" onclick="showPage('candidatos')">Ver todos</button>
+        </div>
+        <div class="panel-body">
+          <div class="cand-row">
+            <div class="cand-avatar">CM</div>
+            <div style="flex:1">
+              <div class="cand-name">Carlos Mendes</div>
+              <div class="cand-cargo">Analista de TI · Vale Transporte</div>
+              <div class="cand-steps">
+                <div class="cand-step pending"></div>
+                <div class="cand-step"></div>
+                <div class="cand-step"></div>
+              </div>
+            </div>
+            <span class="badge badge-amber">⏳ VT</span>
+          </div>
+          <div class="cand-row">
+            <div class="cand-avatar">FL</div>
+            <div style="flex:1">
+              <div class="cand-name">Fernanda Lima</div>
+              <div class="cand-cargo">Supervisora · Exame Admissional</div>
+              <div class="cand-steps">
+                <div class="cand-step done"></div>
+                <div class="cand-step active"></div>
+                <div class="cand-step"></div>
+              </div>
+            </div>
+            <span class="badge badge-red">📋 Exame</span>
+          </div>
+          <div class="cand-row">
+            <div class="cand-avatar">RA</div>
+            <div style="flex:1">
+              <div class="cand-name">Ricardo Alves</div>
+              <div class="cand-cargo">Logística · Contrato Digital</div>
+              <div class="cand-steps">
+                <div class="cand-step done"></div>
+                <div class="cand-step done"></div>
+                <div class="cand-step active"></div>
+              </div>
+            </div>
+            <span class="badge badge-gray">📄 Contrato</span>
+          </div>
+          <div class="cand-row">
+            <div class="cand-avatar done">JC</div>
+            <div style="flex:1">
+              <div class="cand-name">Juliana Costa</div>
+              <div class="cand-cargo">Adm. · Processo Concluído</div>
+              <div class="cand-steps">
+                <div class="cand-step done"></div>
+                <div class="cand-step done"></div>
+                <div class="cand-step done"></div>
+              </div>
+            </div>
+            <span class="badge badge-green">✓ OK</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Agenda de hoje -->
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title"><div class="dot" style="background:var(--amber)"></div> Agenda de Hoje</div>
+          <button class="panel-action" onclick="showPage('agenda')">Completa</button>
+        </div>
+        <div class="panel-body">
+          <div class="agenda-slot">
+            <div class="agenda-time">08:00</div>
+            <div class="agenda-event gray">
+              <div class="agenda-event-title">Revisão de pendências</div>
+              <div class="agenda-event-sub">Verificar documentos do dia anterior</div>
+            </div>
+          </div>
+          <div class="agenda-slot">
+            <div class="agenda-time">09:30</div>
+            <div class="agenda-event">
+              <div class="agenda-event-title">Aprovação Vale Transporte — Carlos</div>
+              <div class="agenda-event-sub">Verificar valor informado e comprovante</div>
+            </div>
+          </div>
+          <div class="agenda-slot">
+            <div class="agenda-time">10:00</div>
+            <div class="agenda-event amber">
+              <div class="agenda-event-title">Follow-up Exame — Fernanda</div>
+              <div class="agenda-event-sub">Agendado para 14/03 — confirmar comparecimento</div>
+            </div>
+          </div>
+          <div class="agenda-slot">
+            <div class="agenda-time">14:00</div>
+            <div class="agenda-event green">
+              <div class="agenda-event-title">Reunião com Gestão</div>
+              <div class="agenda-event-sub">Status admissional semanal</div>
+            </div>
+          </div>
+          <div class="agenda-slot">
+            <div class="agenda-time">16:30</div>
+            <div class="agenda-event gray">
+              <div class="agenda-event-title">Relatório diário</div>
+              <div class="agenda-event-sub">Enviar resumo ao gestor</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Apontamentos recentes -->
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title"><div class="dot" style="background:var(--green)"></div> Apontamentos Recentes</div>
+        <button class="panel-action" onclick="showPage('apontamentos')">Ver todos</button>
+      </div>
+      <div class="panel-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+          <div class="apo-row">
+            <div class="apo-dot"></div>
+            <div class="apo-content">
+              <div class="apo-title">VT reprovado — valor acima do limite</div>
+              <div class="apo-sub">Carlos Mendes · 12/03 · 09:14</div>
+            </div>
+          </div>
+          <div class="apo-row">
+            <div class="apo-dot green"></div>
+            <div class="apo-content">
+              <div class="apo-title">Exame aprovado e validado</div>
+              <div class="apo-sub">Ricardo Alves · 06/03 · 15:30</div>
+            </div>
+          </div>
+          <div class="apo-row">
+            <div class="apo-dot amber"></div>
+            <div class="apo-content">
+              <div class="apo-title">Candidato não compareceu ao exame</div>
+              <div class="apo-sub">Fernanda Lima · 10/03 · 08:00</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ROTINA DIÁRIA ===== -->
+  <div class="page" id="page-rotina">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Rotina <span>Diária</span></div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px;">Checklist completo das atividades do assistente de RH</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-outline" onclick="openModal('nova-tarefa')">+ Tarefa</button>
+        <button class="btn btn-red" onclick="exportarRotina()">⬇ Exportar</button>
+      </div>
+    </div>
+
+    <div class="two-cols">
+      <div>
+        <!-- Manhã -->
+        <div class="panel mb-16">
+          <div class="panel-head">
+            <div class="panel-title" style="color:var(--red)">🌅 Manhã</div>
+            <span class="badge badge-red" id="prog-manha">0/4</span>
+          </div>
+          <div class="panel-body" id="lista-manha">
+            <div class="rotina-item" data-grupo="manha">
+              <div class="rotina-priority" style="background:var(--red)"></div>
+              <div class="rotina-check" onclick="toggleRotina(this)"></div>
+              <div class="rotina-info">
+                <div class="rotina-title">Verificar e-mails e notificações</div>
+                <div class="rotina-desc">Checar pendências do sistema, e-mails e mensagens</div>
+                <div class="rotina-meta">
+                  <span class="rotina-tag">08:00</span>
+                  <span class="rotina-tag red">Alta prioridade</span>
+                </div>
+              </div>
+            </div>
+            <div class="rotina-item" data-grupo="manha">
+              <div class="rotina-priority" style="background:var(--red)"></div>
+              <div class="rotina-check" onclick="toggleRotina(this)"></div>
+              <div class="rotina-info">
+                <div class="rotina-title">Acompanhar agendamentos de exames</div>
+                <div class="rotina-desc">Confirmar se candidatos receberam e agendaram exame admissional</div>
+                <div class="rotina-meta">
+                  <span class="rotina-tag">08:30</span>
+                  <span class="rotina-tag red">Alta prioridade</span>
+                  <span class="rotina-tag amber">Exames</span>
+                </div>
+              </div>
+            </div>
+            <div class="rotina-item" data-grupo="manha">
+              <div class="rotina-priority" style="background:var(--amber)"></div>
+              <div class="rotina-check" onclick="toggleRotina(this)"></div>
+              <div class="rotina-info">
+                <div class="rotina-title">Revisar vales-transporte pendentes</div>
+                <div class="rotina-desc">Verificar valores informados e aprovar ou reprovar com justificativa</div>
+                <div class="rotina-meta">
+                  <span class="rotina-tag">09:00</span>
+                  <span class="rotina-tag amber">Vale Transporte</span>
+                </div>
+              </div>
+            </div>
+            <div class="rotina-item" data-grupo="manha">
+              <div class="rotina-priority" style="background:var(--amber)"></div>
+              <div class="rotina-check" onclick="toggleRotina(this)"></div>
+              <div class="rotina-info">
+                <div class="rotina-title">Follow-up com candidatos em processo</div>
+                <div class="rotina-desc">Enviar mensagens de acompanhamento para candidatos com pendências</div>
+                <div class="rotina-meta">
+                  <span class="rotina-tag">09:30</span>
+                  <span class="rotina-tag amber">Follow-up</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Documentação -->
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title" style="color:var(--gray)">📎 Documentação</div>
+            <span class="badge badge-gray" id="prog-doc">0/3</span>
+          </div>
+          <div class="panel-body" id="lista-doc">
+            <div class="rotina-item" data-grupo="doc">
+              <div class="rotina-priority" style="background:var(--gray)"></div>
+              <div class="rotina-check" onclick="toggleRotina(this)"></div>
+              <div class="rotina-info">
+                <div class="rotina-title">Validar documentos anexados</div>
+                <div class="rotina-desc">Conferir se os documentos estão legíveis e dentro do prazo</div>
+                <div class="rotina-meta"><span class="rotina-tag">Contínuo</span></div>
+              </div>
+            </div>
+            <div class="rotina-item" data-grupo="doc">
+              <div class="rotina-priority" style="background:var(--gray)"></div>
+              <div class="rotina-check" onclick="toggleRotina(this)"></div>
+              <div class="rotina-info">
+                <div class="rotina-title">Verificar status dos contratos digitais</div>
+                <div class="rotina-desc">Checar quais contratos foram enviados, abertos e assinados</div>
+                <div class="rotina-meta"><span class="rotina-tag">Contínuo</span><span class="rotina-tag">Contratos</span></div>
+              </div>
+            </div>
+            <div class="rotina-item" data-grupo="doc">
+              <div class="rotina-priority" style="background:var(--gray)"></div>
+              <div class="rotina-check" onclick="toggleRotina(this)"></div>
+              <div class="rotina-info">
+                <div class="rotina-title">Arquivar documentações aprovadas</div>
+                <div class="rotina-desc">Organizar arquivos dos candidatos aprovados na plataforma</div>
+                <div class="rotina-meta"><span class="rotina-tag">Fim do dia</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <!-- Tarde -->
+        <div class="panel mb-16">
+          <div class="panel-head">
+            <div class="panel-title" style="color:var(--amber)">🌤 Tarde</div>
+            <span class="badge badge-amber" id="prog-tarde">0/4</span>
+          </div>
+          <div class="panel-body" id="lista-tarde">
+            <div class="rotina-item" data-grupo="tarde">
+              <div class="rotina-priority" style="background:var(--red)"></div>
+              <div class="rotina-check" onclick="toggleRotina(this)"></div>
+              <div class="rotina-info">
+                <div class="rotina-title">Revisar exames anexados</div>
+                <div class="rotina-desc">Verificar resultados de exames admissionais e dar andamento</div>
+                <div class="rotina-meta">
+                  <span class="rotina-tag">13:00</span>
+                  <span class="rotina-tag red">Alta prioridade</span>
+                </div>
+              </div>
+            </div>
+            <div class="rotina-item" data-grupo="tarde">
+              <div class="rotina-priority" style="background:var(--amber)"></div>
+              <div class="rotina-check" onclick="toggleRotina(this)"></div>
+              <div class="rotina-info">
+                <div class="rotina-title">Atualizar status dos candidatos</div>
+                <div class="rotina-desc">Atualizar planilha/sistema com o andamento de cada admissão</div>
+                <div class="rotina-meta"><span class="rotina-tag">14:00</span></div>
+              </div>
+            </div>
+            <div class="rotina-item" data-grupo="tarde">
+              <div class="rotina-priority" style="background:var(--green)"></div>
+              <div class="rotina-check" onclick="toggleRotina(this)"></div>
+              <div class="rotina-info">
+                <div class="rotina-title">Contato com gestores</div>
+                <div class="rotina-desc">Informar gestores sobre candidatos prontos para integração</div>
+                <div class="rotina-meta">
+                  <span class="rotina-tag">15:00</span>
+                  <span class="rotina-tag green">Gestão</span>
+                </div>
+              </div>
+            </div>
+            <div class="rotina-item" data-grupo="tarde">
+              <div class="rotina-priority" style="background:var(--green)"></div>
+              <div class="rotina-check" onclick="toggleRotina(this)"></div>
+              <div class="rotina-info">
+                <div class="rotina-title">Registrar apontamentos do dia</div>
+                <div class="rotina-desc">Documentar ocorrências, reprovações e situações fora do padrão</div>
+                <div class="rotina-meta"><span class="rotina-tag">16:00</span><span class="rotina-tag green">Apontamentos</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Encerramento -->
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title" style="color:var(--green)">🌙 Encerramento</div>
+            <span class="badge badge-green" id="prog-encer">0/3</span>
+          </div>
+          <div class="panel-body" id="lista-encer">
+            <div class="rotina-item" data-grupo="encer">
+              <div class="rotina-priority" style="background:var(--red)"></div>
+              <div class="rotina-check" onclick="toggleRotina(this)"></div>
+              <div class="rotina-info">
+                <div class="rotina-title">Enviar relatório diário à gestão</div>
+                <div class="rotina-desc">Resumo de atividades, pendências e conclusões do dia</div>
+                <div class="rotina-meta"><span class="rotina-tag">16:30</span><span class="rotina-tag red">Obrigatório</span></div>
+              </div>
+            </div>
+            <div class="rotina-item" data-grupo="encer">
+              <div class="rotina-priority" style="background:var(--amber)"></div>
+              <div class="rotina-check" onclick="toggleRotina(this)"></div>
+              <div class="rotina-info">
+                <div class="rotina-title">Planejar agenda do dia seguinte</div>
+                <div class="rotina-desc">Organizar prioridades e compromissos para o próximo dia</div>
+                <div class="rotina-meta"><span class="rotina-tag">17:00</span></div>
+              </div>
+            </div>
+            <div class="rotina-item" data-grupo="encer">
+              <div class="rotina-priority" style="background:var(--green)"></div>
+              <div class="rotina-check" onclick="toggleRotina(this)"></div>
+              <div class="rotina-info">
+                <div class="rotina-title">Revisão final de pendências</div>
+                <div class="rotina-desc">Garantir que nada urgente ficou sem resposta</div>
+                <div class="rotina-meta"><span class="rotina-tag">17:30</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== AGENDA ===== -->
+  <div class="page" id="page-agenda">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Agenda <span>Semanal</span></div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px;">Planejamento da semana de trabalho</div>
+      </div>
+      <button class="btn btn-red" onclick="openModal('novo-evento')">+ Novo Evento</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;">
+      <!-- Seg -->
+      <div class="panel">
+        <div class="panel-head" style="background:var(--red-dim);">
+          <div class="panel-title" style="color:var(--red)">Segunda-feira</div>
+        </div>
+        <div class="panel-body">
+          <div class="agenda-slot"><div class="agenda-time">08:00</div><div class="agenda-event gray"><div class="agenda-event-title">Revisão diária</div></div></div>
+          <div class="agenda-slot"><div class="agenda-time">09:30</div><div class="agenda-event"><div class="agenda-event-title">Aprovações VT</div><div class="agenda-event-sub">Carlos Mendes</div></div></div>
+          <div class="agenda-slot"><div class="agenda-time">14:00</div><div class="agenda-event amber"><div class="agenda-event-title">Follow-up exames</div></div></div>
+        </div>
+      </div>
+      <!-- Ter -->
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title">Terça-feira</div></div>
+        <div class="panel-body">
+          <div class="agenda-slot"><div class="agenda-time">08:00</div><div class="agenda-event gray"><div class="agenda-event-title">Revisão diária</div></div></div>
+          <div class="agenda-slot"><div class="agenda-time">10:00</div><div class="agenda-event green"><div class="agenda-event-title">Reunião RH</div><div class="agenda-event-sub">Alinhamento semanal</div></div></div>
+          <div class="agenda-slot"><div class="agenda-time">15:00</div><div class="agenda-event"><div class="agenda-event-title">Contratos digitais</div></div></div>
+        </div>
+      </div>
+      <!-- Qua -->
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title">Quarta-feira</div></div>
+        <div class="panel-body">
+          <div class="agenda-slot"><div class="agenda-time">08:00</div><div class="agenda-event gray"><div class="agenda-event-title">Revisão diária</div></div></div>
+          <div class="agenda-slot"><div class="agenda-time">09:00</div><div class="agenda-event amber"><div class="agenda-event-title">Exame admissional</div><div class="agenda-event-sub">Fernanda Lima — confirmado</div></div></div>
+          <div class="agenda-slot"><div class="agenda-time">14:00</div><div class="agenda-event green"><div class="agenda-event-title">Reunião Gestão</div></div></div>
+        </div>
+      </div>
+      <!-- Qui -->
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title">Quinta-feira</div></div>
+        <div class="panel-body">
+          <div class="agenda-slot"><div class="agenda-time">08:00</div><div class="agenda-event gray"><div class="agenda-event-title">Revisão diária</div></div></div>
+          <div class="agenda-slot"><div class="agenda-time">11:00</div><div class="agenda-event"><div class="agenda-event-title">Aprovação documentos</div></div></div>
+          <div class="agenda-slot"><div class="agenda-time">16:00</div><div class="agenda-event amber"><div class="agenda-event-title">Relatório semanal</div></div></div>
+        </div>
+      </div>
+      <!-- Sex -->
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title">Sexta-feira</div></div>
+        <div class="panel-body">
+          <div class="agenda-slot"><div class="agenda-time">08:00</div><div class="agenda-event gray"><div class="agenda-event-title">Revisão diária</div></div></div>
+          <div class="agenda-slot"><div class="agenda-time">10:00</div><div class="agenda-event green"><div class="agenda-event-title">Fechamento semanal</div><div class="agenda-event-sub">Status todos os candidatos</div></div></div>
+          <div class="agenda-slot"><div class="agenda-time">15:00</div><div class="agenda-event"><div class="agenda-event-title">Planejamento semana</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CANDIDATOS ===== -->
+  <div class="page" id="page-candidatos">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Candidatos <span>em Processo</span></div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px;">Acompanhamento detalhado de cada etapa admissional</div>
+      </div>
+      <button class="btn btn-red" onclick="openModal('novo-candidato')">+ Candidato</button>
+    </div>
+
+    <div class="panel">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Candidato</th>
+            <th>Cargo</th>
+            <th>Vale Transporte</th>
+            <th>Exame</th>
+            <th>Contrato</th>
+            <th>Status Geral</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div style="display:flex;align-items:center;gap:8px;"><div class="cand-avatar" style="width:28px;height:28px;font-size:10px;">CM</div> Carlos Mendes</div></td>
+            <td style="color:var(--text2)">Analista de TI</td>
+            <td><span class="badge badge-amber">⏳ Aguardando</span></td>
+            <td><span class="badge badge-gray">— Pendente</span></td>
+            <td><span class="badge badge-gray">— Pendente</span></td>
+            <td><span class="badge badge-amber">Em andamento</span></td>
+            <td><button class="btn btn-red btn-sm" onclick="openModal('aprovacao')">Revisar VT</button></td>
+          </tr>
+          <tr>
+            <td><div style="display:flex;align-items:center;gap:8px;"><div class="cand-avatar" style="width:28px;height:28px;font-size:10px;">FL</div> Fernanda Lima</div></td>
+            <td style="color:var(--text2)">Supervisora</td>
+            <td><span class="badge badge-green">✓ Aprovado</span></td>
+            <td><span class="badge badge-red">📋 Aguard. Anexo</span></td>
+            <td><span class="badge badge-gray">— Pendente</span></td>
+            <td><span class="badge badge-amber">Em andamento</span></td>
+            <td><button class="btn btn-outline btn-sm">Follow-up</button></td>
+          </tr>
+          <tr>
+            <td><div style="display:flex;align-items:center;gap:8px;"><div class="cand-avatar" style="width:28px;height:28px;font-size:10px;">RA</div> Ricardo Alves</div></td>
+            <td style="color:var(--text2)">Logística</td>
+            <td><span class="badge badge-green">✓ Aprovado</span></td>
+            <td><span class="badge badge-green">✓ Aprovado</span></td>
+            <td><span class="badge badge-red">📄 Env. p/ assinar</span></td>
+            <td><span class="badge badge-amber">Em andamento</span></td>
+            <td><button class="btn btn-outline btn-sm">Ver contrato</button></td>
+          </tr>
+          <tr>
+            <td><div style="display:flex;align-items:center;gap:8px;"><div class="cand-avatar done" style="width:28px;height:28px;font-size:10px;">JC</div> Juliana Costa</div></td>
+            <td style="color:var(--text2)">Adm.</td>
+            <td><span class="badge badge-green">✓ Aprovado</span></td>
+            <td><span class="badge badge-green">✓ Aprovado</span></td>
+            <td><span class="badge badge-green">✓ Assinado</span></td>
+            <td><span class="badge badge-green">✓ Concluído</span></td>
+            <td><button class="btn btn-outline btn-sm">Histórico</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== MENSAGENS ===== -->
+  <div class="page" id="page-mensagens">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Mensagens <span>& Follow-up</span></div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px;">Comunicação com candidatos e gestores</div>
+      </div>
+      <button class="btn btn-red" onclick="openModal('nova-mensagem')">+ Nova Mensagem</button>
+    </div>
+    <div class="two-cols">
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title"><div class="dot" style="background:var(--red)"></div> Mensagens Recentes</div></div>
+        <div class="panel-body" id="lista-mensagens">
+          <div class="msg-box">
+            <div class="msg-head"><span class="msg-de">Carlos Mendes</span><span class="msg-hora">09:14</span></div>
+            <div class="msg-texto">Olá, acabei de preencher o vale transporte. O valor que preenchi foi R$ 8,40/dia, que é o valor da passagem.</div>
+          </div>
+          <div class="msg-box">
+            <div class="msg-head"><span class="msg-de">Você (RH)</span><span class="msg-hora">09:30</span></div>
+            <div class="msg-texto">Olá Carlos! Recebi sua solicitação. Vou verificar o valor informado e retorno em breve com a confirmação.</div>
+          </div>
+          <div class="msg-box">
+            <div class="msg-head"><span class="msg-de">Fernanda Lima</span><span class="msg-hora">10:02</span></div>
+            <div class="msg-texto">Bom dia! Ainda não recebi o agendamento do exame. Pode verificar?</div>
+          </div>
+          <div class="msg-box">
+            <div class="msg-head"><span class="msg-de">Sistema</span><span class="msg-hora">10:05</span></div>
+            <div class="msg-texto">Exame de Fernanda Lima agendado para 14/03/2025 às 07:30 — Clínica São Paulo.</div>
+          </div>
+        </div>
+        <div style="padding:0 18px 16px;">
+          <div class="msg-input-row">
+            <input class="msg-input" id="nova-msg-input" placeholder="Digite sua mensagem..." onkeydown="if(event.key==='Enter')enviarMensagem()">
+            <button class="btn btn-red" onclick="enviarMensagem()">Enviar</button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="panel mb-16">
+          <div class="panel-head"><div class="panel-title"><div class="dot" style="background:var(--amber)"></div> Follow-ups Pendentes</div></div>
+          <div class="panel-body">
+            <div class="rotina-item">
+              <div class="rotina-check" onclick="toggleRotina(this)"></div>
+              <div class="rotina-info">
+                <div class="rotina-title">Fernanda Lima — confirmação de exame</div>
+                <div class="rotina-desc">Confirmar se compareceu ao exame de 14/03</div>
+                <div class="rotina-meta"><span class="rotina-tag amber">Urgente</span><span class="rotina-tag">Amanhã</span></div>
+              </div>
+            </div>
+            <div class="rotina-item">
+              <div class="rotina-check" onclick="toggleRotina(this)"></div>
+              <div class="rotina-info">
+                <div class="rotina-title">Ricardo Alves — assinatura de contrato</div>
+                <div class="rotina-desc">Verificar se o contrato digital foi assinado</div>
+                <div class="rotina-meta"><span class="rotina-tag">Em 2 dias</span></div>
+              </div>
+            </div>
+            <div class="rotina-item">
+              <div class="rotina-check" onclick="toggleRotina(this)"></div>
+              <div class="rotina-info">
+                <div class="rotina-title">Carlos Mendes — reenvio de comprovante VT</div>
+                <div class="rotina-desc">Solicitar comprovante com valor correto</div>
+                <div class="rotina-meta"><span class="rotina-tag red">Hoje</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title"><div class="dot" style="background:var(--green)"></div> Mensagens para Gestão</div></div>
+          <div class="panel-body">
+            <div class="msg-box">
+              <div class="msg-head"><span class="msg-de" style="color:var(--green)">Você (RH → Gestão)</span><span class="msg-hora">08:00</span></div>
+              <div class="msg-texto">Bom dia! Resumo diário: 1 candidato aprovado (Juliana Costa), 2 aguardando exame, 1 com VT pendente.</div>
+            </div>
+            <button class="btn btn-outline w-full mt-12" onclick="openModal('nova-mensagem')">Enviar relatório para gestão</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== APONTAMENTOS ===== -->
+  <div class="page" id="page-apontamentos">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Apontamentos <span>& Ocorrências</span></div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px;">Registro de situações fora do padrão e ocorrências</div>
+      </div>
+      <button class="btn btn-red" onclick="openModal('novo-apontamento')">+ Registrar</button>
+    </div>
+
+    <div class="two-cols">
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title"><div class="dot" style="background:var(--red)"></div> Apontamentos do Mês</div></div>
+        <div class="panel-body">
+          <div class="apo-row">
+            <div class="apo-dot"></div>
+            <div class="apo-content">
+              <div class="apo-title">Vale Transporte reprovado — valor acima do limite</div>
+              <div class="apo-sub">Carlos Mendes · Analista de TI · 12/03 09:14 · <span style="color:var(--red);font-weight:600">Reprovado</span></div>
+            </div>
+          </div>
+          <div class="apo-row">
+            <div class="apo-dot amber"></div>
+            <div class="apo-content">
+              <div class="apo-title">Candidato não compareceu ao exame agendado</div>
+              <div class="apo-sub">Fernanda Lima · Supervisora · 10/03 08:00 · <span style="color:var(--amber);font-weight:600">Em acompanhamento</span></div>
+            </div>
+          </div>
+          <div class="apo-row">
+            <div class="apo-dot green"></div>
+            <div class="apo-content">
+              <div class="apo-title">Exame admissional aprovado dentro do prazo</div>
+              <div class="apo-sub">Ricardo Alves · Logística · 06/03 15:30 · <span style="color:var(--green);font-weight:600">Aprovado</span></div>
+            </div>
+          </div>
+          <div class="apo-row">
+            <div class="apo-dot green"></div>
+            <div class="apo-content">
+              <div class="apo-title">Processo admissional concluído com sucesso</div>
+              <div class="apo-sub">Juliana Costa · Adm. · 01/03 11:00 · <span style="color:var(--green);font-weight:600">Concluído</span></div>
+            </div>
+          </div>
+          <div class="apo-row">
+            <div class="apo-dot amber"></div>
+            <div class="apo-content">
+              <div class="apo-title">Documento ilegível enviado pelo candidato</div>
+              <div class="apo-sub">Carlos Mendes · Analista de TI · 11/03 14:20 · <span style="color:var(--amber);font-weight:600">Solicitado reenvio</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="panel mb-16">
+          <div class="panel-head"><div class="panel-title">📊 Resumo de Apontamentos</div></div>
+          <div class="panel-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div style="text-align:center;padding:16px;background:var(--red-dim);border-radius:10px;border:1px solid var(--red-border);">
+                <div style="font-size:26px;font-weight:800;color:var(--red);font-family:'JetBrains Mono'">2</div>
+                <div style="font-size:11px;color:var(--text3)">Reprovações</div>
+              </div>
+              <div style="text-align:center;padding:16px;background:var(--amber-dim);border-radius:10px;border:1px solid #f5d28a;">
+                <div style="font-size:26px;font-weight:800;color:var(--amber);font-family:'JetBrains Mono'">2</div>
+                <div style="font-size:11px;color:var(--text3)">Em acomp.</div>
+              </div>
+              <div style="text-align:center;padding:16px;background:var(--green-dim);border-radius:10px;border:1px solid #a7d7aa;">
+                <div style="font-size:26px;font-weight:800;color:var(--green);font-family:'JetBrains Mono'">2</div>
+                <div style="font-size:11px;color:var(--text3)">Aprovados</div>
+              </div>
+              <div style="text-align:center;padding:16px;background:var(--gray-dim);border-radius:10px;border:1px solid var(--border2);">
+                <div style="font-size:26px;font-weight:800;color:var(--gray);font-family:'JetBrains Mono'">6</div>
+                <div style="font-size:11px;color:var(--text3)">Total</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title">✏️ Novo Apontamento</div></div>
+          <div class="panel-body">
+            <div class="form-group">
+              <label class="form-label">Candidato</label>
+              <select class="form-select"><option>Carlos Mendes</option><option>Fernanda Lima</option><option>Ricardo Alves</option><option>Juliana Costa</option></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tipo</label>
+              <select class="form-select"><option>Reprovação</option><option>Ocorrência</option><option>Observação</option><option>Aprovação</option></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Descrição</label>
+              <input class="form-input" placeholder="Descreva o apontamento..." id="apo-desc">
+            </div>
+            <button class="btn btn-red w-full" onclick="registrarApontamento()">Registrar Apontamento</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== RELATÓRIOS ===== -->
+  <div class="page" id="page-relatorios">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Relatórios <span>& Produtividade</span></div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px;">Relatórios para gestão e acompanhamento de desempenho</div>
+      </div>
+    </div>
+
+    <div class="three-cols">
+      <div class="rel-card" onclick="gerarRelatorio('diario')">
+        <div class="rel-icon">📋</div>
+        <div>
+          <div class="rel-name">Relatório Diário</div>
+          <div class="rel-desc">Resumo das atividades do dia para gestão</div>
+        </div>
+        <div class="rel-arrow">→</div>
+      </div>
+      <div class="rel-card" onclick="gerarRelatorio('candidatos')">
+        <div class="rel-icon">👤</div>
+        <div>
+          <div class="rel-name">Status dos Candidatos</div>
+          <div class="rel-desc">Situação detalhada de cada processo admissional</div>
+        </div>
+        <div class="rel-arrow">→</div>
+      </div>
+      <div class="rel-card" onclick="gerarRelatorio('apontamentos')">
+        <div class="rel-icon">📝</div>
+        <div>
+          <div class="rel-name">Apontamentos</div>
+          <div class="rel-desc">Ocorrências e observações registradas no período</div>
+        </div>
+        <div class="rel-arrow">→</div>
+      </div>
+      <div class="rel-card" onclick="gerarRelatorio('vt')">
+        <div class="rel-icon">🚌</div>
+        <div>
+          <div class="rel-name">Vale Transporte</div>
+          <div class="rel-desc">Valores aprovados, reprovados e pendentes</div>
+        </div>
+        <div class="rel-arrow">→</div>
+      </div>
+      <div class="rel-card" onclick="gerarRelatorio('exames')">
+        <div class="rel-icon">🏥</div>
+        <div>
+          <div class="rel-name">Exames Admissionais</div>
+          <div class="rel-desc">Status de agendamentos e resultados</div>
+        </div>
+        <div class="rel-arrow">→</div>
+      </div>
+      <div class="rel-card" onclick="gerarRelatorio('contratos')">
+        <div class="rel-icon">📄</div>
+        <div>
+          <div class="rel-name">Contratos Digitais</div>
+          <div class="rel-desc">Contratos enviados, abertos e assinados</div>
+        </div>
+        <div class="rel-arrow">→</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><div class="panel-title"><div class="dot" style="background:var(--red)"></div> Indicadores de Produtividade</div></div>
+      <div class="panel-body">
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;">
+          <div style="text-align:center;">
+            <div style="font-size:30px;font-weight:800;color:var(--red);font-family:'JetBrains Mono'">4</div>
+            <div style="font-size:11px;color:var(--text3)">Candidatos ativos</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:30px;font-weight:800;color:var(--green);font-family:'JetBrains Mono'">1</div>
+            <div style="font-size:11px;color:var(--text3)">Concluídos mês</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:30px;font-weight:800;color:var(--amber);font-family:'JetBrains Mono'">3</div>
+            <div style="font-size:11px;color:var(--text3)">Aprox. pendentes</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:30px;font-weight:800;color:var(--gray);font-family:'JetBrains Mono'">12</div>
+            <div style="font-size:11px;color:var(--text3)">Docs verificados</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:30px;font-weight:800;color:var(--red);font-family:'JetBrains Mono'" id="prod-tarefas">0%</div>
+            <div style="font-size:11px;color:var(--text3)">Tarefas concluídas</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== GESTÃO ===== -->
+  <div class="page" id="page-gestao">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Mensagens para <span>Gestão</span></div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px;">Comunicados, status e relatórios enviados aos gestores</div>
+      </div>
+      <button class="btn btn-red" onclick="openModal('nova-mensagem')">+ Novo Comunicado</button>
+    </div>
+
+    <div class="two-cols">
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title"><div class="dot" style="background:var(--green)"></div> Comunicados Enviados</div></div>
+        <div class="panel-body">
+          <div class="msg-box">
+            <div class="msg-head"><span class="msg-de" style="color:var(--green)">Para: Gestão Geral</span><span class="msg-hora">13/03 08:00</span></div>
+            <div class="msg-texto"><strong>Resumo Diário:</strong> Juliana Costa finalizou o processo admissional. Carlos Mendes aguarda validação do VT. Fernanda Lima tem exame em 14/03. Ricardo Alves aguarda assinatura de contrato.</div>
+          </div>
+          <div class="msg-box">
+            <div class="msg-head"><span class="msg-de" style="color:var(--green)">Para: Gestor TI</span><span class="msg-hora">12/03 17:00</span></div>
+            <div class="msg-texto">Carlos Mendes está em processo admissional. VT em revisão. Previsão de conclusão: 18/03.</div>
+          </div>
+          <div class="msg-box">
+            <div class="msg-head"><span class="msg-de" style="color:var(--green)">Para: Gestão Geral</span><span class="msg-hora">10/03 16:30</span></div>
+            <div class="msg-texto"><strong>Alerta:</strong> Fernanda Lima não compareceu ao exame agendado. Novo agendamento realizado para 14/03.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title"><div class="dot" style="background:var(--red)"></div> Novo Comunicado para Gestão</div></div>
+        <div class="panel-body">
+          <div class="form-group">
+            <label class="form-label">Destinatário</label>
+            <select class="form-select">
+              <option>Gestão Geral</option>
+              <option>Gestor TI</option>
+              <option>Gestor Vendas</option>
+              <option>Gestor Logística</option>
+              <option>Gestor Administrativo</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Assunto</label>
+            <input class="form-input" placeholder="Ex: Resumo diário admissional..." id="gest-assunto">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mensagem</label>
+            <textarea class="form-input" rows="5" placeholder="Digite o comunicado para a gestão..." id="gest-msg" style="resize:vertical"></textarea>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-red" style="flex:1" onclick="enviarGestao()">Enviar Comunicado</button>
+            <button class="btn btn-outline" onclick="gerarAutomatico()">📋 Gerar automático</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- MODALS -->
+<!-- Nova Tarefa -->
+<div class="modal-overlay" id="modal-nova-tarefa">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">Nova Tarefa</div>
+      <button class="modal-close" onclick="closeModal('nova-tarefa')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Título da Tarefa</label>
+        <input class="form-input" id="tarefa-titulo" placeholder="Ex: Aprovar VT do Carlos Mendes">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Descrição</label>
+        <input class="form-input" id="tarefa-desc" placeholder="Detalhes da tarefa...">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Período</label>
+          <select class="form-select" id="tarefa-grupo">
+            <option value="manha">Manhã</option>
+            <option value="tarde">Tarde</option>
+            <option value="encer">Encerramento</option>
+            <option value="doc">Documentação</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Horário</label>
+          <input class="form-input" id="tarefa-hora" type="time" value="09:00">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Prioridade</label>
+        <select class="form-select" id="tarefa-prioridade">
+          <option value="red">Alta</option>
+          <option value="amber">Média</option>
+          <option value="green">Baixa</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('nova-tarefa')">Cancelar</button>
+      <button class="btn btn-red" onclick="adicionarTarefa()">Adicionar Tarefa</button>
+    </div>
+  </div>
+</div>
+
+<!-- Aprovação VT -->
+<div class="modal-overlay" id="modal-aprovacao">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">Revisão — Vale Transporte</div>
+      <button class="modal-close" onclick="closeModal('aprovacao')">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--red-dim);border:1px solid var(--red-border);border-radius:10px;padding:14px;margin-bottom:14px;">
+        <div style="font-size:12px;color:var(--text3);margin-bottom:4px;">Candidato</div>
+        <div style="font-size:15px;font-weight:700;">Carlos Mendes — Analista de TI</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:4px;">Valor informado: <strong style="color:var(--red)">R$ 8,40/dia</strong> · Anexo: comprovante_vt.pdf</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Observação (opcional)</label>
+        <input class="form-input" id="vt-obs" placeholder="Ex: Valor dentro do limite. Aprovado.">
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('aprovacao')">Cancelar</button>
+      <button class="btn" style="background:#ef4444;color:#fff;" onclick="reprovarVT()">✗ Reprovar</button>
+      <button class="btn btn-red" onclick="aprovarVT()">✓ Aprovar VT</button>
+    </div>
+  </div>
+</div>
+
+<!-- Nova Mensagem -->
+<div class="modal-overlay" id="modal-nova-mensagem">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">Nova Mensagem / Comunicado</div>
+      <button class="modal-close" onclick="closeModal('nova-mensagem')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Para</label>
+        <select class="form-select"><option>Carlos Mendes</option><option>Fernanda Lima</option><option>Ricardo Alves</option><option>Gestão Geral</option></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mensagem</label>
+        <textarea class="form-input" rows="4" placeholder="Digite a mensagem..."></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('nova-mensagem')">Cancelar</button>
+      <button class="btn btn-red" onclick="closeModal('nova-mensagem');toast('Mensagem enviada!')">Enviar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Novo Apontamento -->
+<div class="modal-overlay" id="modal-novo-apontamento">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">Registrar Apontamento</div>
+      <button class="modal-close" onclick="closeModal('novo-apontamento')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Candidato</label>
+        <select class="form-select"><option>Carlos Mendes</option><option>Fernanda Lima</option><option>Ricardo Alves</option><option>Juliana Costa</option></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tipo</label>
+        <select class="form-select"><option>Reprovação</option><option>Ocorrência</option><option>Observação</option><option>Aprovação</option></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Descrição</label>
+        <textarea class="form-input" rows="3" placeholder="Descreva o apontamento..."></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('novo-apontamento')">Cancelar</button>
+      <button class="btn btn-red" onclick="closeModal('novo-apontamento');toast('Apontamento registrado!')">Registrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="notif-toast" id="toast"></div>
+
+<script>
+// DATE
+const now = new Date();
+const opts = { weekday:'long', day:'2-digit', month:'long', year:'numeric' };
+document.getElementById('header-date').textContent = now.toLocaleDateString('pt-BR', opts);
+
+// NAV
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+// MODALS
+function openModal(id) {
+  document.getElementById('modal-' + id).classList.add('open');
+}
+function closeModal(id) {
+  document.getElementById('modal-' + id).classList.remove('open');
+}
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+});
+
+// TOAST
+function toast(msg, dur = 2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), dur);
+}
+
+// ROTINA CHECKLIST
+const grupoCounts = { manha: 0, tarde: 0, doc: 0, encer: 0 };
+const grupoTotal = { manha: 4, tarde: 4, doc: 3, encer: 3 };
+let totalFeitas = 0;
+const totalTarefas = 14;
+
+function toggleRotina(el) {
+  const isDone = el.classList.contains('done');
+  el.classList.toggle('done');
+  el.textContent = isDone ? '' : '✓';
+  const item = el.closest('.rotina-item, .mini-task');
+  const titles = item.querySelectorAll('.rotina-title, .mini-task-text');
+  titles.forEach(t => t.classList.toggle('done', !isDone));
+
+  const grupo = item.dataset.grupo;
+  if (grupo) {
+    grupoCounts[grupo] += isDone ? -1 : 1;
+    atualizarProgresso();
+  }
+  totalFeitas += isDone ? -1 : 1;
+  atualizarStats();
+}
+
+function atualizarProgresso() {
+  ['manha','tarde','doc','encer'].forEach(g => {
+    const badge = document.getElementById('prog-' + g);
+    if (badge) badge.textContent = grupoCounts[g] + '/' + grupoTotal[g];
+  });
+  const badge = document.getElementById('badge-rotina');
+  const pendentes = totalTarefas - totalFeitas;
+  if (badge) badge.textContent = pendentes > 0 ? pendentes : '✓';
+}
+
+function atualizarStats() {
+  document.getElementById('dash-feitas').textContent = totalFeitas;
+  document.getElementById('stat-tarefas').textContent = totalFeitas;
+  const pct = Math.round((totalFeitas / totalTarefas) * 100);
+  document.getElementById('bar-feitas').style.width = pct + '%';
+  const prod = document.getElementById('prod-tarefas');
+  if (prod) prod.textContent = pct + '%';
+}
+
+// MINI TASKS SIDEBAR
+const miniTasks = [
+  { texto: 'Aprovar VT — Carlos', hora: '09:00' },
+  { texto: 'Follow-up Fernanda', hora: '10:00' },
+  { texto: 'Reunião gestão', hora: '14:00' },
+  { texto: 'Relatório diário', hora: '16:30' },
+  { texto: 'Planejar amanhã', hora: '17:00' },
+];
+const miniContainer = document.getElementById('mini-tasks');
+miniTasks.forEach(t => {
+  const div = document.createElement('div');
+  div.className = 'mini-task';
+  div.innerHTML = `
+    <div class="mini-check" onclick="toggleMini(this)"></div>
+    <span class="mini-task-text">${t.texto}</span>
+    <span class="mini-task-time">${t.hora}</span>
+  `;
+  miniContainer.appendChild(div);
+});
+
+function toggleMini(el) {
+  const isDone = el.classList.contains('done');
+  el.classList.toggle('done');
+  el.textContent = isDone ? '' : '✓';
+  const text = el.nextElementSibling;
+  text.classList.toggle('done', !isDone);
+}
+
+// ADICIONAR TAREFA
+function adicionarTarefa() {
+  const titulo = document.getElementById('tarefa-titulo').value.trim();
+  if (!titulo) { toast('Informe o título da tarefa!'); return; }
+  const desc = document.getElementById('tarefa-desc').value;
+  const grupo = document.getElementById('tarefa-grupo').value;
+  const hora = document.getElementById('tarefa-hora').value;
+  const prioridade = document.getElementById('tarefa-prioridade').value;
+  const cores = { red: 'var(--red)', amber: 'var(--amber)', green: 'var(--green)' };
+  const tags = { red: 'red', amber: 'amber', green: 'green' };
+  const labels = { red: 'Alta prioridade', amber: 'Média prioridade', green: 'Baixa prioridade' };
+
+  const lista = document.getElementById('lista-' + grupo);
+  if (!lista) return;
+
+  const div = document.createElement('div');
+  div.className = 'rotina-item';
+  div.dataset.grupo = grupo;
+  div.innerHTML = `
+    <div class="rotina-priority" style="background:${cores[prioridade]}"></div>
+    <div class="rotina-check" onclick="toggleRotina(this)"></div>
+    <div class="rotina-info">
+      <div class="rotina-title">${titulo}</div>
+      ${desc ? `<div class="rotina-desc">${desc}</div>` : ''}
+      <div class="rotina-meta">
+        <span class="rotina-tag">${hora}</span>
+        <span class="rotina-tag ${tags[prioridade]}">${labels[prioridade]}</span>
+      </div>
+    </div>`;
+  lista.appendChild(div);
+  grupoTotal[grupo]++;
+  atualizarProgresso();
+  closeModal('nova-tarefa');
+  toast('Tarefa adicionada com sucesso!');
+  document.getElementById('tarefa-titulo').value = '';
+  document.getElementById('tarefa-desc').value = '';
+}
+
+// MENSAGENS
+function enviarMensagem() {
+  const input = document.getElementById('nova-msg-input');
+  const texto = input.value.trim();
+  if (!texto) return;
+  const lista = document.getElementById('lista-mensagens');
+  const hora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  const div = document.createElement('div');
+  div.className = 'msg-box';
+  div.innerHTML = `<div class="msg-head"><span class="msg-de">Você (RH)</span><span class="msg-hora">${hora}</span></div><div class="msg-texto">${texto}</div>`;
+  lista.appendChild(div);
+  lista.scrollTop = lista.scrollHeight;
+  input.value = '';
+  toast('Mensagem enviada!');
+}
+
+// APROVAÇÃO VT
+function aprovarVT() {
+  closeModal('aprovacao');
+  toast('✓ Vale Transporte aprovado!');
+}
+function reprovarVT() {
+  closeModal('aprovacao');
+  toast('✗ Vale Transporte reprovado. Candidato será notificado.');
+}
+
+// APONTAMENTO
+function registrarApontamento() {
+  const desc = document.getElementById('apo-desc').value.trim();
+  if (!desc) { toast('Informe a descrição!'); return; }
+  toast('Apontamento registrado com sucesso!');
+  document.getElementById('apo-desc').value = '';
+}
+
+// GESTÃO
+function enviarGestao() {
+  const msg = document.getElementById('gest-msg').value.trim();
+  if (!msg) { toast('Digite o comunicado!'); return; }
+  toast('Comunicado enviado para a gestão!');
+  document.getElementById('gest-msg').value = '';
+  document.getElementById('gest-assunto').value = '';
+}
+function gerarAutomatico() {
+  document.getElementById('gest-assunto').value = 'Resumo Diário Admissional';
+  document.getElementById('gest-msg').value = `Bom dia, Gestão!\n\nResumo do dia ${now.toLocaleDateString('pt-BR')}:\n\n• Carlos Mendes (Analista de TI) — Vale transporte em revisão.\n• Fernanda Lima (Supervisora) — Exame agendado para 14/03.\n• Ricardo Alves (Logística) — Aguardando assinatura de contrato.\n• Juliana Costa (Adm.) — Processo admissional concluído ✓\n\nQualquer dúvida, estou à disposição.\n\nAtenciosamente,\nAssistente de RH`;
+  toast('Relatório gerado automaticamente!');
+}
+
+// RELATÓRIOS
+const relNomes = {
+  diario: 'Relatório Diário',
+  candidatos: 'Status dos Candidatos',
+  apontamentos: 'Apontamentos',
+  vt: 'Vale Transporte',
+  exames: 'Exames Admissionais',
+  contratos: 'Contratos Digitais'
+};
+function gerarRelatorio(tipo) {
+  toast(`Gerando: ${relNomes[tipo]}...`);
+}
+
+// EXPORTAR ROTINA
+function exportarRotina() {
+  toast('Rotina exportada com sucesso!');
+}
+
+// INIT
+atualizarProgresso();
+atualizarStats();
+</script>
+</body>
+</html>
