@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LinkedIn Boolean Search Map</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#05080f;--bg2:#080d18;--bg3:#0c1220;
+  --card:#0f1520;--card2:#121a2a;
+  --border:rgba(99,179,237,0.10);--border2:rgba(99,179,237,0.22);
+  --accent:#3b82f6;--accent2:#60a5fa;--accent3:#93c5fd;
+  --cyan:#06b6d4;--purple:#a78bfa;--green:#34d399;--amber:#fbbf24;
+  --text:#e2e8f0;--text2:#94a3b8;--text3:#4a5568;
+  --mono:'JetBrains Mono',monospace;--sans:'Space Grotesk',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;overflow-x:hidden;font-size:15px}
+
+/* HEADER */
+.header{position:relative;padding:3rem 2rem 2.5rem;border-bottom:1px solid var(--border);overflow:hidden}
+.orb{position:absolute;border-radius:50%;pointer-events:none}
+.orb1{width:400px;height:400px;top:-150px;left:-100px;background:radial-gradient(circle,rgba(59,130,246,0.07) 0%,transparent 70%)}
+.orb2{width:300px;height:300px;top:-80px;right:5%;background:radial-gradient(circle,rgba(6,182,212,0.05) 0%,transparent 70%)}
+.orb3{width:200px;height:200px;bottom:-60px;left:30%;background:radial-gradient(circle,rgba(167,139,250,0.04) 0%,transparent 70%)}
+.grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(99,179,237,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(99,179,237,0.03) 1px,transparent 1px);background-size:40px 40px;mask-image:linear-gradient(to bottom,transparent,rgba(0,0,0,0.4),transparent)}
+.header-content{position:relative;z-index:1;max-width:920px;margin:0 auto}
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(59,130,246,0.10);border:1px solid rgba(59,130,246,0.25);border-radius:20px;padding:4px 14px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent2);margin-bottom:1.25rem}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--accent2);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.75)}}
+h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:700;line-height:1.15;margin-bottom:.6rem;letter-spacing:-.03em}
+h1 .hl{color:var(--accent2)}
+h1 .hl2{
+  background:linear-gradient(135deg,var(--cyan),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text
+}
+.subtitle{font-size:1rem;color:var(--text2);max-width:540px;line-height:1.7}
+.header-stats{display:flex;gap:2rem;margin-top:1.75rem;flex-wrap:wrap}
+.stat{display:flex;flex-direction:column;gap:2px}
+.stat-num{font-size:1.5rem;font-weight:700;color:var(--accent2);line-height:1}
+.stat-label{font-size:11px;color:var(--text3);letter-spacing:.05em;text-transform:uppercase}
+
+/* TABS */
+.tabs-wrap{background:var(--bg);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
+.tabs{display:flex;gap:2px;padding:.75rem 2rem 0;max-width:920px;margin:0 auto;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:9px 18px;border-radius:8px 8px 0 0;border:none;background:transparent;color:var(--text3);font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s;border-bottom:2px solid transparent;position:relative;bottom:-1px;display:flex;align-items:center;gap:6px}
+.tab:hover{color:var(--text2);background:rgba(255,255,255,.03)}
+.tab.active{color:var(--accent2);border-bottom-color:var(--accent);background:rgba(59,130,246,.06)}
+.tab-count{background:rgba(59,130,246,.15);color:var(--accent3);border-radius:10px;padding:1px 7px;font-size:10px;font-weight:600}
+.tab.active .tab-count{background:rgba(59,130,246,.25)}
+
+/* MAIN */
+.main{max-width:920px;margin:0 auto;padding:2rem}
+.section{display:none}.section.active{display:block}
+
+/* SECTION HEAD */
+.section-head{margin-bottom:1.5rem}
+.section-title{font-size:1.15rem;font-weight:600;color:var(--text);margin-bottom:4px}
+.section-desc{font-size:.9rem;color:var(--text2);line-height:1.6}
+
+/* INFO BOX */
+.info-box{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);border-left:3px solid var(--accent);border-radius:8px;padding:12px 16px;font-size:.875rem;color:var(--text2);line-height:1.7;margin-bottom:1.5rem}
+.info-box strong{color:var(--accent2)}
+
+/* GROUP LABEL */
+.group-label{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin:1.75rem 0 .75rem;display:flex;align-items:center;gap:10px}
+.group-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border2),transparent)}
+.group-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-blue{background:var(--accent2)}
+.dot-cyan{background:var(--cyan)}
+.dot-purple{background:var(--purple)}
+.dot-green{background:var(--green)}
+.dot-amber{background:var(--amber)}
+
+/* SEARCH CARD */
+.search-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:10px;transition:border-color .25s,transform .25s,box-shadow .25s;position:relative;overflow:hidden}
+.search-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,179,237,.35),transparent);opacity:0;transition:opacity .3s}
+.search-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 10px 40px rgba(0,0,0,.5),0 0 0 1px rgba(59,130,246,.07)}
+.search-card:hover::before{opacity:1}
+
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+.card-left{display:flex;flex-direction:column;gap:6px}
+.card-title{font-size:.9rem;font-weight:600;color:var(--text);line-height:1.3}
+.tags{display:flex;gap:5px;flex-wrap:wrap}
+.tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:500}
+.tag-blue{background:rgba(59,130,246,.13);color:#93c5fd;border:1px solid rgba(59,130,246,.2)}
+.tag-cyan{background:rgba(6,182,212,.10);color:#67e8f9;border:1px solid rgba(6,182,212,.18)}
+.tag-purple{background:rgba(167,139,250,.10);color:#c4b5fd;border:1px solid rgba(167,139,250,.18)}
+.tag-green{background:rgba(52,211,153,.10);color:#6ee7b7;border:1px solid rgba(52,211,153,.18)}
+.tag-amber{background:rgba(251,191,36,.10);color:#fcd34d;border:1px solid rgba(251,191,36,.18)}
+.tag-coral{background:rgba(251,113,133,.10);color:#fda4af;border:1px solid rgba(251,113,133,.18)}
+
+/* CODE */
+.code-block{background:var(--bg2);border:1px solid rgba(255,255,255,.05);border-radius:8px;padding:11px 14px;font-family:var(--mono);font-size:12.5px;line-height:1.6;color:var(--text2);word-break:break-all;margin-top:2px}
+.kw{color:#93c5fd;font-weight:500}
+.str{color:#c4b5fd}
+.op{color:#67e8f9;font-weight:500}
+.wc{color:#fcd34d;font-weight:700}
+
+/* BTNS */
+.card-btns{display:flex;flex-direction:column;gap:6px;flex-shrink:0}
+.copy-btn,.open-btn{display:inline-flex;align-items:center;gap:5px;border-radius:7px;padding:6px 11px;font-size:11.5px;font-family:var(--sans);font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap;text-decoration:none}
+.copy-btn{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);color:var(--accent3)}
+.copy-btn:hover{background:rgba(59,130,246,.18);border-color:rgba(59,130,246,.4);color:#fff}
+.copy-btn.copied{background:rgba(52,211,153,.10);border-color:rgba(52,211,153,.3);color:#6ee7b7}
+.open-btn{background:rgba(6,182,212,.07);border:1px solid rgba(6,182,212,.18);color:#67e8f9}
+.open-btn:hover{background:rgba(6,182,212,.16);border-color:rgba(6,182,212,.35);color:#fff}
+
+/* GRID */
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:10px}
+
+/* DIVIDER */
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent);margin:2rem 0}
+
+/* ICONS SVG inline */
+.ico{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+
+@media(max-width:640px){
+  .main{padding:1.25rem}
+  .header{padding:2rem 1.25rem 2rem}
+  .tabs{padding:.75rem 1.25rem 0}
+  .grid-2{grid-template-columns:1fr}
+  .card-btns{flex-direction:row;flex-wrap:wrap}
+  h1{font-size:1.6rem}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div class="grid-bg"></div>
+  <div class="header-content">
+    <div class="badge"><div class="badge-dot"></div>LinkedIn Search Tool</div>
+    <h1>Boolean Search <span class="hl2">Map</span></h1>
+    <p class="subtitle">Buscas estruturadas para encontrar vagas com contato direto — prontas para abrir no LinkedIn.</p>
+    <div class="header-stats">
+      <div class="stat"><span class="stat-num">6</span><span class="stat-label">Categorias</span></div>
+      <div class="stat"><span class="stat-num" id="totalCount">42</span><span class="stat-label">Queries prontas</span></div>
+      <div class="stat"><span class="stat-num">wa.me</span><span class="stat-label">Operador principal</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs-wrap">
+  <div class="tabs" id="tabs">
+    <button class="tab active" onclick="switchTab(0)">Gerais <span class="tab-count">4</span></button>
+    <button class="tab" onclick="switchTab(1)">Por Estado <span class="tab-count">10</span></button>
+    <button class="tab" onclick="switchTab(2)">Por Cargo <span class="tab-count">10</span></button>
+    <button class="tab" onclick="switchTab(3)">Senioridade <span class="tab-count">8</span></button>
+    <button class="tab" onclick="switchTab(4)">Coordenação <span class="tab-count">8</span></button>
+    <button class="tab" onclick="switchTab(5)">Avançado <span class="tab-count">6</span></button>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- ===== TAB 0: GERAIS ===== -->
+<div class="section active" id="s0">
+  <div class="section-head">
+    <div class="section-title">Buscas Gerais</div>
+    <div class="section-desc">Base fundamental — localiza posts de vagas com link de contato direto via WhatsApp.</div>
+  </div>
+  <div class="info-box">
+    <strong>Como usar:</strong> Clique em <strong>Abrir no LinkedIn</strong> para executar a busca direto. Clique em <strong>Copiar</strong> para usar em outras plataformas ou salvar. Filtre por <strong>Posts &gt; Mais recente</strong> para melhores resultados.
+  </div>
+
+  <div class="group-label"><div class="group-dot dot-blue"></div>Via link WhatsApp</div>
+  <div id="cardsG1"></div>
+
+  <div class="group-label"><div class="group-dot dot-cyan"></div>Via palavra-chave direta</div>
+  <div id="cardsG2"></div>
+</div>
+
+<!-- ===== TAB 1: ESTADOS ===== -->
+<div class="section" id="s1">
+  <div class="section-head">
+    <div class="section-title">Por Estado</div>
+    <div class="section-desc">Top 5 estados com maior volume de vagas em marketing, criação e comunicação digital.</div>
+  </div>
+  <div id="cardsEstados"></div>
+</div>
+
+<!-- ===== TAB 2: CARGOS ===== -->
+<div class="section" id="s2">
+  <div class="section-head">
+    <div class="section-title">Por Cargo</div>
+    <div class="section-desc">Combina o link de contato com títulos relevantes ao seu perfil criativo e de marketing.</div>
+  </div>
+  <div id="cardsCargos"></div>
+</div>
+
+<!-- ===== TAB 3: SENIORIDADE ===== -->
+<div class="section" id="s3">
+  <div class="section-head">
+    <div class="section-title">Por Senioridade</div>
+    <div class="section-desc">Filtra vagas que especificam o nível de experiência — útil para sair do ruído de vagas júnior.</div>
+  </div>
+  <div id="cardsSenior"></div>
+</div>
+
+<!-- ===== TAB 4: COORDENAÇÃO ===== -->
+<div class="section" id="s4">
+  <div class="section-head">
+    <div class="section-title">Coordenação com Wildcard <span style="color:var(--amber);font-family:var(--mono);font-size:1rem">*</span></div>
+    <div class="section-desc">Usa <strong style="color:var(--amber);font-family:var(--mono)">*</strong> para capturar variações do cargo: Coordenador, Coordenadora, Coordenação de Conteúdo, etc.</div>
+  </div>
+  <div class="info-box">
+    <strong>Atenção:</strong> O operador <strong style="color:var(--amber);font-family:var(--mono)">*</strong> no LinkedIn funciona como wildcard de sufixo — <strong>Coordenador*</strong> encontra Coordenador, Coordenadora, Coordenadores. Use sem aspas para ativar o wildcard.
+  </div>
+  <div id="cardsCoord"></div>
+</div>
+
+<!-- ===== TAB 5: AVANÇADO ===== -->
+<div class="section" id="s5">
+  <div class="section-head">
+    <div class="section-title">Combinações Avançadas</div>
+    <div class="section-desc">Queries multi-variável com cargo + estado + nível + operador — máxima precisão, menor volume.</div>
+  </div>
+  <div id="cardsAdv"></div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+function li(q){
+  return "https://www.linkedin.com/search/results/content/?keywords="+encodeURIComponent(q)+"&origin=GLOBAL_SEARCH_HEADER&sortBy=%5B%22date_posted%22%5D";
+}
+
+function fmt(q){
+  return q
+    .replace(/AND/g,'<span class="op">AND</span>')
+    .replace(/OR/g,'<span class="op">OR</span>')
+    .replace(/NOT/g,'<span class="op">NOT</span>')
+    .replace(/"([^"]+)"/g,'"<span class="str">$1</span>"')
+    .replace(/\*/g,'<span class="wc">*</span>');
+}
+
+function card(title, query, tags, tagClasses){
+  const tagHtml = tags.map((t,i)=>`<span class="tag ${tagClasses[i]||'tag-blue'}">${t}</span>`).join('');
+  return `
+  <div class="search-card">
+    <div class="card-top">
+      <div class="card-left">
+        <div class="card-title">${title}</div>
+        <div class="tags">${tagHtml}</div>
+      </div>
+      <div class="card-btns">
+        <button class="copy-btn" onclick="copyQ(this,'${query.replace(/'/g,"\\'")}')">
+          <svg class="ico" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Copiar
+        </button>
+        <a class="open-btn" href="${li(query)}" target="_blank" rel="noopener">
+          <svg class="ico" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Abrir
+        </a>
+      </div>
+    </div>
+    <div class="code-block">${fmt(query)}</div>
+  </div>`;
+}
+
+function copyQ(btn, query){
+  navigator.clipboard.writeText(query).then(()=>{
+    btn.classList.add('copied');
+    btn.innerHTML = `<svg class="ico" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Copiado`;
+    setTimeout(()=>{
+      btn.classList.remove('copied');
+      btn.innerHTML = `<svg class="ico" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar`;
+    }, 2000);
+  });
+}
+
+function switchTab(i){
+  document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',i===j));
+  document.querySelectorAll('.section').forEach((s,j)=>s.classList.toggle('active',i===j));
+}
+
+// ---- DATA ----
+
+// GERAIS 1 — WhatsApp link
+const g1 = [
+  {t:'Vaga + wa.me', q:'("vaga") AND ("wa.me")', tags:['base','whatsapp'], tc:['tag-blue','tag-green']},
+  {t:'Vaga + whatsapp', q:'("vaga") AND ("whatsapp")', tags:['base','whatsapp'], tc:['tag-blue','tag-green']},
+];
+const g2 = [
+  {t:'Contratando + wa.me', q:'("contratando") AND ("wa.me")', tags:['alternativa','whatsapp'], tc:['tag-cyan','tag-green']},
+  {t:'Oportunidade + wa.me', q:'("oportunidade") AND ("wa.me")', tags:['alternativa','whatsapp'], tc:['tag-cyan','tag-green']},
+];
+
+// ESTADOS
+const estados = [
+  {estado:'Rio de Janeiro', uf:'RJ'},
+  {estado:'São Paulo', uf:'SP'},
+  {estado:'Minas Gerais', uf:'MG'},
+  {estado:'Paraná', uf:'PR'},
+  {estado:'Rio Grande do Sul', uf:'RS'},
+];
+const estadoCards = [];
+estados.forEach(e=>{
+  estadoCards.push({
+    t:`Vaga + wa.me · ${e.uf}`,
+    q:`("vaga") AND ("wa.me") AND ("${e.estado}")`,
+    tags:[e.uf,'estado','whatsapp'], tc:['tag-purple','tag-blue','tag-green']
+  });
+  estadoCards.push({
+    t:`Vaga + whatsapp · ${e.uf}`,
+    q:`("vaga") AND ("whatsapp") AND ("${e.estado}")`,
+    tags:[e.uf,'estado','whatsapp'], tc:['tag-purple','tag-cyan','tag-green']
+  });
+});
+
+// CARGOS
+const cargos = [
+  {cargo:'Marketing', tag:'tag-blue'},
+  {cargo:'Diretor de Arte', tag:'tag-purple'},
+  {cargo:'Criação', tag:'tag-cyan'},
+  {cargo:'Conteúdo', tag:'tag-green'},
+  {cargo:'Design', tag:'tag-amber'},
+  {cargo:'Coordenador de Marketing', tag:'tag-blue'},
+  {cargo:'Gerente de Marketing', tag:'tag-coral'},
+  {cargo:'Social Media', tag:'tag-cyan'},
+  {cargo:'Branding', tag:'tag-purple'},
+  {cargo:'Comunicação', tag:'tag-green'},
+];
+const cargoCards = cargos.map(c=>({
+  t:`Vaga + wa.me · ${c.cargo}`,
+  q:`("vaga") AND ("wa.me") AND ("${c.cargo}")`,
+  tags:[c.cargo,'cargo','whatsapp'], tc:[c.tag,'tag-blue','tag-green']
+}));
+
+// SENIORIDADE
+const niveis = [
+  {n:'Sênior', tag:'tag-blue'},
+  {n:'Pleno', tag:'tag-cyan'},
+  {n:'Júnior', tag:'tag-green'},
+  {n:'Head', tag:'tag-coral'},
+  {n:'Lead', tag:'tag-purple'},
+  {n:'Especialista', tag:'tag-amber'},
+  {n:'Gerente', tag:'tag-blue'},
+  {n:'Coordenador', tag:'tag-cyan'},
+];
+const seniorCards = niveis.map(n=>({
+  t:`Vaga + wa.me · ${n.n}`,
+  q:`("vaga") AND ("wa.me") AND ("${n.n}")`,
+  tags:[n.n,'senioridade','whatsapp'], tc:[n.tag,'tag-blue','tag-green']
+}));
+
+// COORDENAÇÃO com wildcard
+const coordCargos = [
+  'Coordenador de Conteudo',
+  'Coordenador de Marketing',
+  'Coordenador Criativo',
+  'Coordenador de Mídia',
+  'Coordenador de Comunicação',
+  'Coordenador de Design',
+  'Coordenador de Projetos',
+  'Coordenador de Redes Sociais',
+];
+const coordCards = coordCargos.map(c=>({
+  t:`Vaga + wa.me · ${c}*`,
+  q:`("vaga") AND ("wa.me") AND (${c}*)`,
+  tags:[c+'*','wildcard','whatsapp'], tc:['tag-amber','tag-blue','tag-green']
+}));
+
+// AVANÇADO
+const adv = [
+  {t:'Marketing Sênior · SP + wa.me', q:'("vaga") AND ("wa.me") AND ("Marketing") AND ("Sênior") AND ("São Paulo")', tags:['multi-variável','SP','Sênior'], tc:['tag-coral','tag-purple','tag-blue']},
+  {t:'Diretor de Arte · RJ + wa.me', q:'("vaga") AND ("wa.me") AND ("Diretor de Arte") AND ("Rio de Janeiro")', tags:['multi-variável','RJ','arte'], tc:['tag-coral','tag-purple','tag-cyan']},
+  {t:'Head de Criação · remoto + wa.me', q:'("vaga") AND ("wa.me") AND ("Head de Criação") AND ("remoto" OR "remote")', tags:['multi-variável','remoto','head'], tc:['tag-coral','tag-green','tag-amber']},
+  {t:'Gerente de Marketing · SP ou RJ', q:'("vaga") AND ("wa.me") AND ("Gerente de Marketing") AND ("São Paulo" OR "Rio de Janeiro")', tags:['multi-estado','gerente'], tc:['tag-coral','tag-blue']},
+  {t:'Conteúdo Sênior · SP + contratando', q:'("contratando") AND ("wa.me") AND ("Conteúdo") AND ("Sênior") AND ("São Paulo")', tags:['multi-variável','conteúdo'], tc:['tag-coral','tag-cyan','tag-green']},
+  {t:'Criação ou Design · MG ou PR + wa.me', q:'("vaga") AND ("wa.me") AND ("Criação" OR "Design") AND ("Minas Gerais" OR "Paraná")', tags:['OR duplo','multi-estado'], tc:['tag-purple','tag-amber']},
+];
+
+// ---- RENDER ----
+function render(id, arr){
+  document.getElementById(id).innerHTML = arr.map(d=>card(d.t,d.q,d.tags,d.tc)).join('');
+}
+
+render('cardsG1', g1);
+render('cardsG2', g2);
+render('cardsEstados', estadoCards);
+render('cardsCargos', cargoCards);
+render('cardsSenior', seniorCards);
+render('cardsCoord', coordCards);
+render('cardsAdv', adv);
+
+const total = g1.length+g2.length+estadoCards.length+cargoCards.length+seniorCards.length+coordCards.length+adv.length;
+document.getElementById('totalCount').textContent = total;
+</script>
+</body>
+</html>
