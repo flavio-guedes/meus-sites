@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LinkedIn Search Map</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f4f6fb;
+  --bg2:#eef1f8;
+  --white:#ffffff;
+  --border:#e2e8f0;
+  --border2:#cbd5e1;
+  --shadow:0 1px 3px rgba(15,23,42,0.06),0 4px 16px rgba(15,23,42,0.04);
+  --shadow-hover:0 4px 20px rgba(15,23,42,0.10),0 1px 4px rgba(15,23,42,0.06);
+
+  --blue1:#3b82f6;--blue2:#2563eb;--blue3:#1d4ed8;
+  --cyan1:#06b6d4;--cyan2:#0891b2;
+  --purple1:#8b5cf6;--purple2:#7c3aed;
+  --green1:#10b981;--green2:#059669;
+  --amber1:#f59e0b;--amber2:#d97706;
+  --coral1:#f43f5e;--coral2:#e11d48;
+  --slate:#64748b;--slate2:#475569;--slate3:#334155;
+
+  --grad-blue:linear-gradient(135deg,#3b82f6,#6366f1);
+  --grad-cyan:linear-gradient(135deg,#06b6d4,#3b82f6);
+  --grad-purple:linear-gradient(135deg,#8b5cf6,#ec4899);
+  --grad-green:linear-gradient(135deg,#10b981,#06b6d4);
+  --grad-amber:linear-gradient(135deg,#f59e0b,#ef4444);
+  --grad-title:linear-gradient(135deg,#1e40af 0%,#6366f1 50%,#0891b2 100%);
+
+  --text:#0f172a;--text2:#334155;--text3:#64748b;--text4:#94a3b8;
+  --mono:'JetBrains Mono',monospace;
+  --sans:'Inter',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;overflow-x:hidden;font-size:14px;line-height:1.6}
+
+/* ─── HEADER ─── */
+.header{
+  background:var(--white);
+  border-bottom:1px solid var(--border);
+  padding:2.5rem 2rem 2rem;
+  position:relative;
+  overflow:hidden;
+}
+.header-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 600px 300px at 10% 50%,rgba(59,130,246,0.05) 0%,transparent 70%),
+    radial-gradient(ellipse 400px 200px at 90% 20%,rgba(99,102,241,0.04) 0%,transparent 70%),
+    radial-gradient(ellipse 300px 200px at 50% 100%,rgba(6,182,212,0.04) 0%,transparent 70%);
+  pointer-events:none;
+}
+.header-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(99,102,241,0.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(99,102,241,0.04) 1px,transparent 1px);
+  background-size:32px 32px;
+  mask-image:linear-gradient(to bottom,rgba(0,0,0,0.3),transparent);
+  pointer-events:none;
+}
+.header-inner{position:relative;z-index:1;max-width:1000px;margin:0 auto}
+
+.badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:linear-gradient(135deg,rgba(59,130,246,0.1),rgba(99,102,241,0.08));
+  border:1px solid rgba(59,130,246,0.2);
+  border-radius:20px;padding:4px 14px;
+  font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:#2563eb;margin-bottom:1rem;font-weight:500;
+}
+.badge-dot{width:5px;height:5px;border-radius:50%;background:var(--blue1);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+h1{
+  font-size:clamp(1.7rem,4vw,2.4rem);font-weight:700;
+  line-height:1.15;letter-spacing:-.03em;margin-bottom:.5rem;
+  background:var(--grad-title);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.subtitle{font-size:.925rem;color:var(--text3);max-width:520px;line-height:1.7;margin-bottom:1.5rem}
+
+.stats{display:flex;gap:1.5rem;flex-wrap:wrap}
+.stat{display:flex;flex-direction:column;gap:2px}
+.stat-n{
+  font-size:1.4rem;font-weight:700;line-height:1;
+  background:var(--grad-blue);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.stat-l{font-size:10px;color:var(--text4);letter-spacing:.08em;text-transform:uppercase;font-weight:500}
+
+/* ─── MODE SWITCHER ─── */
+.mode-bar{
+  background:var(--white);border-bottom:2px solid var(--border);
+  position:sticky;top:0;z-index:200;
+}
+.mode-inner{max-width:1000px;margin:0 auto;padding:0 2rem;display:flex;align-items:center;gap:0}
+.mode-btn{
+  padding:1rem 1.5rem;border:none;background:transparent;
+  font-family:var(--sans);font-size:.875rem;font-weight:500;
+  cursor:pointer;color:var(--text3);transition:all .2s;
+  border-bottom:2px solid transparent;margin-bottom:-2px;
+  display:flex;align-items:center;gap:8px;white-space:nowrap;
+}
+.mode-btn:hover{color:var(--text2)}
+.mode-btn.active-jobs{color:var(--blue2);border-bottom-color:var(--blue2)}
+.mode-btn.active-posts{color:var(--purple2);border-bottom-color:var(--purple2)}
+.mode-icon{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.mode-sep{width:1px;height:20px;background:var(--border);margin:0 4px}
+
+/* ─── FILTER BAR ─── */
+.filter-bar{
+  background:var(--white);border-bottom:1px solid var(--border);
+  padding:.75rem 2rem;
+  position:sticky;top:56px;z-index:150;
+}
+.filter-inner{max-width:1000px;margin:0 auto;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+.filter-label{font-size:11px;font-weight:600;color:var(--text4);letter-spacing:.06em;text-transform:uppercase;margin-right:4px}
+
+.chip{
+  padding:5px 12px;border-radius:20px;border:1px solid var(--border2);
+  background:var(--white);color:var(--text3);font-family:var(--sans);
+  font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;
+  white-space:nowrap;
+}
+.chip:hover{border-color:var(--blue1);color:var(--blue2);background:rgba(59,130,246,.04)}
+.chip.active{
+  background:linear-gradient(135deg,#eff6ff,#f0f9ff);
+  border-color:rgba(59,130,246,.4);color:var(--blue2);font-weight:600;
+}
+.chip.active-purple{
+  background:linear-gradient(135deg,#f5f3ff,#fdf4ff);
+  border-color:rgba(139,92,246,.4);color:var(--purple2);font-weight:600;
+}
+.filter-sep{width:1px;height:20px;background:var(--border);margin:0 4px}
+
+/* ─── MAIN ─── */
+.main{max-width:1000px;margin:0 auto;padding:1.5rem 2rem 3rem}
+.mode-panel{display:none}.mode-panel.active{display:block}
+
+/* ─── SECTION HEADER ─── */
+.sec-head{margin-bottom:1rem}
+.sec-title{font-size:1rem;font-weight:600;color:var(--text);margin-bottom:2px}
+.sec-desc{font-size:.825rem;color:var(--text3);line-height:1.6}
+
+/* ─── INFO BOX ─── */
+.info-box{
+  background:linear-gradient(135deg,rgba(59,130,246,.05),rgba(99,102,241,.04));
+  border:1px solid rgba(59,130,246,.15);border-left:3px solid var(--blue1);
+  border-radius:8px;padding:10px 14px;font-size:.825rem;color:var(--text3);
+  line-height:1.7;margin-bottom:1.25rem;
+}
+.info-box strong{color:var(--blue2)}
+.info-box.purple{
+  background:linear-gradient(135deg,rgba(139,92,246,.05),rgba(236,72,153,.03));
+  border-color:rgba(139,92,246,.15);border-left-color:var(--purple1);
+}
+.info-box.purple strong{color:var(--purple2)}
+
+/* ─── GROUP LABEL ─── */
+.grp{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text4);
+  margin:1.5rem 0 .625rem;display:flex;align-items:center;gap:8px}
+.grp::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border2),transparent)}
+.grp-pill{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;
+}
+
+/* ─── CARD ─── */
+.card{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:12px;padding:1rem 1.125rem;margin-bottom:8px;
+  transition:border-color .2s,box-shadow .2s,transform .2s;
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  opacity:0;transition:opacity .25s;
+}
+.card.blue::before{background:var(--grad-blue)}
+.card.cyan::before{background:var(--grad-cyan)}
+.card.purple::before{background:var(--grad-purple)}
+.card.green::before{background:var(--grad-green)}
+.card.amber::before{background:var(--grad-amber)}
+.card:hover{border-color:var(--border2);box-shadow:var(--shadow-hover);transform:translateY(-1px)}
+.card:hover::before{opacity:1}
+
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}
+.card-left{display:flex;flex-direction:column;gap:5px}
+.card-title{font-size:.875rem;font-weight:600;color:var(--text);line-height:1.3}
+.tags{display:flex;gap:4px;flex-wrap:wrap}
+
+.tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;letter-spacing:.02em}
+.t-blue{background:rgba(59,130,246,.1);color:#1d4ed8;border:1px solid rgba(59,130,246,.15)}
+.t-cyan{background:rgba(6,182,212,.08);color:#0e7490;border:1px solid rgba(6,182,212,.15)}
+.t-purple{background:rgba(139,92,246,.08);color:#6d28d9;border:1px solid rgba(139,92,246,.15)}
+.t-green{background:rgba(16,185,129,.08);color:#065f46;border:1px solid rgba(16,185,129,.15)}
+.t-amber{background:rgba(245,158,11,.08);color:#92400e;border:1px solid rgba(245,158,11,.15)}
+.t-coral{background:rgba(244,63,94,.08);color:#9f1239;border:1px solid rgba(244,63,94,.15)}
+.t-slate{background:rgba(100,116,139,.08);color:#334155;border:1px solid rgba(100,116,139,.15)}
+
+/* ─── CODE ─── */
+.code{
+  background:#f8fafc;border:1px solid var(--border);
+  border-radius:7px;padding:9px 12px;
+  font-family:var(--mono);font-size:12px;line-height:1.55;
+  color:var(--slate2);word-break:break-all;
+}
+.kw{color:#2563eb;font-weight:600}
+.str{color:#7c3aed}
+.op{color:#0891b2;font-weight:600}
+.wc{color:#d97706;font-weight:700}
+
+/* ─── BTNS ─── */
+.btns{display:flex;flex-direction:column;gap:5px;flex-shrink:0}
+.btn{
+  display:inline-flex;align-items:center;gap:5px;
+  border-radius:7px;padding:6px 10px;
+  font-size:11.5px;font-family:var(--sans);font-weight:500;
+  cursor:pointer;transition:all .15s;white-space:nowrap;text-decoration:none;border:none;
+}
+.btn-copy{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);color:var(--blue2)}
+.btn-copy:hover{background:rgba(59,130,246,.16);border-color:rgba(59,130,246,.4);color:var(--blue3)}
+.btn-copy.done{background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.2);color:var(--green2)}
+.btn-open{background:linear-gradient(135deg,rgba(59,130,246,.1),rgba(99,102,241,.08));border:1px solid rgba(59,130,246,.25);color:var(--blue2)}
+.btn-open:hover{background:linear-gradient(135deg,rgba(59,130,246,.18),rgba(99,102,241,.14));border-color:rgba(59,130,246,.5);color:var(--blue3)}
+.btn-open.purple{background:linear-gradient(135deg,rgba(139,92,246,.1),rgba(236,72,153,.06));border-color:rgba(139,92,246,.25);color:var(--purple2)}
+.btn-open.purple:hover{background:linear-gradient(135deg,rgba(139,92,246,.18),rgba(236,72,153,.1));border-color:rgba(139,92,246,.5)}
+
+.ico{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+
+/* ─── GRID ─── */
+.grid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:8px}
+
+/* ─── PILLS FILTROS ATIVOS ─── */
+.active-filters{
+  display:flex;gap:6px;flex-wrap:wrap;align-items:center;
+  padding:.5rem 0 .25rem;
+}
+.af-label{font-size:11px;color:var(--text4);font-weight:500}
+.af-pill{
+  background:linear-gradient(135deg,#eff6ff,#f0f9ff);
+  border:1px solid rgba(59,130,246,.25);
+  border-radius:20px;padding:3px 10px;
+  font-size:11px;color:var(--blue2);font-weight:600;
+}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:640px){
+  .main{padding:1.25rem}
+  .header{padding:2rem 1.25rem 1.5rem}
+  .filter-bar{padding:.625rem 1.25rem}
+  .mode-inner{padding:0 1.25rem}
+  .grid2{grid-template-columns:1fr}
+  h1{font-size:1.6rem}
+  .btns{flex-direction:row;flex-wrap:wrap}
+  .stats{gap:1rem}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-bg"></div>
+  <div class="header-grid"></div>
+  <div class="header-inner">
+    <div class="badge"><div class="badge-dot"></div>LinkedIn Search Tool</div>
+    <h1>Boolean Search Map</h1>
+    <p class="subtitle">Buscas estruturadas para vagas e publicações — com filtros de tempo, cidade, modalidade e rede.</p>
+    <div class="stats">
+      <div class="stat"><span class="stat-n" id="totalStat">—</span><span class="stat-l">Queries geradas</span></div>
+      <div class="stat"><span class="stat-n" style="background:var(--grad-cyan);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">2</span><span class="stat-l">Modos de busca</span></div>
+      <div class="stat"><span class="stat-n" style="background:var(--grad-purple);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">6</span><span class="stat-l">Filtros ativos</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODE SWITCHER -->
+<div class="mode-bar">
+  <div class="mode-inner">
+    <button class="mode-btn active-jobs" id="btnJobs" onclick="setMode('jobs')">
+      <svg class="mode-icon" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+      Vagas
+    </button>
+    <div class="mode-sep"></div>
+    <button class="mode-btn" id="btnPosts" onclick="setMode('posts')">
+      <svg class="mode-icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      Publicações
+    </button>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar" id="filterBar">
+  <div class="filter-inner" id="filterInner">
+    <!-- renderizado via JS -->
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- VAGAS -->
+  <div class="mode-panel active" id="panelJobs">
+    <div id="jobsContent"></div>
+  </div>
+
+  <!-- POSTS -->
+  <div class="mode-panel" id="panelPosts">
+    <div id="postsContent"></div>
+  </div>
+
+</div>
+
+<script>
+// ─── ENCODING ───
+function liEncode(q){
+  return encodeURIComponent(q).replace(/\(/g,'%28').replace(/\)/g,'%29');
+}
+
+// ─── URL BUILDERS ───
+function jobUrl(keywords, geoId, location, tpr, wt, jt){
+  let p = [];
+  if(keywords) p.push('keywords='+encodeURIComponent(keywords));
+  if(location)  p.push('location='+encodeURIComponent(location));
+  if(geoId)     p.push('geoId='+geoId);
+  if(tpr)       p.push('f_TPR='+tpr);
+  if(wt)        p.push('f_WT='+wt);
+  if(jt)        p.push('f_JT='+jt);
+  p.push('origin=JOB_SEARCH_PAGE_KEYWORD_HISTORY');
+  p.push('refresh=true');
+  return 'https://www.linkedin.com/jobs/search/?'+p.join('&');
+}
+
+function postUrl(query, datePosted, network){
+  let url = 'https://www.linkedin.com/search/results/content/?keywords='+liEncode(query);
+  if(datePosted) url += '&datePosted=%22'+datePosted+'%22';
+  if(network)    url += '&network=%5B%22'+network+'%22%5D';
+  url += '&origin=GLOBAL_SEARCH_HEADER&sortBy=%5B%22date_posted%22%5D';
+  return url;
+}
+
+// ─── STATE ───
+let mode = 'jobs';
+let jobFilters = { tpr:'r86400', wt:'', jt:'' };
+let postFilters = { date:'past-24h', net:'' };
+
+// ─── DATA ───
+const cidades = [
+  {nome:'Brasil (todo)',  geoId:'106057199', loc:'Brasil'},
+  {nome:'São Paulo',      geoId:'100446943', loc:'São Paulo'},
+  {nome:'Rio de Janeiro', geoId:'102676203', loc:'Rio de Janeiro'},
+  {nome:'Belo Horizonte', geoId:'100399247', loc:'Belo Horizonte'},
+  {nome:'Curitiba',       geoId:'107153773', loc:'Curitiba'},
+  {nome:'Porto Alegre',   geoId:'107188213', loc:'Porto Alegre'},
+];
+
+const cargos = [
+  'Marketing','Diretor de Arte','Criação','Conteúdo','Design',
+  'Gerente de Marketing','Coordenador de Marketing','Social Media',
+  'Branding','Comunicação','Head de Criação','Coordenador de Conteúdo',
+];
+
+const tiposVaga = [
+  {label:'CLT/Integral', code:'F'},
+  {label:'Contrato/PJ', code:'C'},
+  {label:'Estágio', code:'I'},
+  {label:'Part-time', code:'P'},
+];
+
+const modalidades = [
+  {label:'Qualquer modalidade', wt:''},
+  {label:'Remoto', wt:'2'},
+  {label:'Presencial', wt:'1'},
+  {label:'Híbrido', wt:'3'},
+];
+
+// ─── FILTERS CONFIG ───
+const jobFilterConfig = [
+  {group:'Período', key:'tpr', chips:[
+    {l:'4h', v:'r14400'},{l:'12h', v:'r43200'},{l:'24h', v:'r86400'},
+    {l:'Semana', v:'r604800'},{l:'Mês', v:'r2592000'},
+  ]},
+  {group:'Modalidade', key:'wt', chips:[
+    {l:'Todos', v:''},{l:'Remoto', v:'2'},{l:'Presencial', v:'1'},{l:'Híbrido', v:'3'},
+  ]},
+  {group:'Tipo', key:'jt', chips:[
+    {l:'Todos', v:''},{l:'CLT', v:'F'},{l:'PJ/Contrato', v:'C'},{l:'Estágio', v:'I'},
+  ]},
+];
+
+const postFilterConfig = [
+  {group:'Período', key:'date', chips:[
+    {l:'24h', v:'past-24h'},{l:'Semana', v:'past-week'},{l:'Mês', v:'past-month'},
+  ]},
+  {group:'Rede', key:'net', chips:[
+    {l:'Todos', v:''},{l:'1ª conexão', v:'F'},{l:'2ª conexão', v:'S'},{l:'1ª e 2ª', v:'F,S'},
+  ]},
+];
+
+// ─── RENDER FILTERS ───
+function renderFilters(){
+  const cfg = mode === 'jobs' ? jobFilterConfig : postFilterConfig;
+  const state = mode === 'jobs' ? jobFilters : postFilters;
+  const accent = mode === 'jobs' ? 'active' : 'active-purple';
+  let html = '';
+  cfg.forEach((g,gi)=>{
+    if(gi>0) html += '<div class="filter-sep"></div>';
+    html += `<span class="filter-label">${g.group}</span>`;
+    g.chips.forEach(c=>{
+      const isActive = state[g.key] === c.v;
+      html += `<button class="chip ${isActive?accent:''}" onclick="setFilter('${g.key}','${c.v}')">${c.l}</button>`;
+    });
+  });
+  document.getElementById('filterInner').innerHTML = html;
+}
+
+function setFilter(key, val){
+  if(mode==='jobs') jobFilters[key]=val;
+  else postFilters[key]=val;
+  renderFilters();
+  renderCards();
+}
+
+// ─── FORMAT QUERY ───
+function fmt(q){
+  return q
+    .replace(/\bAND\b/g,'<span class="op">AND</span>')
+    .replace(/\bOR\b/g,'<span class="op">OR</span>')
+    .replace(/\bNOT\b/g,'<span class="op">NOT</span>')
+    .replace(/"([^"]+)"/g,'"<span class="str">$1</span>"')
+    .replace(/\*/g,'<span class="wc">*</span>');
+}
+
+// ─── CARD HTML ───
+function card(title, query, url, tags, tagCls, accent){
+  const btnClass = accent==='purple' ? 'purple' : '';
+  const tagHtml = tags.map((t,i)=>`<span class="tag ${tagCls[i]||'t-blue'}">${t}</span>`).join('');
+  const qEsc = query.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+  return `
+<div class="card ${accent==='purple'?'purple':'blue'}">
+  <div class="card-top">
+    <div class="card-left">
+      <div class="card-title">${title}</div>
+      <div class="tags">${tagHtml}</div>
+    </div>
+    <div class="btns">
+      <button class="btn btn-copy" onclick="copyQ(this,'${qEsc}')">
+        <svg class="ico" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copiar
+      </button>
+      <a class="btn btn-open ${btnClass}" href="${url}" target="_blank" rel="noopener">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Abrir
+      </a>
+    </div>
+  </div>
+  <div class="code">${fmt(query)}</div>
+</div>`;
+}
+
+function grp(label, dotClass){
+  return `<div class="grp"><div class="grp-pill" style="background:var(--${dotClass}1)"></div>${label}</div>`;
+}
+
+// ─── RENDER JOBS ───
+function renderJobs(){
+  const {tpr, wt, jt} = jobFilters;
+  const tprLabels = {r14400:'4h',r43200:'12h',r86400:'24h',r604800:'semana',r2592000:'mês'};
+  const wtLabels  = {'':'','2':' · Remoto','1':' · Presencial','3':' · Híbrido'};
+  const jtLabels  = {'':'','F':' · CLT','C':' · PJ/Contrato','I':' · Estágio','P':' · Part-time'};
+  const suffix = (wtLabels[wt]||'') + (jtLabels[jt]||'');
+  const tprLbl = tprLabels[tpr]||'24h';
+
+  let html = '';
+
+  // Info
+  html += `<div class="info-box">
+    <strong>Modo Vagas</strong> — Busca diretamente na aba de empregos do LinkedIn. Filtros ativos: <strong>${tprLbl}</strong>${suffix||' · todos os tipos'}. Clique em <strong>Abrir</strong> para ir direto aos resultados.
+  </div>`;
+
+  // Por cidade × cargo
+  html += grp('Por Cidade — Cargos Principais','blue');
+  html += '<div class="grid2">';
+  cidades.slice(0,4).forEach(c=>{
+    cargos.slice(0,6).forEach(cargo=>{
+      const q = cargo;
+      const url = jobUrl(q, c.geoId, c.loc, tpr, wt, jt);
+      html += card(
+        `${cargo} · ${c.nome}`, q, url,
+        [cargo, c.nome, tprLbl], ['t-blue','t-slate','t-cyan'], 'blue'
+      );
+    });
+  });
+  html += '</div>';
+
+  // Remoto nacional por cargo
+  html += grp('Remoto — Brasil Completo','cyan');
+  html += '<div class="grid2">';
+  cargos.forEach(cargo=>{
+    const url = jobUrl(cargo, '106057199', 'Brasil', tpr, '2', jt);
+    html += card(
+      `${cargo} · Remoto · Brasil`, cargo, url,
+      [cargo,'Remoto',tprLbl], ['t-cyan','t-green','t-slate'], 'cyan'
+    );
+  });
+  html += '</div>';
+
+  // Senioridade
+  const niveis = [
+    {n:'Gerente de Marketing', t:'t-blue'},
+    {n:'Head de Criação', t:'t-purple'},
+    {n:'Coordenador de Marketing', t:'t-amber'},
+    {n:'Diretor de Arte Sênior', t:'t-coral'},
+    {n:'Especialista de Marketing', t:'t-green'},
+    {n:'Analista de Marketing Sênior', t:'t-cyan'},
+  ];
+  html += grp('Por Senioridade — São Paulo e Rio de Janeiro','purple');
+  html += '<div class="grid2">';
+  niveis.forEach(n=>{
+    ['São Paulo','Rio de Janeiro'].forEach(loc=>{
+      const geoId = loc==='São Paulo'?'100446943':'102676203';
+      const url = jobUrl(n.n, geoId, loc, tpr, wt, jt);
+      html += card(
+        `${n.n} · ${loc}`, n.n, url,
+        [n.n, loc, tprLbl], [n.t,'t-slate','t-cyan'], 'purple'
+      );
+    });
+  });
+  html += '</div>';
+
+  // Tipo de vaga
+  if(jt===''){
+    html += grp('Por Tipo de Contrato — Marketing · Brasil','amber');
+    html += '<div class="grid2">';
+    tiposVaga.forEach(t=>{
+      const url = jobUrl('Marketing', '106057199', 'Brasil', tpr, wt, t.code);
+      html += card(
+        `Marketing · ${t.label} · Brasil`, 'Marketing', url,
+        ['Marketing', t.label, tprLbl], ['t-blue','t-amber','t-slate'], 'amber'
+      );
+    });
+    html += '</div>';
+  }
+
+  document.getElementById('jobsContent').innerHTML = html;
+  updateCount();
+}
+
+// ─── RENDER POSTS ───
+function renderPosts(){
+  const {date, net} = postFilters;
+  const dateLbl = {
+    'past-24h':'últimas 24h','past-week':'última semana','past-month':'último mês'
+  }[date]||'últimas 24h';
+  const netLbl = {'':'','F':'1ª conexão','S':'2ª conexão','F,S':'1ª e 2ª conexão'}[net]||'';
+
+  let html = '';
+  html += `<div class="info-box purple">
+    <strong>Modo Publicações</strong> — Busca posts com vagas e link de WhatsApp. Filtro de tempo: <strong>${dateLbl}</strong>${netLbl?' · rede: <strong>'+netLbl+'</strong>':' · toda a rede'}. Combine com <strong>Posts → Mais recente</strong> no LinkedIn.
+  </div>`;
+
+  // Base
+  html += grp('Buscas Base — wa.me + WhatsApp','purple');
+  const baseQueries = [
+    {t:'Vaga + wa.me',        q:'("vaga") AND ("wa.me")',        tags:['base','wa.me','whatsapp']},
+    {t:'Vaga + whatsapp',     q:'("vaga") AND ("whatsapp")',     tags:['base','whatsapp']},
+    {t:'Contratando + wa.me', q:'("contratando") AND ("wa.me")', tags:['alternativa','wa.me']},
+    {t:'Oportunidade + wa.me',q:'("oportunidade") AND ("wa.me")',tags:['alternativa','wa.me']},
+  ];
+  html += '<div class="grid2">';
+  baseQueries.forEach(b=>{
+    const url = postUrl(b.q, date, net);
+    html += card(b.t, b.q, url,
+      b.tags.map((t,i)=>t), b.tags.map((_,i)=>['t-purple','t-blue','t-green'][i]||'t-slate'),
+      'purple');
+  });
+  html += '</div>';
+
+  // Por cargo
+  html += grp('Por Cargo','blue');
+  html += '<div class="grid2">';
+  cargos.forEach(c=>{
+    const q = `("vaga") AND ("wa.me") AND ("${c}")`;
+    const url = postUrl(q, date, net);
+    html += card(`Vaga + wa.me · ${c}`, q, url,
+      [c,'cargo','wa.me'], ['t-blue','t-slate','t-green'], 'purple');
+  });
+  html += '</div>';
+
+  // Por cidade
+  html += grp('Por Cidade','cyan');
+  html += '<div class="grid2">';
+  cidades.slice(1).forEach(c=>{
+    const q = `("vaga") AND ("wa.me") AND ("${c.loc}")`;
+    const url = postUrl(q, date, net);
+    html += card(`Vaga + wa.me · ${c.nome}`, q, url,
+      [c.nome,'cidade','wa.me'], ['t-cyan','t-slate','t-green'], 'purple');
+  });
+  html += '</div>';
+
+  // Remoto
+  html += grp('Remoto — Publicações','green');
+  html += '<div class="grid2">';
+  const remotoQ = [
+    {t:'Vaga Remota + wa.me',      q:'("vaga") AND ("wa.me") AND ("remoto" OR "remote")'},
+    {t:'Oportunidade Remota + wa.me', q:'("oportunidade") AND ("wa.me") AND ("remoto" OR "remote")'},
+  ];
+  remotoQ.forEach(r=>{
+    const url = postUrl(r.q, date, net);
+    html += card(r.t, r.q, url,
+      ['remoto','wa.me','publicação'], ['t-green','t-blue','t-slate'], 'purple');
+  });
+  html += '</div>';
+
+  // Coordenação wildcard
+  html += grp('Coordenação com Wildcard *','amber');
+  html += '<div class="grid2">';
+  const coordCargos = [
+    'Coordenador de Conteudo','Coordenador de Marketing','Coordenador Criativo',
+    'Coordenador de Midia','Head de Criacao','Gerente de Marketing',
+  ];
+  coordCargos.forEach(c=>{
+    const q = `("vaga") AND ("wa.me") AND (${c}*)`;
+    const url = postUrl(q, date, net);
+    html += card(`Vaga + wa.me · ${c}*`, q, url,
+      [c+'*','wildcard','wa.me'], ['t-amber','t-blue','t-green'], 'purple');
+  });
+  html += '</div>';
+
+  // Na minha rede (explícito)
+  if(net === ''){
+    html += grp('Na Minha Rede — Forçado','coral');
+    html += '<div class="grid2">';
+    const redeQ = [
+      {t:'Vaga + wa.me · 1ª conexão',  q:'("vaga") AND ("wa.me")',  net:'F'},
+      {t:'Vaga + wa.me · 2ª conexão',  q:'("vaga") AND ("wa.me")',  net:'S'},
+      {t:'Marketing · 1ª conexão',      q:'("vaga") AND ("wa.me") AND ("Marketing")', net:'F'},
+      {t:'Criação · 1ª conexão',        q:'("vaga") AND ("wa.me") AND ("Criação")',   net:'F'},
+    ];
+    redeQ.forEach(r=>{
+      const url = postUrl(r.q, date, r.net);
+      html += card(r.t, r.q, url,
+        ['rede', r.net==='F'?'1ª conexão':'2ª conexão','wa.me'],
+        ['t-coral','t-purple','t-green'], 'purple');
+    });
+    html += '</div>';
+  }
+
+  document.getElementById('postsContent').innerHTML = html;
+  updateCount();
+}
+
+// ─── COPY ───
+function copyQ(btn, query){
+  navigator.clipboard.writeText(query).then(()=>{
+    btn.classList.add('done');
+    btn.innerHTML = `<svg class="ico" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Copiado`;
+    setTimeout(()=>{
+      btn.classList.remove('done');
+      btn.innerHTML = `<svg class="ico" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copiar`;
+    },2000);
+  });
+}
+
+// ─── COUNT ───
+function updateCount(){
+  const n = document.querySelectorAll('.card').length;
+  document.getElementById('totalStat').textContent = n;
+}
+
+// ─── MODE SWITCH ───
+function setMode(m){
+  mode = m;
+  document.getElementById('panelJobs').classList.toggle('active', m==='jobs');
+  document.getElementById('panelPosts').classList.toggle('active', m==='posts');
+  document.getElementById('btnJobs').className  = 'mode-btn' + (m==='jobs'?' active-jobs':'');
+  document.getElementById('btnPosts').className = 'mode-btn' + (m==='posts'?' active-posts':'');
+  renderFilters();
+  if(m==='jobs') renderJobs();
+  else renderPosts();
+}
+
+// ─── INIT ───
+renderFilters();
+renderJobs();
+renderPosts();
+updateCount();
+</script>
+</body>
+</html>
