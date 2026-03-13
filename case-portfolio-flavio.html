@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case — Painel de Rotina RH · Flávio Guedes</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red: #c91010;
+  --red2: #e02020;
+  --red-dim: #fdf2f2;
+  --red-mid: #fce4e4;
+  --white: #ffffff;
+  --bg: #f7f7f7;
+  --gray-100: #f3f3f3;
+  --gray-200: #e8e8e8;
+  --gray-300: #d0d0d0;
+  --gray-500: #888888;
+  --gray-700: #444444;
+  --text: #1a1a1a;
+  --shadow: 0 2px 16px rgba(0,0,0,0.07);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.12);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Sora', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--gray-200);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 48px; height: 58px;
+}
+.nav-brand {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 700; font-size: 15px; color: var(--text);
+  text-decoration: none;
+}
+.nav-dot {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: var(--red);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 13px; font-weight: 800;
+}
+.nav-links { display: flex; gap: 28px; }
+.nav-links a {
+  font-size: 13px; font-weight: 500; color: var(--gray-500);
+  text-decoration: none; transition: color 0.15s;
+}
+.nav-links a:hover { color: var(--red); }
+.nav-cta {
+  background: var(--red); color: #fff !important;
+  padding: 7px 16px; border-radius: 8px; font-weight: 600 !important;
+  font-size: 13px !important;
+}
+.nav-cta:hover { background: var(--red2) !important; color: #fff !important; }
+
+/* HERO */
+.hero {
+  padding: 130px 48px 80px;
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-200);
+  display: grid; grid-template-columns: 1fr 420px; gap: 60px;
+  align-items: center; max-width: 1160px; margin: 0 auto;
+}
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--red-dim); color: var(--red);
+  font-size: 12px; font-weight: 700; letter-spacing: 0.8px;
+  text-transform: uppercase; padding: 5px 14px; border-radius: 20px;
+  border: 1px solid #f5c0c0; margin-bottom: 20px;
+}
+.hero h1 {
+  font-size: 42px; font-weight: 800; line-height: 1.15;
+  letter-spacing: -1.5px; margin-bottom: 18px;
+}
+.hero h1 span { color: var(--red); }
+.hero-sub {
+  font-size: 16px; color: var(--gray-700); line-height: 1.7;
+  margin-bottom: 32px; max-width: 500px;
+}
+.hero-meta { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 36px; }
+.hero-meta-item { display: flex; flex-direction: column; gap: 2px; }
+.hero-meta-label { font-size: 10px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.8px; }
+.hero-meta-val { font-size: 13px; font-weight: 600; color: var(--text); }
+.hero-btns { display: flex; gap: 10px; }
+.btn-primary {
+  background: var(--red); color: #fff;
+  padding: 11px 22px; border-radius: 10px;
+  font-family: 'Sora'; font-size: 13px; font-weight: 700;
+  text-decoration: none; transition: all 0.15s; border: none; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-primary:hover { background: var(--red2); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(201,16,16,0.3); }
+.btn-secondary {
+  background: var(--white); color: var(--text);
+  padding: 11px 22px; border-radius: 10px; border: 1.5px solid var(--gray-300);
+  font-family: 'Sora'; font-size: 13px; font-weight: 600;
+  text-decoration: none; transition: all 0.15s;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-secondary:hover { border-color: var(--red); color: var(--red); }
+
+/* HERO CARD */
+.hero-card {
+  background: var(--white); border-radius: 16px;
+  border: 1px solid var(--gray-200); box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+.hero-card-header {
+  background: var(--red); color: #fff;
+  padding: 14px 18px; display: flex; align-items: center; gap: 10px;
+}
+.hero-card-title { font-size: 13px; font-weight: 700; }
+.hero-card-sub { font-size: 11px; opacity: 0.8; }
+.hero-card-body { padding: 18px; }
+.mock-stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.mock-stat {
+  background: var(--gray-100); border-radius: 10px; padding: 12px;
+  border: 1px solid var(--gray-200);
+}
+.mock-stat-n { font-size: 22px; font-weight: 800; font-family: 'JetBrains Mono'; color: var(--red); }
+.mock-stat-l { font-size: 10px; color: var(--gray-500); }
+.mock-bar { height: 6px; border-radius: 3px; background: var(--gray-200); margin-top: 8px; overflow: hidden; }
+.mock-bar-fill { height: 100%; border-radius: 3px; background: var(--red); }
+.mock-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; border-radius: 8px;
+  background: var(--gray-100); margin-bottom: 6px;
+  border: 1px solid var(--gray-200);
+}
+.mock-item:last-child { margin-bottom: 0; }
+.mock-avatar {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: var(--red); color: #fff;
+  font-size: 10px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.mock-name { font-size: 12px; font-weight: 600; flex: 1; }
+.mock-badge {
+  font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600;
+}
+.mock-badge-red { background: #fdeaea; color: var(--red); }
+.mock-badge-green { background: #e8f5e9; color: #2e7d32; }
+.mock-badge-amber { background: #fef3c7; color: #b45309; }
+
+/* SECTION */
+.section { padding: 80px 48px; max-width: 1160px; margin: 0 auto; }
+.section-full { padding: 80px 0; background: var(--white); border-top: 1px solid var(--gray-200); border-bottom: 1px solid var(--gray-200); }
+.section-inner { max-width: 1160px; margin: 0 auto; padding: 0 48px; }
+.section-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1px; color: var(--red); margin-bottom: 10px;
+}
+.section-tag::before { content: ''; width: 20px; height: 2px; background: var(--red); border-radius: 1px; }
+.section-title { font-size: 30px; font-weight: 800; letter-spacing: -0.8px; margin-bottom: 10px; }
+.section-title span { color: var(--red); }
+.section-desc { font-size: 15px; color: var(--gray-700); max-width: 560px; line-height: 1.7; margin-bottom: 40px; }
+
+/* PROBLEM */
+.problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.problem-card {
+  background: var(--white); border-radius: 14px;
+  border: 1px solid var(--gray-200); padding: 24px;
+  box-shadow: var(--shadow);
+}
+.problem-card.highlight { border-color: var(--red); background: var(--red-dim); }
+.problem-icon { font-size: 28px; margin-bottom: 12px; }
+.problem-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+.problem-text { font-size: 14px; color: var(--gray-700); line-height: 1.65; }
+
+/* PAIN POINTS */
+.pain-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.pain-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  background: var(--white); border-radius: 10px; padding: 14px 16px;
+  border: 1px solid var(--gray-200); box-shadow: var(--shadow);
+}
+.pain-marker {
+  width: 22px; height: 22px; border-radius: 6px; flex-shrink: 0;
+  background: var(--red-dim); border: 1px solid #f5c0c0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: var(--red); font-weight: 800; margin-top: 1px;
+}
+.pain-text { font-size: 14px; font-weight: 500; }
+.pain-sub { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+
+/* SOLUTION STEPS */
+.steps { display: flex; flex-direction: column; gap: 0; }
+.step {
+  display: flex; gap: 24px; padding: 28px 0;
+  border-bottom: 1px solid var(--gray-200);
+}
+.step:last-child { border-bottom: none; }
+.step-num {
+  width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
+  background: var(--red); color: #fff;
+  font-size: 16px; font-weight: 800; font-family: 'JetBrains Mono';
+  display: flex; align-items: center; justify-content: center;
+}
+.step-content { flex: 1; }
+.step-title { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+.step-desc { font-size: 14px; color: var(--gray-700); line-height: 1.65; }
+.step-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.step-tag {
+  font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 10px;
+  background: var(--gray-100); color: var(--gray-700); border: 1px solid var(--gray-200);
+}
+.step-tag.red { background: var(--red-dim); color: var(--red); border-color: #f5c0c0; }
+
+/* DESIGN DECISIONS */
+.decisions-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.decision-card {
+  background: var(--white); border-radius: 14px; padding: 22px;
+  border: 1px solid var(--gray-200); box-shadow: var(--shadow);
+  transition: all 0.2s;
+}
+.decision-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--red); }
+.decision-icon { font-size: 26px; margin-bottom: 12px; }
+.decision-title { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+.decision-text { font-size: 13px; color: var(--gray-700); line-height: 1.6; }
+.decision-why {
+  margin-top: 12px; padding: 10px 12px; border-radius: 8px;
+  background: var(--red-dim); border-left: 3px solid var(--red);
+  font-size: 12px; color: var(--gray-700);
+}
+.decision-why strong { color: var(--red); }
+
+/* BUILD TIMELINE */
+.timeline { position: relative; padding-left: 32px; }
+.timeline::before {
+  content: ''; position: absolute; left: 7px; top: 8px; bottom: 8px;
+  width: 2px; background: var(--gray-200); border-radius: 1px;
+}
+.tl-item { position: relative; padding-bottom: 32px; }
+.tl-item:last-child { padding-bottom: 0; }
+.tl-dot {
+  position: absolute; left: -29px; top: 4px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--red); border: 3px solid var(--white);
+  box-shadow: 0 0 0 2px var(--red);
+}
+.tl-dot.gray { background: var(--gray-300); box-shadow: 0 0 0 2px var(--gray-300); }
+.tl-phase {
+  font-size: 11px; font-weight: 700; color: var(--red);
+  text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px;
+}
+.tl-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+.tl-desc { font-size: 13px; color: var(--gray-700); line-height: 1.6; }
+.tl-deliverables { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.tl-del {
+  font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 8px;
+  background: var(--gray-100); color: var(--gray-700); border: 1px solid var(--gray-200);
+}
+
+/* FEATURES */
+.features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.feature-item {
+  display: flex; gap: 14px; padding: 18px;
+  background: var(--white); border-radius: 12px;
+  border: 1px solid var(--gray-200); box-shadow: var(--shadow);
+}
+.feature-icon {
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  background: var(--red-dim); border: 1px solid #f5c0c0;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+}
+.feature-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.feature-desc { font-size: 12px; color: var(--gray-500); line-height: 1.5; }
+
+/* LEARNINGS */
+.learnings-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.learning-card {
+  background: var(--white); border-radius: 14px; padding: 22px;
+  border: 1px solid var(--gray-200); box-shadow: var(--shadow);
+}
+.learning-num {
+  font-size: 32px; font-weight: 800; color: var(--gray-200);
+  font-family: 'JetBrains Mono'; line-height: 1; margin-bottom: 10px;
+}
+.learning-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.learning-text { font-size: 13px; color: var(--gray-700); line-height: 1.6; }
+
+/* QUOTE */
+.quote-block {
+  background: var(--red); color: #fff;
+  border-radius: 16px; padding: 40px 48px;
+  text-align: center; margin: 40px 0;
+}
+.quote-text {
+  font-size: 22px; font-weight: 600; line-height: 1.5;
+  letter-spacing: -0.3px; margin-bottom: 16px; max-width: 700px; margin-left: auto; margin-right: auto;
+}
+.quote-author { font-size: 13px; opacity: 0.8; font-weight: 500; }
+
+/* DIVIDER */
+.divider { height: 1px; background: var(--gray-200); margin: 0; }
+
+/* FOOTER / LINKS */
+.footer {
+  background: var(--text); color: #fff;
+  padding: 60px 48px 40px;
+}
+.footer-inner { max-width: 1160px; margin: 0 auto; }
+.footer-top {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
+  padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.1);
+  margin-bottom: 32px;
+}
+.footer-name { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
+.footer-name span { color: var(--red); }
+.footer-role { font-size: 14px; color: rgba(255,255,255,0.6); margin-bottom: 20px; }
+.footer-bio { font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.7; max-width: 420px; }
+.footer-links-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.5); margin-bottom: 16px; }
+.footer-link-card {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px; border-radius: 12px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  text-decoration: none; color: #fff;
+  transition: all 0.2s; margin-bottom: 10px;
+}
+.footer-link-card:hover {
+  background: rgba(201,16,16,0.2);
+  border-color: var(--red);
+  transform: translateX(4px);
+}
+.footer-link-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+.footer-link-label { font-size: 13px; font-weight: 600; }
+.footer-link-url { font-size: 11px; color: rgba(255,255,255,0.45); font-family: 'JetBrains Mono'; }
+.footer-link-arrow { margin-left: auto; color: rgba(255,255,255,0.3); font-size: 16px; }
+.footer-bottom {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12px; color: rgba(255,255,255,0.4);
+}
+.footer-bottom-brand { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.footer-bottom-dot {
+  width: 20px; height: 20px; border-radius: 6px;
+  background: var(--red);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 800; color: #fff;
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate { animation: fadeUp 0.5s ease both; }
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; padding: 100px 24px 60px; }
+  .hero-card { display: none; }
+  .section { padding: 60px 24px; }
+  .section-inner { padding: 0 24px; }
+  .problem-grid, .decisions-grid, .learnings-grid { grid-template-columns: 1fr; }
+  .features-grid { grid-template-columns: 1fr; }
+  nav { padding: 0 24px; }
+  .nav-links { display: none; }
+  .footer { padding: 40px 24px; }
+  .footer-top { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-brand">
+    <div class="nav-dot">FG</div>
+    Flávio Guedes
+  </a>
+  <div class="nav-links">
+    <a href="#problema">Problema</a>
+    <a href="#solucao">Solução</a>
+    <a href="#design">Design</a>
+    <a href="#build">Build</a>
+    <a href="#aprendizados">Aprendizados</a>
+  </div>
+  <a href="https://www.linkedin.com/in/fl%C3%A1vio-guedes/" target="_blank" class="nav-links"><a href="https://www.linkedin.com/in/fl%C3%A1vio-guedes/" target="_blank" class="btn-primary" style="font-size:12px;padding:7px 14px;">LinkedIn ↗</a></a>
+</nav>
+
+<!-- HERO -->
+<div style="background:var(--white); border-bottom:1px solid var(--gray-200);">
+<div class="hero animate">
+  <div>
+    <div class="hero-tag">📁 Case de Produto · 2025</div>
+    <h1>Painel de Rotina<br>para <span>Assistente de RH</span></h1>
+    <p class="hero-sub">Como identifiquei gargalos na operação admissional de RH e projetei uma ferramenta que centraliza checklist, aprovações, follow-ups e comunicação com gestores em um único painel.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Meu papel</span>
+        <span class="hero-meta-val">Product Designer</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Duração</span>
+        <span class="hero-meta-val">Sprint de discovery + build</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Plataforma</span>
+        <span class="hero-meta-val">Web (HTML/CSS/JS)</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Contexto</span>
+        <span class="hero-meta-val">Operação interna de RH</span>
+      </div>
+    </div>
+    <div class="hero-btns">
+      <a href="https://flavio-guedes.github.io/portfolio/painel-rotina-rh.html" target="_blank" class="btn-primary">▶ Ver sistema ao vivo</a>
+      <a href="#problema" class="btn-secondary">Ver o case completo ↓</a>
+    </div>
+    <div style="margin-top:12px;">
+      <a href="https://flavio-guedes.github.io/portfolio/apresentacao.html" target="_blank" style="font-size:12px;color:var(--gray-500);text-decoration:none;border-bottom:1px solid var(--gray-300);padding-bottom:1px;">Portfólio completo ↗</a>
+    </div>
+  </div>
+
+  <!-- MOCK -->
+  <div class="hero-card animate delay-2">
+    <div class="hero-card-header">
+      <div>
+        <div class="hero-card-title">RH Admissional — Painel</div>
+        <div class="hero-card-sub">Rotina diária · 13/03/2025</div>
+      </div>
+      <div style="margin-left:auto;background:rgba(255,255,255,0.2);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;">● AO VIVO</div>
+    </div>
+    <div class="hero-card-body">
+      <div class="mock-stat-row">
+        <div class="mock-stat">
+          <div class="mock-stat-n">4</div>
+          <div class="mock-stat-l">Candidatos ativos</div>
+          <div class="mock-bar"><div class="mock-bar-fill" style="width:80%"></div></div>
+        </div>
+        <div class="mock-stat">
+          <div class="mock-stat-n" style="color:#b45309">3</div>
+          <div class="mock-stat-l">Aprovações pend.</div>
+          <div class="mock-bar"><div class="mock-bar-fill" style="width:60%;background:#f59e0b"></div></div>
+        </div>
+      </div>
+      <div class="mock-item"><div class="mock-avatar">CM</div><div class="mock-name">Carlos Mendes</div><span class="mock-badge mock-badge-amber">⏳ VT</span></div>
+      <div class="mock-item"><div class="mock-avatar">FL</div><div class="mock-name">Fernanda Lima</div><span class="mock-badge mock-badge-red">📋 Exame</span></div>
+      <div class="mock-item"><div class="mock-avatar">RA</div><div class="mock-name">Ricardo Alves</div><span class="mock-badge mock-badge-red">📄 Contrato</span></div>
+      <div class="mock-item"><div class="mock-avatar" style="background:#2e7d32">JC</div><div class="mock-name">Juliana Costa</div><span class="mock-badge mock-badge-green">✓ Concluído</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- PROBLEMA -->
+<div id="problema" style="background:var(--bg);">
+<div class="section">
+  <div class="section-tag">Discovery</div>
+  <div class="section-title">O <span>Problema</span></div>
+  <p class="section-desc">Antes deste projeto, o processo admissional era conduzido de forma fragmentada — e-mails, planilhas e anotações manuais conviviam sem integração, gerando retrabalho e perda de informação.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card highlight">
+      <div class="problem-icon">🔴</div>
+      <div class="problem-title">Contexto do usuário</div>
+      <p class="problem-text">A assistente de RH gerencia simultaneamente o processo admissional de múltiplos candidatos: validação de vale-transporte, acompanhamento de exames, aprovação de documentos e envio de contratos digitais — tudo de forma manual, sem visibilidade centralizada.</p>
+    </div>
+    <div class="problem-card">
+      <div class="problem-icon">🗂️</div>
+      <div class="problem-title">O processo existente</div>
+      <p class="problem-text">Cada etapa do processo (VT → Exame → Contrato) era tratada em silos: e-mail para um candidato, planilha para outro, lembretes manuais em papel. O gestor precisava perguntar ativamente pelo status — não havia visibilidade de ponta a ponta.</p>
+    </div>
+  </div>
+
+  <div style="height:24px"></div>
+
+  <ul class="pain-list">
+    <li class="pain-item">
+      <div class="pain-marker">1</div>
+      <div>
+        <div class="pain-text">Falta de visão centralizada do funil admissional</div>
+        <div class="pain-sub">Impossível saber em qual etapa cada candidato estava sem abrir múltiplas abas e planilhas</div>
+      </div>
+    </li>
+    <li class="pain-item">
+      <div class="pain-marker">2</div>
+      <div>
+        <div class="pain-text">Aprovações dependiam de memória e e-mail</div>
+        <div class="pain-sub">VT, exames e contratos chegavam por canais diferentes, sem histórico unificado de decisão</div>
+      </div>
+    </li>
+    <li class="pain-item">
+      <div class="pain-marker">3</div>
+      <div>
+        <div class="pain-text">Follow-ups de candidatos eram reativos, não proativos</div>
+        <div class="pain-sub">Sem alertas, a profissional só percebia atrasos quando já havia impacto no processo</div>
+      </div>
+    </li>
+    <li class="pain-item">
+      <div class="pain-marker">4</div>
+      <div>
+        <div class="pain-text">Comunicação com a gestão era manual e inconsistente</div>
+        <div class="pain-sub">Relatórios de status eram feitos a partir do zero, consumindo tempo que deveria ir ao candidato</div>
+      </div>
+    </li>
+    <li class="pain-item">
+      <div class="pain-marker">5</div>
+      <div>
+        <div class="pain-text">Rotina diária sem estrutura de checklist</div>
+        <div class="pain-sub">Sem um guia claro do que fazer pela manhã, tarde e ao encerrar o dia, tarefas críticas ficavam esquecidas</div>
+      </div>
+    </li>
+  </ul>
+</div>
+</div>
+
+<!-- SOLUÇÃO -->
+<div id="solucao" class="section-full">
+<div class="section-inner">
+  <div class="section-tag">Solução</div>
+  <div class="section-title">Como eu <span>resolvi</span></div>
+  <p class="section-desc">Desenhei um painel operacional completo para a rotina do assistente de RH, com foco em três princípios: clareza do status, ação com um clique e comunicação automática com a gestão.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-content">
+        <div class="step-title">Mapeamento da jornada e das etapas críticas</div>
+        <p class="step-desc">Conduzi uma sessão de discovery conversacional com a usuária para entender o fluxo real do processo: quais etapas existiam, em que ordem aconteciam, onde ficavam travadas e qual era o custo de cada erro ou atraso. Mapeei 3 etapas-chave (VT → Exame → Contrato) e identifiquei que o principal gargalo estava na falta de visibilidade sobre o status de cada candidato.</p>
+        <div class="step-tags">
+          <span class="step-tag red">Discovery</span>
+          <span class="step-tag">Entrevista</span>
+          <span class="step-tag">Mapeamento de fluxo</span>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-content">
+        <div class="step-title">Definição do escopo mínimo que gera valor</div>
+        <p class="step-desc">Em vez de propor um sistema complexo, priorizei as funcionalidades com maior impacto imediato na rotina: dashboard de status, checklist diário estruturado por período (manhã/tarde/encerramento), painel de candidatos por etapa e sistema de mensagens com templates para gestão. Tudo dentro de um único arquivo HTML, sem dependência de back-end.</p>
+        <div class="step-tags">
+          <span class="step-tag red">Priorização</span>
+          <span class="step-tag">MVP</span>
+          <span class="step-tag">Escopo</span>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-content">
+        <div class="step-title">Design e construção do painel em HTML/CSS/JS</div>
+        <p class="step-desc">Construí o painel com tema visual forte (vermelho, branco e cinza) para criar identidade e facilitar leitura rápida. Cada seção do painel foi desenhada para responder uma pergunta específica da usuária: "O que tenho para aprovar hoje?", "Em que etapa está cada candidato?", "O que ainda falta fazer antes das 18h?"</p>
+        <div class="step-tags">
+          <span class="step-tag red">UI Design</span>
+          <span class="step-tag">HTML/CSS/JS</span>
+          <span class="step-tag">Hierarquia visual</span>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-content">
+        <div class="step-title">Estruturação da rotina como produto</div>
+        <p class="step-desc">Transformei a rotina diária em um produto estruturado: checklist dividido em blocos temporais com prioridade visual clara, barra de progresso por período e relatório automático de encerramento para a gestão. A ideia central foi que o painel "pensasse junto" com a usuária, antecipando o que ela precisaria fazer a seguir.</p>
+        <div class="step-tags">
+          <span class="step-tag red">UX de rotina</span>
+          <span class="step-tag">Checklist</span>
+          <span class="step-tag">Produtividade</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- DESIGN -->
+<div id="design" style="background:var(--bg);">
+<div class="section">
+  <div class="section-tag">Design & UX</div>
+  <div class="section-title">Decisões de <span>Design</span></div>
+  <p class="section-desc">Cada decisão visual e de interação foi tomada a partir do contexto real de uso — um ambiente de trabalho rápido, com múltiplas tarefas simultâneas e necessidade de resposta imediata.</p>
+
+  <div class="decisions-grid">
+    <div class="decision-card">
+      <div class="decision-icon">🔴</div>
+      <div class="decision-title">Tema vermelho como linguagem de urgência</div>
+      <p class="decision-text">O vermelho foi escolhido como cor primária não por estética, mas por semântica: em RH admissional, pendências têm custo real. A cor sinaliza ação necessária sem exigir leitura do texto.</p>
+      <div class="decision-why"><strong>Por quê:</strong> Reduz o tempo cognitivo de priorização em ambientes de alta demanda.</div>
+    </div>
+    <div class="decision-card">
+      <div class="decision-icon">📋</div>
+      <div class="decision-title">Checklist dividido por período do dia</div>
+      <p class="decision-text">Em vez de uma lista única e infinita, estruturei as tarefas em blocos temporais (manhã, tarde, encerramento, documentação), cada um com seu próprio contador de progresso.</p>
+      <div class="decision-why"><strong>Por quê:</strong> Reduz sobrecarga cognitiva e cria senso de ritmo e conclusão ao longo do dia.</div>
+    </div>
+    <div class="decision-card">
+      <div class="decision-icon">👤</div>
+      <div class="decision-title">Candidato como unidade central de navegação</div>
+      <p class="decision-text">Toda a informação do sistema orbita ao redor do candidato — o usuário sempre sabe em qual etapa ele está e qual é a ação esperada a seguir, sem precisar interpretar tabelas complexas.</p>
+      <div class="decision-why"><strong>Por quê:</strong> Alinha o modelo mental do usuário com o modelo de dados do sistema.</div>
+    </div>
+    <div class="decision-card">
+      <div class="decision-icon">💬</div>
+      <div class="decision-title">Geração automática de relatório para gestão</div>
+      <p class="decision-text">O sistema gera automaticamente um texto de status para envio à gestão, baseado no estado atual dos candidatos. A usuária revisa e envia — não começa do zero.</p>
+      <div class="decision-why"><strong>Por quê:</strong> Elimina um dos maiores pontos de atrito da rotina: o relatório de fim de dia.</div>
+    </div>
+    <div class="decision-card">
+      <div class="decision-icon">🎨</div>
+      <div class="decision-title">Badges de status com semântica de cor</div>
+      <p class="decision-text">Cada status usa uma cor com significado consistente: vermelho = requer ação imediata, amarelo = aguardando terceiro, verde = concluído, cinza = pendente mas não urgente.</p>
+      <div class="decision-why"><strong>Por quê:</strong> Permite leitura de status sem leitura de texto — scan visual rápido da tela.</div>
+    </div>
+    <div class="decision-card">
+      <div class="decision-icon">⚡</div>
+      <div class="decision-title">Zero dependência — arquivo único abrível no browser</div>
+      <p class="decision-text">O painel foi construído como um único arquivo HTML funcional, sem necessidade de servidor, banco de dados ou instalação. Basta abrir no navegador.</p>
+      <div class="decision-why"><strong>Por quê:</strong> Remove a barreira de adoção em contextos onde TI é limitado ou lento.</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- BUILD -->
+<div id="build" class="section-full">
+<div class="section-inner">
+  <div class="section-tag">Processo de Build</div>
+  <div class="section-title">Como foi <span>construído</span></div>
+  <p class="section-desc">Da conversa com a usuária ao arquivo final entregue, o processo seguiu ciclos curtos de descoberta e construção — priorizando velocidade de aprendizado sobre perfeição técnica.</p>
+
+  <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 48px;">
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-phase">Fase 1 — Discovery</div>
+        <div class="tl-title">Entendimento do fluxo real</div>
+        <p class="tl-desc">Sessão conversacional para mapear o processo admissional completo — etapas, dores, ferramentas usadas e como a profissional organizava sua rotina hoje.</p>
+        <div class="tl-deliverables">
+          <span class="tl-del">Mapa de processo</span>
+          <span class="tl-del">Lista de dores</span>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-phase">Fase 2 — Definição</div>
+        <div class="tl-title">Escopo e arquitetura da informação</div>
+        <p class="tl-desc">Definição das seções do painel, hierarquia de informação e fluxo de navegação. Quais perguntas o painel precisaria responder em menos de 5 segundos.</p>
+        <div class="tl-deliverables">
+          <span class="tl-del">Arquitetura</span>
+          <span class="tl-del">Escopo MVP</span>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-phase">Fase 3 — Design</div>
+        <div class="tl-title">Sistema visual e componentes</div>
+        <p class="tl-desc">Definição do tema (vermelho/branco/cinza), criação dos componentes visuais reutilizáveis: cards, badges, tabelas, checklists, modais de aprovação e agenda.</p>
+        <div class="tl-deliverables">
+          <span class="tl-del">Design System</span>
+          <span class="tl-del">Componentes</span>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-phase">Fase 4 — Build</div>
+        <div class="tl-title">Implementação em HTML/CSS/JS</div>
+        <p class="tl-desc">Construção do painel completo em arquivo único, com lógica de checklist interativo, contadores, modais funcionais, gerador automático de relatório e navegação entre seções.</p>
+        <div class="tl-deliverables">
+          <span class="tl-del">HTML/CSS/JS</span>
+          <span class="tl-del">Arquivo único</span>
+          <span class="tl-del">Entrega</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:16px;color:var(--gray-700);">Funcionalidades entregues</div>
+      <div class="features-grid">
+        <div class="feature-item">
+          <div class="feature-icon">📊</div>
+          <div>
+            <div class="feature-title">Dashboard geral</div>
+            <div class="feature-desc">Cards de status, candidatos em andamento e agenda do dia</div>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">✅</div>
+          <div>
+            <div class="feature-title">Checklist diário</div>
+            <div class="feature-desc">14 tarefas em 4 blocos temporais com marcação e progresso</div>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">👤</div>
+          <div>
+            <div class="feature-title">Painel de candidatos</div>
+            <div class="feature-desc">Status de VT, exame e contrato em visão tabular</div>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">📅</div>
+          <div>
+            <div class="feature-title">Agenda semanal</div>
+            <div class="feature-desc">Planejamento visual dos 5 dias com eventos por cor</div>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">💬</div>
+          <div>
+            <div class="feature-title">Mensagens & Follow-up</div>
+            <div class="feature-desc">Chat interno + lista de follow-ups pendentes</div>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">📝</div>
+          <div>
+            <div class="feature-title">Apontamentos</div>
+            <div class="feature-desc">Registro de ocorrências com formulário rápido</div>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">📈</div>
+          <div>
+            <div class="feature-title">Relatórios</div>
+            <div class="feature-desc">6 tipos de relatório + indicadores de produtividade</div>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">👔</div>
+          <div>
+            <div class="feature-title">Gestão</div>
+            <div class="feature-desc">Comunicados com geração automática de resumo diário</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- QUOTE -->
+<div style="background:var(--bg);">
+<div class="section" style="padding-top:60px;padding-bottom:60px;">
+  <div class="quote-block">
+    <div class="quote-text">"O objetivo não era criar um software. Era criar uma rotina que funcionasse — e uma ferramenta que sustentasse essa rotina sem atrapalhar o trabalho real."</div>
+    <div class="quote-author">Flávio Guedes · Product Designer</div>
+  </div>
+</div>
+</div>
+
+<!-- DEMO CTA -->
+<div style="background:var(--white);border-top:1px solid var(--gray-200);border-bottom:1px solid var(--gray-200);">
+<div style="max-width:1160px;margin:0 auto;padding:48px;">
+  <div style="background:var(--red);border-radius:16px;padding:40px 48px;display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap;">
+    <div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.6);margin-bottom:8px;">Protótipo funcional</div>
+      <div style="font-size:24px;font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:8px;">Veja o sistema funcionando ao vivo</div>
+      <div style="font-size:14px;color:rgba(255,255,255,0.75);max-width:480px;">Abra no navegador, sem instalar nada. Dashboard, checklist, candidatos, mensagens, relatórios — tudo interativo.</div>
+    </div>
+    <a href="https://flavio-guedes.github.io/portfolio/painel-rotina-rh.html" target="_blank" style="background:#fff;color:var(--red);padding:14px 28px;border-radius:12px;font-family:'Sora';font-size:14px;font-weight:800;text-decoration:none;white-space:nowrap;display:inline-flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,0.15);">▶ Abrir o Painel de RH ↗</a>
+  </div>
+</div>
+</div>
+
+<!-- APRENDIZADOS -->
+<div id="aprendizados" class="section-full">
+<div class="section-inner">
+  <div class="section-tag">Aprendizados</div>
+  <div class="section-title">O que este projeto <span>ensinou</span></div>
+  <p class="section-desc">Três aprendizados que moldam a minha forma de pensar sobre produto — extraídos diretamente deste projeto.</p>
+
+  <div class="learnings-grid">
+    <div class="learning-card">
+      <div class="learning-num">01</div>
+      <div class="learning-title">Rotina é o produto mais subestimado</div>
+      <p class="learning-text">Em operações de RH, a ferramenta mais transformadora não é o sistema de HRIS — é a estrutura do dia de quem executa. Projetar a rotina como produto gera mais impacto imediato do que qualquer automação complexa.</p>
+    </div>
+    <div class="learning-card">
+      <div class="learning-num">02</div>
+      <div class="learning-title">Contexto de uso define a interface, não o contrário</div>
+      <p class="learning-text">A escolha do vermelho como cor primária não foi estética — foi funcional. Em um ambiente com múltiplas pendências simultâneas, a cor é o primeiro nível de triagem de atenção. Design sem contexto é decoração.</p>
+    </div>
+    <div class="learning-card">
+      <div class="learning-num">03</div>
+      <div class="learning-title">Reduzir fricção é mais valioso que adicionar função</div>
+      <p class="learning-text">O gerador automático de relatório para gestão foi a feature de maior impacto — não porque é a mais complexa, mas porque elimina completamente uma tarefa que consumia energia criativa desnecessária ao fim de cada dia.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- FOOTER / LINKS -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-name">Flávio <span>Guedes</span></div>
+        <div class="footer-role">Product Designer · Gestão de Produto</div>
+        <p class="footer-bio">Crio ferramentas que as pessoas realmente usam. Meu foco é entender o trabalho real antes de propor qualquer solução — e entregar produtos que reduzem fricção, aumentam clareza e fazem o dia a dia funcionar melhor.</p>
+      </div>
+      <div>
+        <!-- DESTAQUE SISTEMA -->
+        <a href="https://flavio-guedes.github.io/portfolio/painel-rotina-rh.html" target="_blank" style="display:flex;align-items:center;gap:14px;background:var(--red);border-radius:12px;padding:16px 18px;text-decoration:none;margin-bottom:20px;transition:all 0.2s;box-shadow:0 4px 24px rgba(201,16,16,0.35);">
+          <div style="width:42px;height:42px;border-radius:10px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">▶</div>
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:2px;">Abrir o Painel de Rotina RH</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.65);font-family:'JetBrains Mono';">flavio-guedes.github.io · ao vivo</div>
+          </div>
+          <div style="color:rgba(255,255,255,0.7);font-size:18px;">↗</div>
+        </a>
+
+        <div class="footer-links-title">Onde me encontrar</div>
+        <a href="https://www.linkedin.com/in/fl%C3%A1vio-guedes/" target="_blank" class="footer-link-card">
+          <div class="footer-link-icon">💼</div>
+          <div>
+            <div class="footer-link-label">LinkedIn</div>
+            <div class="footer-link-url">linkedin.com/in/flávio-guedes</div>
+          </div>
+          <div class="footer-link-arrow">↗</div>
+        </a>
+        <a href="https://flavio-guedes.github.io/portfolio/links.html" target="_blank" class="footer-link-card">
+          <div class="footer-link-icon">🔗</div>
+          <div>
+            <div class="footer-link-label">Portfólio — Links</div>
+            <div class="footer-link-url">flavio-guedes.github.io/portfolio/links</div>
+          </div>
+          <div class="footer-link-arrow">↗</div>
+        </a>
+        <a href="https://flavio-guedes.github.io/portfolio/apresentacao.html" target="_blank" class="footer-link-card">
+          <div class="footer-link-icon">🗂️</div>
+          <div>
+            <div class="footer-link-label">Portfólio — Apresentação</div>
+            <div class="footer-link-url">flavio-guedes.github.io/portfolio/apresentacao</div>
+          </div>
+          <div class="footer-link-arrow">↗</div>
+        </a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-bottom-brand">
+        <div class="footer-bottom-dot">FG</div>
+        Flávio Guedes · 2025
+      </div>
+      <div>Case de Produto · Painel de Rotina RH</div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
